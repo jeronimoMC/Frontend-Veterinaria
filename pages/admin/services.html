@@ -1,0 +1,163 @@
+<!-- Contenedor principal del contenido de servicios -->
+<div id="sectionContent" style="max-width: 1400px; margin: 0 auto; padding: 0 1rem;">
+    <!-- Vista: Lista de Servicios -->
+    <div id="servicesListView">
+        <div class="admin-card">
+            <div class="admin-card-header">
+                <h2 style="margin:0; color:var(--gray-900); display:flex; align-items:center; gap:0.5rem; font-size:1.25rem; font-weight:600;">
+                    <i class="fa-solid fa-stethoscope" style="color:var(--primary-color);"></i> Gestión de Servicios
+                </h2>
+                <button class="submit-btn" onclick="openCreateServiceModal()">
+                    <i class="fa-solid fa-plus"></i> Nuevo Servicio
+                </button>
+            </div>
+            
+            <!-- Estadísticas rápidas -->
+            <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap:1rem; margin-bottom:1.5rem; padding:1rem; background:var(--gray-50); border-radius:var(--border-radius-lg);">
+                <div style="text-align:center; padding:0.75rem; background:var(--white); border-radius:var(--border-radius-md); border:1px solid var(--gray-200);">
+                    <div style="font-size:0.85rem; color:var(--gray-600); margin-bottom:0.25rem;">Total Servicios</div>
+                    <div style="font-size:1.5rem; font-weight:700; color:var(--primary-color);" id="statTotalServices">0</div>
+                </div>
+                <div style="text-align:center; padding:0.75rem; background:var(--white); border-radius:var(--border-radius-md); border:1px solid var(--gray-200);">
+                    <div style="font-size:0.85rem; color:var(--gray-600); margin-bottom:0.25rem;">Activos</div>
+                    <div style="font-size:1.5rem; font-weight:700; color:#4CAF50;" id="statActiveServices">0</div>
+                </div>
+                <div style="text-align:center; padding:0.75rem; background:var(--white); border-radius:var(--border-radius-md); border:1px solid var(--gray-200);">
+                    <div style="font-size:0.85rem; color:var(--gray-600); margin-bottom:0.25rem;">Inactivos</div>
+                    <div style="font-size:1.5rem; font-weight:700; color:#757575;" id="statInactiveServices">0</div>
+                </div>
+            </div>
+            
+            <!-- Búsqueda y filtros -->
+            <div style="display:grid; grid-template-columns: 1fr auto; gap:1rem; margin-bottom:1.5rem;">
+                <div class="input-container">
+                    <i class="fas fa-search input-icon"></i>
+                    <input type="text" id="serviceSearch" placeholder="Buscar servicio por nombre..." 
+                           onkeyup="filterServices()">
+                    <div class="input-underline"></div>
+                </div>
+                <div class="input-container select-container">
+                    <i class="fas fa-filter input-icon"></i>
+                    <select id="serviceStatusFilter" onchange="filterServices()">
+                        <option value="">Todos los estados</option>
+                        <option value="active">Activos</option>
+                        <option value="inactive">Inactivos</option>
+                    </select>
+                    <div class="input-underline"></div>
+                </div>
+            </div>
+            
+            <!-- Tabla de servicios -->
+            <div style="overflow-x:auto;">
+                <table class="data-table" style="width:100%; border-collapse:collapse;">
+                    <thead>
+                        <tr style="background:var(--gray-100); border-bottom:2px solid var(--gray-300);">
+                            <th style="padding:0.75rem; text-align:left; font-weight:600; color:var(--gray-700);">ID</th>
+                            <th style="padding:0.75rem; text-align:left; font-weight:600; color:var(--gray-700);">Nombre</th>
+                            <th style="padding:0.75rem; text-align:left; font-weight:600; color:var(--gray-700);">Descripción</th>
+                            <th style="padding:0.75rem; text-align:right; font-weight:600; color:var(--gray-700);">Precio Base</th>
+                            <th style="padding:0.75rem; text-align:center; font-weight:600; color:var(--gray-700);">Estado</th>
+                            <th style="padding:0.75rem; text-align:center; font-weight:600; color:var(--gray-700);">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="servicesTableBody">
+                        <!-- Se cargará dinámicamente -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    
+<!-- Modal: Crear/Editar Servicio -->
+<div id="createServiceModal" class="patient-modal" onclick="if(event.target === this) closeCreateServiceModal();">
+    <div class="patient-modal-content" style="max-width:700px;">
+        <div class="patient-modal-header">
+            <h2 class="patient-modal-title">
+                <i class="fa-solid fa-stethoscope"></i> <span id="serviceModalTitle">Nuevo Servicio</span>
+            </h2>
+            <button class="patient-modal-close" onclick="closeCreateServiceModal()">
+                <i class="fa-solid fa-times"></i>
+            </button>
+        </div>
+        <div class="patient-modal-body">
+            <form id="serviceForm" onsubmit="event.preventDefault(); saveService();">
+                <div class="form-grid-admin" style="display:grid; grid-template-columns:repeat(2, 1fr); gap:1.5rem; margin-bottom:1.5rem;">
+                    <div class="input-group">
+                        <label style="display:block; margin-bottom:0.5rem; font-weight:600; color:var(--gray-700);">Nombre del Servicio *</label>
+                        <div class="input-container">
+                            <i class="fas fa-stethoscope input-icon"></i>
+                            <input type="text" id="serviceName" required placeholder="Ej: Consulta general">
+                            <div class="input-underline"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="input-group">
+                        <label style="display:block; margin-bottom:0.5rem; font-weight:600; color:var(--gray-700);">Precio Base *</label>
+                        <div class="input-container">
+                            <i class="fas fa-dollar-sign input-icon"></i>
+                            <input type="number" id="servicePrice" step="0.01" min="0" required placeholder="0.00">
+                            <div class="input-underline"></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="input-group" style="margin-bottom:1.5rem;">
+                    <label style="display:block; margin-bottom:0.5rem; font-weight:600; color:var(--gray-700); display:flex; align-items:center;">
+                        <i class="fas fa-align-left" style="color:var(--primary-color); margin-right:0.5rem;"></i>Descripción
+                    </label>
+                    <div class="input-container" style="position:relative; display:flex; align-items:flex-start;">
+                        <i class="fas fa-align-left input-icon" style="position:absolute; left:1rem; top:1rem; color:var(--gray-400); transition:color 0.3s ease;"></i>
+                        <textarea 
+                            id="serviceDescription" 
+                            rows="4" 
+                            placeholder="Descripción detallada del servicio (opcional)"
+                            style="width:100%; min-height:100px; padding:1rem 1rem 1rem calc(1rem + 24px); border:2px solid var(--gray-300); border-radius:var(--border-radius-lg); font-family:var(--font-family); font-size:var(--font-size-base); resize:vertical; transition:all 0.3s ease; background:var(--gray-50); color:var(--gray-900); line-height:1.5; outline:none;">
+                        </textarea>
+                        <div class="input-underline" style="position:absolute; bottom:0; left:0; width:0; height:2px; background:var(--primary-color); transition:width 0.3s ease; pointer-events:none;"></div>
+                    </div>
+                </div>
+                
+                <div class="input-group" style="margin-bottom:1.5rem;">
+                    <label style="display:flex; align-items:center; gap:0.5rem; font-weight:600; color:var(--gray-700); cursor:pointer;">
+                        <input type="checkbox" id="serviceActive" checked style="width:20px; height:20px; cursor:pointer; accent-color:var(--primary-color);">
+                        <span>Servicio Activo</span>
+                        <small style="color:var(--gray-500); font-weight:400; margin-left:0.5rem;">(Los servicios inactivos no estarán disponibles para facturación)</small>
+                    </label>
+                </div>
+                
+                <style>
+                    #serviceDescription:focus {
+                        background:var(--white);
+                        border-color:var(--primary-color);
+                        box-shadow:0 0 0 4px rgba(46, 139, 87, 0.1);
+                    }
+                    
+                    #serviceDescription:focus ~ .input-underline {
+                        width:100%;
+                    }
+                    
+                    #serviceDescription:focus ~ .input-icon {
+                        color:var(--primary-color);
+                    }
+                    
+                    #serviceDescription::placeholder {
+                        color:var(--gray-400);
+                    }
+                </style>
+                
+                <div class="patient-modal-footer" style="padding:1rem 1.5rem; border-top:1px solid var(--gray-200); display:flex; gap:0.75rem; justify-content:flex-end;">
+                    <button type="button" class="submit-btn btn-secondary" onclick="closeCreateServiceModal()">
+                        Cancelar
+                    </button>
+                    <button type="submit" class="submit-btn">
+                        <i class="fa-solid fa-save"></i> Guardar Servicio
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Acciones de la sección -->
+<div id="sectionActions" style="display:none;"></div>
+

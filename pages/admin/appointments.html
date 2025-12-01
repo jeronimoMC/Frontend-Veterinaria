@@ -1,0 +1,552 @@
+<!-- Contenedor principal del contenido de citas -->
+<div id="sectionContent" style="max-width: 1800px; margin: 0 auto; padding: 0 1rem;">
+    <!-- Vista: Lista y Calendario de Citas -->
+    <div id="appointmentsMainView">
+        <!-- Estadísticas rápidas -->
+        <div class="admin-card" style="margin-bottom:1.5rem;">
+            <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap:1rem;">
+                <div style="text-align:center; padding:1rem; background:var(--gray-50); border-radius:var(--border-radius-lg); border-left:4px solid var(--primary-color);">
+                    <div style="font-size:0.85rem; color:var(--gray-600); margin-bottom:0.25rem;">Total Citas</div>
+                    <div style="font-size:1.75rem; font-weight:700; color:var(--primary-color);" id="statTotalAppointments">0</div>
+                </div>
+                <div style="text-align:center; padding:1rem; background:var(--gray-50); border-radius:var(--border-radius-lg); border-left:4px solid #2196F3;">
+                    <div style="font-size:0.85rem; color:var(--gray-600); margin-bottom:0.25rem;">Hoy</div>
+                    <div style="font-size:1.75rem; font-weight:700; color:#2196F3;" id="statTodayAppointments">0</div>
+                </div>
+                <div style="text-align:center; padding:1rem; background:var(--gray-50); border-radius:var(--border-radius-lg); border-left:4px solid #FF9800;">
+                    <div style="font-size:0.85rem; color:var(--gray-600); margin-bottom:0.25rem;">Pendientes</div>
+                    <div style="font-size:1.75rem; font-weight:700; color:#FF9800;" id="statPendingAppointments">0</div>
+                </div>
+                <div style="text-align:center; padding:1rem; background:var(--gray-50); border-radius:var(--border-radius-lg); border-left:4px solid #4CAF50;">
+                    <div style="font-size:0.85rem; color:var(--gray-600); margin-bottom:0.25rem;">Confirmadas</div>
+                    <div style="font-size:1.75rem; font-weight:700; color:#4CAF50;" id="statConfirmedAppointments">0</div>
+                </div>
+                <div style="text-align:center; padding:1rem; background:var(--gray-50); border-radius:var(--border-radius-lg); border-left:4px solid #757575;">
+                    <div style="font-size:0.85rem; color:var(--gray-600); margin-bottom:0.25rem;">Completadas</div>
+                    <div style="font-size:1.75rem; font-weight:700; color:#757575;" id="statCompletedAppointments">0</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Barra de herramientas -->
+        <div class="admin-card" style="margin-bottom:1.5rem;">
+            <div class="admin-card-header">
+                <h2 style="margin:0; color:var(--gray-900); display:flex; align-items:center; gap:0.5rem; font-size:1.25rem; font-weight:600;">
+                    <i class="fa-solid fa-calendar-days" style="color:var(--primary-color);"></i> Gestión de Citas
+                </h2>
+                <div style="display:flex; gap:0.75rem; flex-wrap:wrap;">
+                    <!-- Selector de vista -->
+                    <div class="input-container select-container" style="width:auto; min-width:150px;">
+                        <i class="fas fa-calendar-week input-icon"></i>
+                        <select id="appointmentViewMode" onchange="changeAppointmentView()">
+                            <option value="list">Vista de Lista</option>
+                            <option value="daily">Vista Diaria</option>
+                            <option value="weekly" selected>Vista Semanal</option>
+                            <option value="monthly">Vista Mensual</option>
+                        </select>
+                        <div class="input-underline"></div>
+                    </div>
+                    <button class="submit-btn" onclick="openCreateAppointmentAdmin()">
+                        <i class="fa-solid fa-plus"></i> Nueva Cita
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Filtros -->
+            <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap:1rem; margin-top:1.5rem; padding-top:1.5rem; border-top:2px solid var(--gray-200);">
+                <div class="input-container">
+                    <i class="fas fa-search input-icon"></i>
+                    <input type="text" id="appointmentSearch" placeholder="Buscar por cliente o mascota..." onkeyup="filterAppointments()">
+                    <div class="input-underline"></div>
+                </div>
+                
+                <div class="input-container select-container">
+                    <i class="fas fa-user-md input-icon"></i>
+                    <select id="filterVeterinarian" onchange="filterAppointments()">
+                        <option value="">Todos los veterinarios</option>
+                    </select>
+                    <div class="input-underline"></div>
+                </div>
+                
+                <div class="input-container select-container">
+                    <i class="fas fa-stethoscope input-icon"></i>
+                    <select id="filterService" onchange="filterAppointments()">
+                        <option value="">Todos los servicios</option>
+                    </select>
+                    <div class="input-underline"></div>
+                </div>
+                
+                <div class="input-container select-container">
+                    <i class="fas fa-filter input-icon"></i>
+                    <select id="filterStatus" onchange="filterAppointments()">
+                        <option value="">Todos los estados</option>
+                        <option value="PENDIENTE">Pendiente</option>
+                        <option value="CONFIRMADA">Confirmada</option>
+                        <option value="COMPLETADA">Completada</option>
+                        <option value="CANCELADA">Cancelada</option>
+                    </select>
+                    <div class="input-underline"></div>
+                </div>
+                
+                <div class="input-container">
+                    <i class="fas fa-calendar input-icon"></i>
+                    <input type="date" id="filterDate" onchange="filterAppointments()">
+                    <div class="input-underline"></div>
+                </div>
+                
+                <button class="submit-btn btn-secondary" onclick="clearAppointmentFilters()" style="white-space:nowrap;">
+                    <i class="fa-solid fa-times"></i> Limpiar Filtros
+                </button>
+            </div>
+        </div>
+        
+        <!-- Vista de Lista -->
+        <div id="appointmentsListView" class="admin-card">
+            <div style="overflow-x:auto;">
+                <table class="data-table" style="width:100%; border-collapse:collapse;">
+                    <thead>
+                        <tr style="background:var(--gray-100); border-bottom:2px solid var(--gray-300);">
+                            <th style="padding:0.75rem; text-align:left; font-weight:600; color:var(--gray-700);">Fecha</th>
+                            <th style="padding:0.75rem; text-align:left; font-weight:600; color:var(--gray-700);">Hora</th>
+                            <th style="padding:0.75rem; text-align:left; font-weight:600; color:var(--gray-700);">Cliente</th>
+                            <th style="padding:0.75rem; text-align:left; font-weight:600; color:var(--gray-700);">Mascota</th>
+                            <th style="padding:0.75rem; text-align:left; font-weight:600; color:var(--gray-700);">Servicio</th>
+                            <th style="padding:0.75rem; text-align:left; font-weight:600; color:var(--gray-700);">Veterinario</th>
+                            <th style="padding:0.75rem; text-align:center; font-weight:600; color:var(--gray-700);">Estado</th>
+                            <th style="padding:0.75rem; text-align:center; font-weight:600; color:var(--gray-700);">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="appointmentsTableBody">
+                        <!-- Se cargará dinámicamente -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        
+        <!-- Vista Semanal -->
+        <div id="appointmentsWeeklyView" class="admin-card" style="display:none;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem; padding-bottom:1rem; border-bottom:2px solid var(--gray-200);">
+                <h3 style="margin:0; color:var(--gray-900); font-size:1.1rem; font-weight:600;" id="weeklyViewTitle">Semana actual</h3>
+                <div style="display:flex; gap:0.5rem;">
+                    <button class="submit-btn btn-secondary" onclick="previousWeek()" style="padding:0.5rem 1rem;">
+                        <i class="fa-solid fa-chevron-left"></i>
+                    </button>
+                    <button class="submit-btn btn-secondary" onclick="goToTodayWeek()" style="padding:0.5rem 1rem;">
+                        Hoy
+                    </button>
+                    <button class="submit-btn btn-secondary" onclick="nextWeek()" style="padding:0.5rem 1rem;">
+                        <i class="fa-solid fa-chevron-right"></i>
+                    </button>
+                </div>
+            </div>
+            <div id="weeklyCalendarContainer" style="display:grid; grid-template-columns: repeat(7, 1fr); gap:1rem;">
+                <!-- Se cargará dinámicamente -->
+            </div>
+        </div>
+        
+        <!-- Vista Diaria -->
+        <div id="appointmentsDailyView" class="admin-card" style="display:none;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem; padding-bottom:1rem; border-bottom:2px solid var(--gray-200);">
+                <h3 style="margin:0; color:var(--gray-900); font-size:1.1rem; font-weight:600;" id="dailyViewTitle">Hoy</h3>
+                <div style="display:flex; gap:0.5rem;">
+                    <button class="submit-btn btn-secondary" onclick="previousDay()" style="padding:0.5rem 1rem;">
+                        <i class="fa-solid fa-chevron-left"></i>
+                    </button>
+                    <button class="submit-btn btn-secondary" onclick="goToTodayDay()" style="padding:0.5rem 1rem;">
+                        Hoy
+                    </button>
+                    <button class="submit-btn btn-secondary" onclick="nextDay()" style="padding:0.5rem 1rem;">
+                        <i class="fa-solid fa-chevron-right"></i>
+                    </button>
+                </div>
+            </div>
+            <div id="dailyCalendarContainer">
+                <!-- Se cargará dinámicamente -->
+            </div>
+        </div>
+        
+        <!-- Vista Mensual -->
+        <div id="appointmentsMonthlyView" class="admin-card" style="display:none;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem; padding-bottom:1rem; border-bottom:2px solid var(--gray-200);">
+                <h3 style="margin:0; color:var(--gray-900); font-size:1.1rem; font-weight:600;" id="monthlyViewTitle">Mes actual</h3>
+                <div style="display:flex; gap:0.5rem;">
+                    <button class="submit-btn btn-secondary" onclick="previousMonth()" style="padding:0.5rem 1rem;">
+                        <i class="fa-solid fa-chevron-left"></i>
+                    </button>
+                    <button class="submit-btn btn-secondary" onclick="goToTodayMonth()" style="padding:0.5rem 1rem;">
+                        Hoy
+                    </button>
+                    <button class="submit-btn btn-secondary" onclick="nextMonth()" style="padding:0.5rem 1rem;">
+                        <i class="fa-solid fa-chevron-right"></i>
+                    </button>
+                </div>
+            </div>
+            <div id="monthlyCalendarContainer">
+                <!-- Se cargará dinámicamente -->
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal: Crear/Editar Cita -->
+<div id="createAppointmentModalAdmin" class="patient-modal" onclick="if(event.target === this) closeCreateAppointmentModalAdmin();">
+    <div class="patient-modal-content" style="max-width:700px;">
+        <div class="patient-modal-header">
+            <h2 class="patient-modal-title">
+                <i class="fa-solid fa-plus"></i> <span id="createAppointmentModalTitle">Nueva Cita</span>
+            </h2>
+            <button class="patient-modal-close" onclick="closeCreateAppointmentModalAdmin()">
+                <i class="fa-solid fa-times"></i>
+            </button>
+        </div>
+        <div class="patient-modal-body">
+            <form id="createAppointmentFormAdmin" onsubmit="event.preventDefault(); saveAppointmentAdmin();">
+                <div class="form-grid-admin" style="display:grid; grid-template-columns:repeat(2, 1fr); gap:1.5rem; margin-bottom:1.5rem;">
+                    <div class="input-group">
+                        <label style="display:block; margin-bottom:0.5rem; font-weight:600; color:var(--gray-700);">Cliente *</label>
+                        <div class="input-container select-container">
+                            <i class="fas fa-user input-icon"></i>
+                            <select id="appointmentClientAdmin" required onchange="loadPetsForAppointmentAdmin()">
+                                <option value="">Seleccione un cliente</option>
+                            </select>
+                            <div class="input-underline"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="input-group">
+                        <label style="display:block; margin-bottom:0.5rem; font-weight:600; color:var(--gray-700);">Mascota *</label>
+                        <div class="input-container select-container">
+                            <i class="fas fa-paw input-icon"></i>
+                            <select id="appointmentPetAdmin" required>
+                                <option value="">Primero seleccione un cliente</option>
+                            </select>
+                            <div class="input-underline"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="input-group">
+                        <label style="display:block; margin-bottom:0.5rem; font-weight:600; color:var(--gray-700);">Fecha *</label>
+                        <div class="input-container">
+                            <i class="fas fa-calendar input-icon"></i>
+                            <input type="date" id="appointmentDateAdmin" required>
+                            <div class="input-underline"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="input-group">
+                        <label style="display:block; margin-bottom:0.5rem; font-weight:600; color:var(--gray-700);">Hora *</label>
+                        <div class="input-container">
+                            <i class="fas fa-clock input-icon"></i>
+                            <input type="time" id="appointmentTimeAdmin" required>
+                            <div class="input-underline"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="input-group">
+                        <label style="display:block; margin-bottom:0.5rem; font-weight:600; color:var(--gray-700);">Servicio *</label>
+                        <div class="input-container select-container">
+                            <i class="fas fa-stethoscope input-icon"></i>
+                            <select id="appointmentServiceAdmin" required>
+                                <option value="">Seleccione un servicio</option>
+                            </select>
+                            <div class="input-underline"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="input-group">
+                        <label style="display:block; margin-bottom:0.5rem; font-weight:600; color:var(--gray-700);">Veterinario</label>
+                        <div class="input-container select-container">
+                            <i class="fas fa-user-md input-icon"></i>
+                            <select id="appointmentVeterinarianAdmin">
+                                <option value="">Asignar veterinario (opcional)</option>
+                            </select>
+                            <div class="input-underline"></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="input-group" style="margin-bottom:1.5rem;">
+                    <label style="display:block; margin-bottom:0.5rem; font-weight:600; color:var(--gray-700);">Estado</label>
+                    <div class="input-container select-container">
+                        <i class="fas fa-info-circle input-icon"></i>
+                        <select id="appointmentStatusAdmin">
+                            <option value="PENDIENTE">Pendiente</option>
+                            <option value="CONFIRMADA">Confirmada</option>
+                        </select>
+                        <div class="input-underline"></div>
+                    </div>
+                </div>
+                
+                <div class="input-group" style="margin-bottom:1.5rem;">
+                    <label style="display:block; margin-bottom:0.5rem; font-weight:600; color:var(--gray-700);">Notas adicionales</label>
+                    <div class="input-container" style="position:relative; display:flex; align-items:flex-start;">
+                        <i class="fas fa-comment input-icon" style="position:absolute; left:1rem; top:1rem; color:var(--gray-400); transition:color 0.3s ease;"></i>
+                        <textarea 
+                            id="appointmentNotesAdmin" 
+                            rows="3" 
+                            placeholder="Notas adicionales sobre la cita (opcional)"
+                            style="width:100%; min-height:80px; padding:1rem 1rem 1rem calc(1rem + 24px); border:2px solid var(--gray-300); border-radius:var(--border-radius-lg); font-family:var(--font-family); font-size:var(--font-size-base); resize:vertical; transition:all 0.3s ease; background:var(--gray-50); color:var(--gray-900); line-height:1.5; outline:none;">
+                        </textarea>
+                        <div class="input-underline" style="position:absolute; bottom:0; left:0; width:0; height:2px; background:var(--primary-color); transition:width 0.3s ease; pointer-events:none;"></div>
+                    </div>
+                </div>
+                
+                <div style="display:flex; gap:1rem; justify-content:flex-end;">
+                    <button type="button" class="submit-btn btn-secondary" onclick="closeCreateAppointmentModalAdmin()">
+                        Cancelar
+                    </button>
+                    <button type="submit" class="submit-btn">
+                        <i class="fa-solid fa-save"></i> Guardar Cita
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modal: Detalle de Cita -->
+<div id="appointmentDetailModalAdmin" class="patient-modal" onclick="if(event.target === this) closeAppointmentDetailModalAdmin();">
+    <div class="patient-modal-content" style="max-width:700px;">
+        <div class="patient-modal-header">
+            <h2 class="patient-modal-title">
+                <i class="fa-solid fa-calendar-check"></i> Detalle de la Cita
+            </h2>
+            <button class="patient-modal-close" onclick="closeAppointmentDetailModalAdmin()">
+                <i class="fa-solid fa-times"></i>
+            </button>
+        </div>
+        <div class="patient-modal-body" id="appointmentDetailContentAdmin">
+            <!-- Se cargará dinámicamente -->
+        </div>
+        <div class="patient-modal-footer" style="padding:1rem 1.5rem; border-top:1px solid var(--gray-200); display:flex; gap:0.75rem; justify-content:flex-end;">
+            <button class="submit-btn btn-secondary" onclick="closeAppointmentDetailModalAdmin()">
+                Cerrar
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Modal: Reprogramar Cita -->
+<div id="rescheduleAppointmentModalAdmin" class="patient-modal" onclick="if(event.target === this) closeRescheduleAppointmentModalAdmin();">
+    <div class="patient-modal-content" style="max-width:600px;">
+        <div class="patient-modal-header">
+            <h2 class="patient-modal-title">
+                <i class="fa-solid fa-calendar-week"></i> Reprogramar Cita
+            </h2>
+            <button class="patient-modal-close" onclick="closeRescheduleAppointmentModalAdmin()">
+                <i class="fa-solid fa-times"></i>
+            </button>
+        </div>
+        <div class="patient-modal-body">
+            <form id="rescheduleAppointmentFormAdmin" onsubmit="event.preventDefault(); saveRescheduledAppointmentAdmin();">
+                <input type="hidden" id="rescheduleAppointmentIdAdmin">
+                
+                <div class="form-grid-admin" style="display:grid; grid-template-columns:repeat(2, 1fr); gap:1.5rem; margin-bottom:1.5rem;">
+                    <div class="input-group">
+                        <label style="display:block; margin-bottom:0.5rem; font-weight:600; color:var(--gray-700);">Nueva Fecha *</label>
+                        <div class="input-container">
+                            <i class="fas fa-calendar input-icon"></i>
+                            <input type="date" id="rescheduleDateAdmin" required>
+                            <div class="input-underline"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="input-group">
+                        <label style="display:block; margin-bottom:0.5rem; font-weight:600; color:var(--gray-700);">Nueva Hora *</label>
+                        <div class="input-container">
+                            <i class="fas fa-clock input-icon"></i>
+                            <input type="time" id="rescheduleTimeAdmin" required>
+                            <div class="input-underline"></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="input-group" style="margin-bottom:1.5rem;">
+                    <label style="display:block; margin-bottom:0.5rem; font-weight:600; color:var(--gray-700);">Motivo de reprogramación</label>
+                    <div class="input-container" style="position:relative; display:flex; align-items:flex-start;">
+                        <i class="fas fa-comment input-icon" style="position:absolute; left:1rem; top:1rem; color:var(--gray-400); transition:color 0.3s ease;"></i>
+                        <textarea 
+                            id="rescheduleReasonAdmin" 
+                            rows="3" 
+                            placeholder="Motivo de la reprogramación (opcional)"
+                            style="width:100%; min-height:80px; padding:1rem 1rem 1rem calc(1rem + 24px); border:2px solid var(--gray-300); border-radius:var(--border-radius-lg); font-family:var(--font-family); font-size:var(--font-size-base); resize:vertical; transition:all 0.3s ease; background:var(--gray-50); color:var(--gray-900); line-height:1.5; outline:none;">
+                        </textarea>
+                        <div class="input-underline" style="position:absolute; bottom:0; left:0; width:0; height:2px; background:var(--primary-color); transition:width 0.3s ease; pointer-events:none;"></div>
+                    </div>
+                </div>
+                
+                <div style="display:flex; gap:1rem; justify-content:flex-end;">
+                    <button type="button" class="submit-btn btn-secondary" onclick="closeRescheduleAppointmentModalAdmin()">
+                        Cancelar
+                    </button>
+                    <button type="submit" class="submit-btn">
+                        <i class="fa-solid fa-save"></i> Reprogramar
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modal: Cancelar Cita -->
+<div id="cancelAppointmentModalAdmin" class="patient-modal" onclick="if(event.target === this) closeCancelAppointmentModalAdmin();">
+    <div class="patient-modal-content" style="max-width:600px;">
+        <div class="patient-modal-header">
+            <h2 class="patient-modal-title">
+                <i class="fa-solid fa-times-circle"></i> Cancelar Cita
+            </h2>
+            <button class="patient-modal-close" onclick="closeCancelAppointmentModalAdmin()">
+                <i class="fa-solid fa-times"></i>
+            </button>
+        </div>
+        <div class="patient-modal-body">
+            <form id="cancelAppointmentFormAdmin" onsubmit="event.preventDefault(); confirmCancelAppointmentAdmin();">
+                <input type="hidden" id="cancelAppointmentIdAdmin">
+                
+                <div style="padding:1rem; background:var(--gray-50); border-radius:var(--border-radius-lg); margin-bottom:1.5rem;">
+                    <p style="margin:0; color:var(--gray-700);">¿Estás seguro de que deseas cancelar esta cita?</p>
+                </div>
+                
+                <div class="input-group" style="margin-bottom:1.5rem;">
+                    <label style="display:block; margin-bottom:0.5rem; font-weight:600; color:var(--gray-700);">Motivo de cancelación *</label>
+                    <div class="input-container" style="position:relative; display:flex; align-items:flex-start;">
+                        <i class="fas fa-comment input-icon" style="position:absolute; left:1rem; top:1rem; color:var(--gray-400); transition:color 0.3s ease;"></i>
+                        <textarea 
+                            id="cancelReasonAdmin" 
+                            rows="3" 
+                            required
+                            placeholder="Ingrese el motivo de la cancelación"
+                            style="width:100%; min-height:80px; padding:1rem 1rem 1rem calc(1rem + 24px); border:2px solid var(--gray-300); border-radius:var(--border-radius-lg); font-family:var(--font-family); font-size:var(--font-size-base); resize:vertical; transition:all 0.3s ease; background:var(--gray-50); color:var(--gray-900); line-height:1.5; outline:none;">
+                        </textarea>
+                        <div class="input-underline" style="position:absolute; bottom:0; left:0; width:0; height:2px; background:var(--primary-color); transition:width 0.3s ease; pointer-events:none;"></div>
+                    </div>
+                </div>
+                
+                <div style="display:flex; gap:1rem; justify-content:flex-end;">
+                    <button type="button" class="submit-btn btn-secondary" onclick="closeCancelAppointmentModalAdmin()">
+                        No Cancelar
+                    </button>
+                    <button type="submit" class="submit-btn" style="background:linear-gradient(135deg, #F44336, #E91E63);">
+                        <i class="fa-solid fa-times"></i> Confirmar Cancelación
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Acciones de la sección -->
+<div id="sectionActions" style="display:none;"></div>
+
+<style>
+    /* Estilos para textareas */
+    #appointmentNotesAdmin:focus,
+    #rescheduleReasonAdmin:focus,
+    #cancelReasonAdmin:focus {
+        background:var(--white);
+        border-color:var(--primary-color);
+        box-shadow:0 0 0 4px rgba(46, 139, 87, 0.1);
+    }
+    
+    #appointmentNotesAdmin:focus ~ .input-underline,
+    #rescheduleReasonAdmin:focus ~ .input-underline,
+    #cancelReasonAdmin:focus ~ .input-underline {
+        width:100%;
+    }
+    
+    #appointmentNotesAdmin:focus ~ .input-icon,
+    #rescheduleReasonAdmin:focus ~ .input-icon,
+    #cancelReasonAdmin:focus ~ .input-icon {
+        color:var(--primary-color);
+    }
+    
+    /* Estilos para calendario semanal */
+    .week-day-column {
+        background:var(--white);
+        border:2px solid var(--gray-200);
+        border-radius:var(--border-radius-lg);
+        padding:1rem;
+        min-height:400px;
+    }
+    
+    .week-day-header {
+        text-align:center;
+        padding-bottom:0.75rem;
+        margin-bottom:0.75rem;
+        border-bottom:2px solid var(--gray-200);
+        font-weight:600;
+        color:var(--gray-900);
+    }
+    
+    .week-day-appointments {
+        display:flex;
+        flex-direction:column;
+        gap:0.5rem;
+    }
+    
+    .week-appointment-item {
+        background:var(--gray-50);
+        border-left:4px solid var(--primary-color);
+        border-radius:var(--border-radius-md);
+        padding:0.75rem;
+        cursor:pointer;
+        transition:all 0.2s ease;
+    }
+    
+    .week-appointment-item:hover {
+        background:var(--gray-100);
+        transform:translateX(4px);
+    }
+    
+    /* Estilos para calendario diario */
+    .daily-time-slot {
+        display:flex;
+        padding:0.75rem;
+        border-bottom:1px solid var(--gray-200);
+        gap:1rem;
+    }
+    
+    .daily-time-label {
+        font-weight:600;
+        color:var(--gray-700);
+        min-width:80px;
+    }
+    
+    .daily-appointments-list {
+        flex:1;
+        display:flex;
+        flex-direction:column;
+        gap:0.5rem;
+    }
+    
+    /* Estilos para calendario mensual */
+    .month-calendar-grid {
+        display:grid;
+        grid-template-columns: repeat(7, 1fr);
+        gap:0.5rem;
+    }
+    
+    .month-day-cell {
+        background:var(--white);
+        border:1px solid var(--gray-200);
+        border-radius:var(--border-radius-md);
+        padding:0.5rem;
+        min-height:100px;
+        position:relative;
+    }
+    
+    .month-day-number {
+        font-weight:600;
+        color:var(--gray-900);
+        margin-bottom:0.5rem;
+    }
+    
+    .month-appointment-dot {
+        width:8px;
+        height:8px;
+        border-radius:50%;
+        display:inline-block;
+        margin-right:0.25rem;
+    }
+</style>
+

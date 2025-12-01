@@ -1,0 +1,93 @@
+<!-- Contenedor principal del contenido del dashboard -->
+<div id="sectionContent" style="max-width: 1400px; margin: 0 auto; padding: 0 1rem;">
+    <!-- Estadísticas -->
+    <div class="stats-grid" style="margin-bottom:2rem;">
+        <div class="stat-card">
+            <h3><i class="fa-solid fa-users"></i> Clientes Activos</h3>
+            <div class="stat-value" id="statClients">0</div>
+        </div>
+        <div class="stat-card">
+            <h3><i class="fa-solid fa-calendar-check"></i> Citas Hoy</h3>
+            <div class="stat-value" id="statAppointments">0</div>
+        </div>
+        <div class="stat-card">
+            <h3><i class="fa-solid fa-box"></i> Productos</h3>
+            <div class="stat-value" id="statProducts">0</div>
+        </div>
+        <div class="stat-card">
+            <h3><i class="fa-solid fa-dollar-sign"></i> Ventas Hoy</h3>
+            <div class="stat-value" id="statSales">$0</div>
+        </div>
+        <div class="stat-card">
+            <h3><i class="fa-solid fa-user-doctor"></i> Veterinarios Activos</h3>
+            <div class="stat-value" id="statVeterinarians">0</div>
+        </div>
+        <div class="stat-card">
+            <h3><i class="fa-solid fa-receipt"></i> Facturas Pendientes</h3>
+            <div class="stat-value" id="statPendingInvoices">0</div>
+        </div>
+    </div>
+    
+    <div style="display:grid; grid-template-columns: 2fr 1fr; gap: 1.5rem; margin-bottom: 2rem;">
+        <div class="admin-card">
+            <div class="admin-card-header" style="margin-bottom:1rem; padding-bottom:1rem; border-bottom:2px solid var(--gray-100);">
+                <h3 style="margin:0; color:var(--gray-900); display:flex; align-items:center; gap:0.5rem; font-size:1.1rem; font-weight:600;">
+                    <i class="fa-solid fa-calendar-day" style="color:var(--primary-color);"></i> Citas del Día
+                </h3>
+            </div>
+            <div id="todayAppointmentsList" style="max-height: 400px; overflow-y: auto;">
+                <!-- Se cargará dinámicamente -->
+            </div>
+        </div>
+        
+        <div class="admin-card">
+            <div class="admin-card-header" style="margin-bottom:1rem; padding-bottom:1rem; border-bottom:2px solid var(--gray-100);">
+                <h3 style="margin:0; color:var(--gray-900); display:flex; align-items:center; gap:0.5rem; font-size:1.1rem; font-weight:600;">
+                    <i class="fa-solid fa-bolt" style="color:var(--primary-color);"></i> Acciones Rápidas
+                </h3>
+            </div>
+            <div style="display:grid; gap:0.75rem;">
+                <button class="submit-btn" onclick="showAdminSection('products-new')" style="width:100%; justify-content:center;">
+                    <i class="fa-solid fa-plus"></i> Nuevo Producto
+                </button>
+                <button class="submit-btn" style="background:var(--secondary-color); width:100%; justify-content:center;" onclick="showAdminSection('appointments-new');">
+                    <i class="fa-solid fa-calendar-plus"></i> Nueva Cita
+                </button>
+                <button class="submit-btn" style="background:var(--accent-blue); width:100%; justify-content:center;" onclick="showAdminSection('clients-new');">
+                    <i class="fa-solid fa-user-plus"></i> Nuevo Cliente
+                </button>
+                <button class="submit-btn" style="background:var(--primary-color); width:100%; justify-content:center;" onclick="showAdminSection('invoices'); window.openInvoiceModal = true;">
+                    <i class="fa-solid fa-receipt"></i> Nueva Factura
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+        <div class="admin-card">
+            <div class="admin-card-header" style="margin-bottom:1rem; padding-bottom:1rem; border-bottom:2px solid var(--gray-100);">
+                <h3 style="margin:0; color:var(--gray-900); display:flex; align-items:center; gap:0.5rem; font-size:1.1rem; font-weight:600;">
+                    <i class="fa-solid fa-box" style="color:var(--primary-color);"></i> Productos con Stock Bajo
+                </h3>
+            </div>
+            <div id="lowStockProducts" style="max-height: 300px; overflow-y: auto;">
+                <!-- Se cargará dinámicamente -->
+            </div>
+        </div>
+        
+        <div class="admin-card">
+            <div class="admin-card-header" style="margin-bottom:1rem; padding-bottom:1rem; border-bottom:2px solid var(--gray-100);">
+                <h3 style="margin:0; color:var(--gray-900); display:flex; align-items:center; gap:0.5rem; font-size:1.1rem; font-weight:600;">
+                    <i class="fa-solid fa-chart-line" style="color:var(--primary-color);"></i> Últimas Facturas
+                </h3>
+            </div>
+            <div id="recentInvoices" style="max-height: 300px; overflow-y: auto;">
+                <!-- Se cargará dinámicamente -->
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Acciones del dashboard (vacío por ahora) -->
+<div id="sectionActions" style="display:none;"></div>
+

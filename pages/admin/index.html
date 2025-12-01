@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>VetUni - Panel de Administración</title>
+    <link rel="stylesheet" href="../../assets/css/styles.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+        
+        html, body {
+            overflow-x: hidden;
+            width: 100%;
+            max-width: 100%;
+            margin: 0;
+            padding: 0;
+        }
+        
+        .admin-container {
+            display: flex;
+            min-height: 100vh;
+            width: 100%;
+            max-width: 100%;
+        }
+        
+        /* Sidebar */
+        .admin-sidebar {
+            width: 280px;
+            background: var(--white);
+            border-right: 2px solid var(--gray-200);
+            padding: 1.5rem 0;
+            position: fixed;
+            left: 0;
+            top: 0;
+            height: 100vh;
+            overflow-y: auto;
+            z-index: 100;
+            box-shadow: var(--shadow-lg);
+            transition: transform 0.3s ease;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .admin-sidebar-header {
+            padding: 1.5rem;
+            border-bottom: 2px solid var(--gray-200);
+            margin-bottom: 1rem;
+        }
+        
+        .admin-sidebar-header h2 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        
+        .admin-sidebar-user {
+            padding: 1rem 1.5rem;
+            border-bottom: 2px solid var(--gray-200);
+            margin-bottom: 1rem;
+        }
+        
+        .admin-sidebar-user-name {
+            font-weight: 600;
+            color: var(--gray-900);
+            margin-bottom: 0.25rem;
+        }
+        
+        .admin-sidebar-user-role {
+            font-size: 0.85rem;
+            color: var(--gray-600);
+        }
+        
+        .admin-menu {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            flex: 1;
+        }
+        
+        .admin-menu-item {
+            margin-bottom: 0.25rem;
+        }
+        
+        .admin-menu-link {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem 1.5rem;
+            color: var(--gray-700);
+            text-decoration: none;
+            transition: all 0.2s ease;
+            cursor: pointer;
+            font-weight: 500;
+            border: none;
+            background: none;
+            width: 100%;
+            text-align: left;
+            font-family: var(--font-family);
+            font-size: 1rem;
+        }
+        
+        .admin-menu-link:hover {
+            background: var(--gray-50);
+            color: var(--primary-color);
+        }
+        
+        .admin-menu-link.active {
+            background: linear-gradient(90deg, var(--primary-color), var(--primary-light));
+            color: var(--white);
+            font-weight: 600;
+        }
+        
+        .admin-menu-link i:first-child {
+            width: 20px;
+            text-align: center;
+        }
+        
+        .admin-menu-submenu {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+            background: var(--gray-50);
+        }
+        
+        .admin-menu-item.active .admin-menu-submenu {
+            max-height: 500px;
+        }
+        
+        .admin-menu-submenu-item {
+            padding-left: 0;
+        }
+        
+        .admin-menu-submenu-link {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.6rem 1.5rem 0.6rem 3rem;
+            color: var(--gray-600);
+            text-decoration: none;
+            transition: all 0.2s ease;
+            font-size: 0.9rem;
+            border: none;
+            background: none;
+            width: 100%;
+            text-align: left;
+            font-family: var(--font-family);
+            cursor: pointer;
+        }
+        
+        .admin-menu-submenu-link:hover {
+            background: var(--gray-100);
+            color: var(--primary-color);
+            padding-left: 2.5rem;
+        }
+        
+        .admin-menu-submenu-link.active {
+            color: var(--primary-color);
+            font-weight: 600;
+            border-left: 3px solid var(--primary-color);
+        }
+        
+        .admin-menu-toggle {
+            margin-left: auto;
+            transition: transform 0.3s ease;
+            font-size: 0.75rem;
+        }
+        
+        .admin-menu-item.active > .admin-menu-link .admin-menu-toggle {
+            transform: rotate(90deg);
+        }
+        
+        /* Contenido principal */
+        .admin-main-content {
+            flex: 1;
+            margin-left: 280px;
+            padding: 2rem;
+            background: linear-gradient(135deg, rgba(46, 139, 87, 0.05), rgba(60, 179, 113, 0.03));
+            min-height: 100vh;
+            width: calc(100% - 280px);
+        }
+        
+        .admin-content-header {
+            background: var(--white);
+            border-radius: var(--border-radius-xl);
+            padding: 1.5rem 2rem;
+            margin-bottom: 2rem;
+            box-shadow: var(--shadow-md);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+        
+        .admin-content-header h1 {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: var(--gray-900);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin: 0;
+        }
+        
+        #adminSectionActions {
+            display: flex;
+            gap: 0.75rem;
+            flex-wrap: wrap;
+        }
+        
+        #adminSectionsContainer {
+            min-height: calc(100vh - 200px);
+        }
+        
+        .admin-sidebar-footer {
+            padding: 1rem 1.5rem;
+            border-top: 2px solid var(--gray-200);
+            margin-top: auto;
+        }
+        
+        /* Responsive */
+        .admin-mobile-menu-toggle {
+            display: none;
+            position: fixed;
+            top: 1rem;
+            left: 1rem;
+            z-index: 101;
+            background: var(--primary-color);
+            color: var(--white);
+            border: none;
+            border-radius: var(--border-radius-lg);
+            padding: 0.75rem;
+            cursor: pointer;
+            box-shadow: var(--shadow-lg);
+            font-size: 1.25rem;
+        }
+        
+        .admin-mobile-menu-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 99;
+        }
+        
+        @media (max-width: 1024px) {
+            .admin-sidebar {
+                transform: translateX(-100%);
+            }
+            
+            .admin-sidebar.open {
+                transform: translateX(0);
+            }
+            
+            .admin-main-content {
+                margin-left: 0;
+                width: 100%;
+                padding: 1rem;
+            }
+            
+            .admin-mobile-menu-toggle {
+                display: block;
+            }
+            
+            .admin-mobile-menu-overlay.active {
+                display: block;
+            }
+        }
+        
+        /* Estilos para componentes del admin */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .stat-card {
+            background: var(--white);
+            border-radius: var(--border-radius-xl);
+            padding: 1.5rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            border: 1px solid var(--gray-200);
+            transition: all 0.3s ease;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+        }
+        
+        .stat-card h3 {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--gray-600);
+            margin-bottom: 0.75rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary-color);
+        }
+        
+        .admin-card {
+            background: var(--white);
+            border-radius: var(--border-radius-xl);
+            padding: 1.5rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            border: 1px solid var(--gray-200);
+            transition: all 0.3s ease;
+            margin-bottom: 1.5rem;
+        }
+        
+        .admin-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+        }
+        
+        .admin-card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid var(--gray-100);
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+        
+        .admin-card h3 {
+            color: var(--gray-900);
+            margin: 0;
+            font-size: 1.1rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .admin-card h2 {
+            color: var(--gray-900);
+            margin: 0;
+            font-size: 1.25rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: var(--white);
+            border-radius: var(--border-radius-lg);
+            overflow: hidden;
+        }
+        
+        .data-table thead {
+            background: var(--gray-100);
+        }
+        
+        .data-table th {
+            padding: 0.75rem;
+            text-align: left;
+            font-weight: 600;
+            color: var(--gray-700);
+            border-bottom: 2px solid var(--gray-300);
+        }
+        
+        .data-table td {
+            padding: 0.75rem;
+            border-bottom: 1px solid var(--gray-200);
+        }
+        
+        .data-table tbody tr:hover {
+            background: var(--gray-50);
+        }
+        
+        /* Botones de acción mejorados */
+        .action-btn {
+            width: 36px;
+            height: 36px;
+            border: none;
+            border-radius: var(--border-radius-md);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.875rem;
+            color: var(--white);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .action-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+        }
+        
+        .action-btn-edit {
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
+        }
+        
+        .action-btn-edit:hover {
+            background: linear-gradient(135deg, var(--primary-dark), var(--primary-color));
+        }
+        
+        .action-btn-delete {
+            background: linear-gradient(135deg, var(--error-color), #F87171);
+        }
+        
+        .action-btn-delete:hover {
+            background: linear-gradient(135deg, #D32F2F, var(--error-color));
+        }
+        
+        .action-btn-view {
+            background: linear-gradient(135deg, var(--accent-blue), #6BB6FF);
+        }
+        
+        .btn-secondary {
+            background: var(--gray-300);
+            color: var(--gray-700);
+        }
+        
+        .btn-secondary:hover {
+            background: var(--gray-400);
+        }
+        
+        .appointment-item {
+            background: var(--white);
+            border-radius: var(--border-radius-lg);
+            padding: 1rem;
+            margin-bottom: 0.75rem;
+            border: 1px solid var(--gray-200);
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+        
+        .appointment-item:hover {
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            transform: translateX(4px);
+        }
+    </style>
+</head>
+<body>
+    <script src="../../assets/js/api.service.js"></script>
+    
+    <button class="admin-mobile-menu-toggle" onclick="toggleSidebar()" id="mobileMenuToggle" aria-label="Abrir menú">
+        <i class="fa-solid fa-bars"></i>
+    </button>
+    
+    <div class="admin-mobile-menu-overlay" id="mobileMenuOverlay" onclick="toggleSidebar()"></div>
+    
+    <div class="admin-container">
+        <!-- Sidebar -->
+        <aside class="admin-sidebar" id="adminSidebar">
+            <div class="admin-sidebar-header">
+                <h2>
+                    <i class="fa-solid fa-user-shield"></i>
+                    Admin
+                </h2>
+            </div>
+            
+            <div class="admin-sidebar-user">
+                <div class="admin-sidebar-user-name" id="adminUserLabel">Administrador</div>
+                <div class="admin-sidebar-user-role">Control Total</div>
+            </div>
+            
+            <nav>
+                <ul class="admin-menu">
+                    <li class="admin-menu-item active" data-menu="dashboard">
+                        <button class="admin-menu-link active" onclick="showAdminSection('dashboard'); return false;">
+                            <i class="fa-solid fa-chart-line"></i>
+                            <span>Dashboard General</span>
+                        </button>
+                    </li>
+                    
+                    <li class="admin-menu-item" data-menu="products">
+                        <button class="admin-menu-link" onclick="showAdminSection('products'); return false;">
+                            <i class="fa-solid fa-box"></i>
+                            <span>Productos</span>
+                        </button>
+                    </li>
+                    
+                    <li class="admin-menu-item" data-menu="services">
+                        <button class="admin-menu-link" onclick="showAdminSection('services'); return false;">
+                            <i class="fa-solid fa-stethoscope"></i>
+                            <span>Servicios</span>
+                        </button>
+                    </li>
+                    
+                    <li class="admin-menu-item" data-menu="appointments">
+                        <button class="admin-menu-link" onclick="showAdminSection('appointments'); return false;">
+                            <i class="fa-solid fa-calendar"></i>
+                            <span>Citas</span>
+                        </button>
+                    </li>
+                    
+                    <li class="admin-menu-item" data-menu="clients">
+                        <button class="admin-menu-link" onclick="showAdminSection('clients'); return false;">
+                            <i class="fa-solid fa-user"></i>
+                            <span>Clientes</span>
+                        </button>
+                    </li>
+                    
+                    <li class="admin-menu-item" data-menu="pets">
+                        <button class="admin-menu-link" onclick="showAdminSection('pets'); return false;">
+                            <i class="fa-solid fa-paw"></i>
+                            <span>Mascotas</span>
+                        </button>
+                    </li>
+                    
+                    <li class="admin-menu-item" data-menu="invoices">
+                        <button class="admin-menu-link" onclick="showAdminSection('invoices'); return false;">
+                            <i class="fa-solid fa-receipt"></i>
+                            <span>Facturas</span>
+                        </button>
+                    </li>
+                    
+                    <li class="admin-menu-item" data-menu="veterinarians">
+                        <button class="admin-menu-link" onclick="showAdminSection('veterinarians-list'); return false;">
+                            <i class="fa-solid fa-user-doctor"></i>
+                            <span>Veterinarios</span>
+                        </button>
+                    </li>
+                    
+                    <li class="admin-menu-item" data-menu="reports">
+                        <button class="admin-menu-link" onclick="showAdminSection('reports'); return false;">
+                            <i class="fa-solid fa-chart-bar"></i>
+                            <span>Reportes</span>
+                        </button>
+                    </li>
+                    
+                    <li class="admin-menu-item" data-menu="settings">
+                        <button class="admin-menu-link" onclick="showAdminSection('settings'); return false;">
+                            <i class="fa-solid fa-gear"></i>
+                            <span>Configuración</span>
+                        </button>
+                    </li>
+                </ul>
+            </nav>
+            
+            <div class="admin-sidebar-footer">
+                <button class="submit-btn" onclick="window.location.replace('../auth/index.html')" style="width:100%; padding:0.75rem; font-size:0.9rem; background:var(--error-color);">
+                    <i class="fa-solid fa-sign-out-alt"></i> Cerrar Sesión
+                </button>
+            </div>
+        </aside>
+        
+        <!-- Contenido Principal -->
+        <main class="admin-main-content">
+            <div class="admin-content-header">
+                <h1 id="adminSectionTitle">
+                    <i class="fa-solid fa-chart-line"></i>
+                    Dashboard General
+                </h1>
+                <div id="adminSectionActions">
+                    <!-- Acciones específicas de cada sección -->
+                </div>
+            </div>
+            
+            <!-- Contenedor donde se cargarán las secciones dinámicamente -->
+            <div id="adminSectionsContainer">
+                <!-- El contenido se carga dinámicamente -->
+            </div>
+        </main>
+    </div>
+
+    <script src="./admin.js"></script>
+</body>
+</html>

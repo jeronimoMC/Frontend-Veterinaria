@@ -1,0 +1,480 @@
+<!-- Contenedor principal del contenido de facturas -->
+<div id="sectionContent" class="invoices-container">
+    <div class="admin-card invoice-main-card">
+        <!-- Header con acciones -->
+        <div class="admin-card-header invoice-header">
+            <div class="invoice-header-title">
+                <div class="invoice-icon-wrapper">
+                    <i class="fa-solid fa-receipt"></i>
+                </div>
+                <div>
+                    <h2 class="invoice-title">Gestión de Facturas</h2>
+                    <p class="invoice-subtitle">Administra y controla todas las facturas del sistema</p>
+                </div>
+            </div>
+            <div class="invoice-header-actions">
+                <button class="invoice-btn invoice-btn-secondary" onclick="exportInvoicesToCSV()" title="Exportar a CSV">
+                    <i class="fa-solid fa-file-csv"></i>
+                    <span>Exportar CSV</span>
+                </button>
+                <button class="invoice-btn invoice-btn-primary" onclick="openCreateInvoiceModalAdmin()">
+                    <i class="fa-solid fa-plus"></i>
+                    <span>Nueva Factura</span>
+                </button>
+            </div>
+        </div>
+        
+        <!-- Estadísticas rápidas -->
+        <div class="invoice-stats-grid">
+            <div class="invoice-stat-card stat-card-total">
+                <div class="stat-card-icon">
+                    <i class="fa-solid fa-file-invoice"></i>
+                </div>
+                <div class="stat-card-content">
+                    <div class="stat-card-label">Total Facturas</div>
+                    <div class="stat-card-value" id="statTotalInvoices">0</div>
+                </div>
+            </div>
+            <div class="invoice-stat-card stat-card-pending">
+                <div class="stat-card-icon">
+                    <i class="fa-solid fa-clock"></i>
+                </div>
+                <div class="stat-card-content">
+                    <div class="stat-card-label">Pendientes</div>
+                    <div class="stat-card-value" id="statPendingInvoices">0</div>
+                </div>
+            </div>
+            <div class="invoice-stat-card stat-card-paid">
+                <div class="stat-card-icon">
+                    <i class="fa-solid fa-check-circle"></i>
+                </div>
+                <div class="stat-card-content">
+                    <div class="stat-card-label">Pagadas</div>
+                    <div class="stat-card-value" id="statPaidInvoices">0</div>
+                </div>
+            </div>
+            <div class="invoice-stat-card stat-card-amount">
+                <div class="stat-card-icon">
+                    <i class="fa-solid fa-dollar-sign"></i>
+                </div>
+                <div class="stat-card-content">
+                    <div class="stat-card-label">Total Facturado</div>
+                    <div class="stat-card-value" id="statTotalAmount">$0</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Filtros -->
+        <div class="invoice-filters-container">
+            <div class="invoice-filters-header">
+                <i class="fa-solid fa-filter"></i>
+                <span>Filtros de Búsqueda</span>
+            </div>
+            <div class="invoice-filters-grid">
+                <div class="invoice-filter-item">
+                    <label class="invoice-filter-label">
+                        <i class="fas fa-calendar"></i>
+                        Fecha desde
+                    </label>
+                    <div class="input-container">
+                        <i class="fas fa-calendar input-icon"></i>
+                        <input type="date" id="filterInvoiceDateFrom" placeholder="Fecha desde" onchange="applyInvoiceFilters()">
+                        <div class="input-underline"></div>
+                    </div>
+                </div>
+                <div class="invoice-filter-item">
+                    <label class="invoice-filter-label">
+                        <i class="fas fa-calendar"></i>
+                        Fecha hasta
+                    </label>
+                    <div class="input-container">
+                        <i class="fas fa-calendar input-icon"></i>
+                        <input type="date" id="filterInvoiceDateTo" placeholder="Fecha hasta" onchange="applyInvoiceFilters()">
+                        <div class="input-underline"></div>
+                    </div>
+                </div>
+                <div class="invoice-filter-item">
+                    <label class="invoice-filter-label">
+                        <i class="fas fa-user"></i>
+                        Cliente
+                    </label>
+                    <div class="input-container">
+                        <i class="fas fa-user input-icon"></i>
+                        <input type="text" id="filterInvoiceClient" placeholder="Buscar por cliente..." onkeyup="applyInvoiceFilters()">
+                        <div class="input-underline"></div>
+                    </div>
+                </div>
+                <div class="invoice-filter-item">
+                    <label class="invoice-filter-label">
+                        <i class="fas fa-paw"></i>
+                        Mascota
+                    </label>
+                    <div class="input-container">
+                        <i class="fas fa-paw input-icon"></i>
+                        <input type="text" id="filterInvoicePet" placeholder="Buscar por mascota..." onkeyup="applyInvoiceFilters()">
+                        <div class="input-underline"></div>
+                    </div>
+                </div>
+                <div class="invoice-filter-item">
+                    <label class="invoice-filter-label">
+                        <i class="fas fa-user-md"></i>
+                        Veterinario
+                    </label>
+                    <div class="input-container select-container">
+                        <i class="fas fa-user-md input-icon"></i>
+                        <select id="filterInvoiceVeterinarian" onchange="applyInvoiceFilters()">
+                            <option value="">Todos los veterinarios</option>
+                        </select>
+                        <div class="input-underline"></div>
+                    </div>
+                </div>
+                <div class="invoice-filter-item">
+                    <label class="invoice-filter-label">
+                        <i class="fas fa-box"></i>
+                        Producto/Servicio
+                    </label>
+                    <div class="input-container">
+                        <i class="fas fa-box input-icon"></i>
+                        <input type="text" id="filterInvoiceItem" placeholder="Buscar por producto o servicio..." onkeyup="applyInvoiceFilters()">
+                        <div class="input-underline"></div>
+                    </div>
+                </div>
+                <div class="invoice-filter-item">
+                    <label class="invoice-filter-label">
+                        <i class="fas fa-credit-card"></i>
+                        Método de Pago
+                    </label>
+                    <div class="input-container select-container">
+                        <i class="fas fa-credit-card input-icon"></i>
+                        <select id="filterInvoicePaymentMethod" onchange="applyInvoiceFilters()">
+                            <option value="">Todos los métodos</option>
+                            <option value="cash">Efectivo</option>
+                            <option value="card">Tarjeta</option>
+                            <option value="transfer">Transferencia</option>
+                            <option value="check">Cheque</option>
+                        </select>
+                        <div class="input-underline"></div>
+                    </div>
+                </div>
+                <div class="invoice-filter-item">
+                    <label class="invoice-filter-label">
+                        <i class="fas fa-info-circle"></i>
+                        Estado
+                    </label>
+                    <div class="input-container select-container">
+                        <i class="fas fa-info-circle input-icon"></i>
+                        <select id="filterInvoiceStatus" onchange="applyInvoiceFilters()">
+                            <option value="">Todos los estados</option>
+                            <option value="pending">Pendiente</option>
+                            <option value="paid">Pagada</option>
+                            <option value="cancelled">Anulada</option>
+                        </select>
+                        <div class="input-underline"></div>
+                    </div>
+                </div>
+                <div class="invoice-filter-item">
+                    <label class="invoice-filter-label">
+                        <i class="fas fa-hashtag"></i>
+                        Número de Factura
+                    </label>
+                    <div class="input-container">
+                        <i class="fas fa-hashtag input-icon"></i>
+                        <input type="text" id="filterInvoiceNumber" placeholder="Buscar por número..." onkeyup="applyInvoiceFilters()">
+                        <div class="input-underline"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="invoice-filters-actions">
+                <button class="invoice-btn invoice-btn-clear" onclick="clearInvoiceFilters()">
+                    <i class="fa-solid fa-times"></i>
+                    <span>Limpiar Filtros</span>
+                </button>
+            </div>
+        </div>
+        
+        <!-- Tabla de facturas -->
+        <div class="invoice-table-container">
+            <table class="invoice-table-modern">
+                <thead>
+                    <tr>
+                        <th class="invoice-table-header sortable" onclick="sortInvoicesBy('number')">
+                            <div class="table-header-content">
+                                <i class="fa-solid fa-hashtag"></i>
+                                <span>Número</span>
+                                <i class="fa-solid fa-sort table-sort-icon"></i>
+                            </div>
+                        </th>
+                        <th class="invoice-table-header sortable" onclick="sortInvoicesBy('date')">
+                            <div class="table-header-content">
+                                <i class="fa-solid fa-calendar"></i>
+                                <span>Fecha</span>
+                                <i class="fa-solid fa-sort table-sort-icon"></i>
+                            </div>
+                        </th>
+                        <th class="invoice-table-header">
+                            <div class="table-header-content">
+                                <i class="fa-solid fa-user"></i>
+                                <span>Cliente</span>
+                            </div>
+                        </th>
+                        <th class="invoice-table-header">
+                            <div class="table-header-content">
+                                <i class="fa-solid fa-paw"></i>
+                                <span>Mascota</span>
+                            </div>
+                        </th>
+                        <th class="invoice-table-header">
+                            <div class="table-header-content">
+                                <i class="fa-solid fa-user-tie"></i>
+                                <span>Veterinario</span>
+                            </div>
+                        </th>
+                        <th class="invoice-table-header sortable" onclick="sortInvoicesBy('total')">
+                            <div class="table-header-content">
+                                <i class="fa-solid fa-dollar-sign"></i>
+                                <span>Total</span>
+                                <i class="fa-solid fa-sort table-sort-icon"></i>
+                            </div>
+                        </th>
+                        <th class="invoice-table-header">
+                            <div class="table-header-content">
+                                <i class="fa-solid fa-info-circle"></i>
+                                <span>Estado</span>
+                            </div>
+                        </th>
+                        <th class="invoice-table-header invoice-table-actions">
+                            <div class="table-header-content">
+                                <i class="fa-solid fa-cog"></i>
+                                <span>Acciones</span>
+                            </div>
+                        </th>
+                    </tr>
+                </thead>
+                <tbody id="invoicesTableBody">
+                    <!-- Se cargará dinámicamente -->
+                </tbody>
+            </table>
+        </div>
+        
+        <div class="invoice-pagination">
+            <div class="invoice-pagination-info">
+                <i class="fa-solid fa-info-circle"></i>
+                <span>Mostrando <strong id="invoicesCount">0</strong> de <strong id="totalInvoicesCount">0</strong> facturas</span>
+            </div>
+            <div class="invoice-pagination-controls">
+                <button class="invoice-pagination-btn" onclick="previousInvoicePage()" id="prevPageBtn" disabled>
+                    <i class="fa-solid fa-chevron-left"></i>
+                    <span>Anterior</span>
+                </button>
+                <div class="invoice-pagination-page">
+                    <span>Página</span>
+                    <strong id="currentInvoicePage">1</strong>
+                </div>
+                <button class="invoice-pagination-btn" onclick="nextInvoicePage()" id="nextPageBtn" disabled>
+                    <span>Siguiente</span>
+                    <i class="fa-solid fa-chevron-right"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal: Crear/Editar Factura -->
+<div class="patient-modal invoice-modal" id="createInvoiceModalAdmin" onclick="if(event.target===this) closeCreateInvoiceModalAdmin()">
+    <div class="patient-modal-content large invoice-modal-content">
+        <div class="patient-modal-header invoice-modal-header">
+            <div class="invoice-modal-title-wrapper">
+                <div class="invoice-modal-icon">
+                    <i class="fa-solid fa-receipt"></i>
+                </div>
+                <div>
+                    <h2 class="patient-modal-title" id="invoiceModalTitle">Crear Factura</h2>
+                    <p class="invoice-modal-subtitle">Completa la información para generar una nueva factura</p>
+                </div>
+            </div>
+            <button class="patient-modal-close invoice-modal-close" onclick="closeCreateInvoiceModalAdmin()">
+                <i class="fa-solid fa-times"></i>
+            </button>
+        </div>
+        <div class="patient-modal-body invoice-modal-body">
+            <form id="createInvoiceFormAdmin" onsubmit="event.preventDefault(); saveInvoiceAdmin();">
+                <!-- Información General -->
+                <div class="invoice-form-section">
+                    <div class="invoice-section-header">
+                        <div class="invoice-section-icon">
+                            <i class="fa-solid fa-info-circle"></i>
+                        </div>
+                        <h3 class="invoice-section-title">Información General</h3>
+                    </div>
+                    <div class="invoice-form-grid" style="display:grid; grid-template-columns:repeat(2, 1fr); gap:1.5rem;">
+                        <div class="input-group invoice-input-group">
+                            <label class="invoice-label" style="display:flex; align-items:center; gap:0.5rem; margin-bottom:0.75rem; font-weight:600; color:var(--gray-800); font-size:0.95rem;">
+                                <i class="fas fa-user" style="color:var(--primary-color); font-size:1rem;"></i>
+                                Cliente *
+                            </label>
+                            <div class="input-container select-container" style="position:relative;">
+                                <i class="fas fa-user input-icon" style="position:absolute; left:1rem; top:50%; transform:translateY(-50%); color:var(--gray-500); z-index:1;"></i>
+                                <select id="invoiceClientIdAdmin" required onchange="loadPetsForInvoiceAdmin()" style="width:100%; padding:0.875rem 1rem 0.875rem 3rem; border:2px solid var(--gray-300); border-radius:var(--border-radius-lg); font-family:var(--font-family); font-size:var(--font-size-base); background:var(--white); color:var(--gray-900); outline:none; transition:all 0.3s ease;">
+                                    <option value="">Selecciona el cliente</option>
+                                </select>
+                                <div class="input-underline"></div>
+                            </div>
+                        </div>
+                        <div class="input-group invoice-input-group">
+                            <label class="invoice-label" style="display:flex; align-items:center; gap:0.5rem; margin-bottom:0.75rem; font-weight:600; color:var(--gray-800); font-size:0.95rem;">
+                                <i class="fas fa-paw" style="color:var(--primary-color); font-size:1rem;"></i>
+                                Mascota
+                            </label>
+                            <div class="input-container select-container" style="position:relative;">
+                                <i class="fas fa-paw input-icon" style="position:absolute; left:1rem; top:50%; transform:translateY(-50%); color:var(--gray-500); z-index:1;"></i>
+                                <select id="invoicePetIdAdmin" style="width:100%; padding:0.875rem 1rem 0.875rem 3rem; border:2px solid var(--gray-300); border-radius:var(--border-radius-lg); font-family:var(--font-family); font-size:var(--font-size-base); background:var(--white); color:var(--gray-900); outline:none; transition:all 0.3s ease;">
+                                    <option value="">Primero selecciona un cliente</option>
+                                </select>
+                                <div class="input-underline"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Ítems de la Factura -->
+                <div class="invoice-form-section">
+                    <div class="invoice-items-header">
+                        <div class="invoice-section-header">
+                            <div class="invoice-section-icon">
+                                <i class="fa-solid fa-list"></i>
+                            </div>
+                            <h3 class="invoice-section-title">Ítems de la Factura</h3>
+                        </div>
+                        <button type="button" class="invoice-btn invoice-btn-primary invoice-btn-add-item" onclick="addInvoiceItemAdmin()">
+                            <i class="fa-solid fa-plus"></i>
+                            <span>Agregar Ítem</span>
+                        </button>
+                    </div>
+                    <div id="invoiceItemsListAdmin" class="invoice-items-list">
+                        <!-- Los ítems se agregarán dinámicamente -->
+                    </div>
+                    <div id="invoiceItemsEmpty" class="invoice-items-empty">
+                        <div class="invoice-empty-icon">
+                            <i class="fa-solid fa-inbox"></i>
+                        </div>
+                        <div class="invoice-empty-text">No hay ítems agregados</div>
+                        <div class="invoice-empty-hint">Haz clic en "Agregar Ítem" para comenzar</div>
+                    </div>
+                </div>
+                
+                <!-- Observaciones -->
+                <div class="invoice-form-section">
+                    <div class="invoice-section-header">
+                        <div class="invoice-section-icon">
+                            <i class="fas fa-comment"></i>
+                        </div>
+                        <h3 class="invoice-section-title">Observaciones Adicionales</h3>
+                    </div>
+                    <div class="input-group invoice-input-group">
+                        <div class="input-container invoice-textarea-container">
+                            <textarea id="invoiceObservationsAdmin" placeholder="Observaciones adicionales (opcional)" rows="3" class="invoice-textarea"></textarea>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Resumen de Totales -->
+                <div class="invoice-summary-card">
+                    <div class="invoice-summary-header">
+                        <i class="fa-solid fa-calculator"></i>
+                        <span>Resumen de Totales</span>
+                    </div>
+                    <div class="invoice-summary-content">
+                        <div class="invoice-summary-row">
+                            <span class="invoice-summary-label">Subtotal:</span>
+                            <span class="invoice-summary-value" id="invoiceSubtotalAdmin">$0.00</span>
+                        </div>
+                        <div class="invoice-summary-row">
+                            <span class="invoice-summary-label">Impuestos (19%):</span>
+                            <span class="invoice-summary-value" id="invoiceTaxAdmin">$0.00</span>
+                        </div>
+                        <div class="invoice-summary-row invoice-summary-total">
+                            <span class="invoice-summary-label">Total:</span>
+                            <span class="invoice-summary-value" id="invoiceTotalAdmin">$0.00</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Botones de Acción -->
+                <div class="invoice-modal-footer">
+                    <button type="button" class="invoice-btn invoice-btn-secondary invoice-btn-full" onclick="closeCreateInvoiceModalAdmin()">
+                        <i class="fa-solid fa-times"></i>
+                        <span>Cancelar</span>
+                    </button>
+                    <button type="submit" class="invoice-btn invoice-btn-primary invoice-btn-full">
+                        <i class="fa-solid fa-save"></i>
+                        <span id="invoiceSaveButtonText">Generar Factura</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modal: Detalle de Factura -->
+<div class="patient-modal" id="invoiceDetailModalAdmin" onclick="if(event.target===this) closeInvoiceDetailModalAdmin()">
+    <div class="patient-modal-content large">
+        <div class="patient-modal-header">
+            <h2 class="patient-modal-title">
+                <i class="fa-solid fa-eye"></i> Detalle de Factura
+            </h2>
+            <button class="patient-modal-close" onclick="closeInvoiceDetailModalAdmin()">
+                <i class="fa-solid fa-times"></i>
+            </button>
+        </div>
+        <div class="patient-modal-body" id="invoiceDetailContentAdmin">
+            <!-- Se cargará dinámicamente -->
+        </div>
+        <div class="patient-modal-footer" style="padding:1rem 1.5rem; border-top:1px solid var(--gray-200); display:flex; gap:0.75rem; justify-content:flex-end;">
+            <button class="submit-btn btn-secondary" onclick="closeInvoiceDetailModalAdmin()">
+                Cerrar
+            </button>
+            <button class="submit-btn" onclick="downloadInvoicePDFAdmin()" id="downloadInvoiceBtnAdmin">
+                <i class="fa-solid fa-download"></i> Descargar PDF
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Modal: Anular Factura -->
+<div class="patient-modal" id="cancelInvoiceModalAdmin" onclick="if(event.target===this) closeCancelInvoiceModalAdmin()">
+    <div class="patient-modal-content">
+        <div class="patient-modal-header">
+            <h2 class="patient-modal-title">
+                <i class="fa-solid fa-ban" style="color:var(--error-color);"></i> Anular Factura
+            </h2>
+            <button class="patient-modal-close" onclick="closeCancelInvoiceModalAdmin()">
+                <i class="fa-solid fa-times"></i>
+            </button>
+        </div>
+        <div class="patient-modal-body">
+            <div style="margin-bottom:1rem; padding:1rem; background:var(--gray-50); border-radius:var(--border-radius-lg); border-left:4px solid var(--error-color);">
+                <div style="font-weight:600; color:var(--gray-900); margin-bottom:0.25rem;">Factura a anular:</div>
+                <div id="cancelInvoiceNumberAdmin" style="font-size:1.1rem; color:var(--error-color); font-weight:600;"></div>
+            </div>
+            <div class="input-group">
+                <label style="display:block; margin-bottom:0.5rem; font-weight:600; color:var(--gray-700);">
+                    Motivo de la Anulación *
+                </label>
+                <div class="input-container" style="position:relative; display:flex; align-items:flex-start;">
+                    <textarea id="cancelInvoiceReasonAdmin" required placeholder="Indica el motivo de la anulación..." rows="4" style="width:100%; padding:0.75rem; border:2px solid var(--gray-300); border-radius:var(--border-radius-lg); font-family:var(--font-family); font-size:var(--font-size-base); resize:vertical; transition:all 0.3s ease; background:var(--gray-50); color:var(--gray-900); outline:none;"></textarea>
+                </div>
+            </div>
+        </div>
+        <div class="patient-modal-footer" style="padding:1rem 1.5rem; border-top:1px solid var(--gray-200); display:flex; gap:0.75rem; justify-content:flex-end;">
+            <button class="submit-btn btn-secondary" onclick="closeCancelInvoiceModalAdmin()">
+                Cancelar
+            </button>
+            <button class="submit-btn" style="background:var(--error-color);" onclick="confirmCancelInvoiceAdmin()">
+                <i class="fa-solid fa-ban"></i> Confirmar Anulación
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Acciones de la sección -->
+<div id="sectionActions" style="display:none;"></div>

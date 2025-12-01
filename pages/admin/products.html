@@ -1,0 +1,158 @@
+<!-- Contenedor principal del contenido de productos -->
+<div id="sectionContent" style="max-width: 1400px; margin: 0 auto; padding: 0 1rem;">
+    <!-- Vista: Lista de Productos -->
+    <div id="productsListView">
+        <div class="admin-card">
+            <div class="admin-card-header">
+                <h2 style="margin:0; color:var(--gray-900); display:flex; align-items:center; gap:0.5rem; font-size:1.25rem; font-weight:600;">
+                    <i class="fa-solid fa-box" style="color:var(--primary-color);"></i> Gestión de Productos
+                </h2>
+                <button class="submit-btn" onclick="openCreateProductModal()">
+                    <i class="fa-solid fa-plus"></i> Nuevo Producto
+                </button>
+            </div>
+            
+            <!-- Búsqueda y filtros -->
+            <div style="margin-bottom:1.5rem;">
+                <div class="input-container">
+                    <i class="fas fa-search input-icon"></i>
+                    <input type="text" id="productSearch" placeholder="Buscar producto por nombre..." 
+                           onkeyup="filterProducts()">
+                    <div class="input-underline"></div>
+                </div>
+            </div>
+            
+            <!-- Tabla de productos -->
+            <div style="overflow-x:auto;">
+                <table class="data-table" style="width:100%; border-collapse:collapse;">
+                    <thead>
+                        <tr style="background:var(--gray-100); border-bottom:2px solid var(--gray-300);">
+                            <th style="padding:0.75rem; text-align:left; font-weight:600; color:var(--gray-700);">ID</th>
+                            <th style="padding:0.75rem; text-align:left; font-weight:600; color:var(--gray-700);">Nombre</th>
+                            <th style="padding:0.75rem; text-align:left; font-weight:600; color:var(--gray-700);">Categoría</th>
+                            <th style="padding:0.75rem; text-align:left; font-weight:600; color:var(--gray-700);">Precio</th>
+                            <th style="padding:0.75rem; text-align:center; font-weight:600; color:var(--gray-700);">Stock</th>
+                            <th style="padding:0.75rem; text-align:center; font-weight:600; color:var(--gray-700);">Estado</th>
+                            <th style="padding:0.75rem; text-align:center; font-weight:600; color:var(--gray-700);">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="productsTableBody">
+                        <!-- Se cargará dinámicamente -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    
+<!-- Modal: Crear/Editar Producto -->
+<div id="createProductModal" class="patient-modal" onclick="if(event.target === this) closeCreateProductModal();">
+    <div class="patient-modal-content" style="max-width:700px;">
+        <div class="patient-modal-header">
+            <h2 class="patient-modal-title">
+                <i class="fa-solid fa-box"></i> <span id="productModalTitle">Nuevo Producto</span>
+            </h2>
+            <button class="patient-modal-close" onclick="closeCreateProductModal()">
+                <i class="fa-solid fa-times"></i>
+            </button>
+        </div>
+        <div class="patient-modal-body">
+            <form id="productForm" onsubmit="event.preventDefault(); saveProduct();">
+                <div class="form-grid-admin" style="display:grid; grid-template-columns:repeat(2, 1fr); gap:1.5rem; margin-bottom:1.5rem;">
+                    <div class="input-group">
+                        <label style="display:block; margin-bottom:0.5rem; font-weight:600; color:var(--gray-700);">Nombre del Producto *</label>
+                        <div class="input-container">
+                            <i class="fas fa-box input-icon"></i>
+                            <input type="text" id="productName" required placeholder="Ej: Alimento Premium para Perros">
+                            <div class="input-underline"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="input-group">
+                        <label style="display:block; margin-bottom:0.5rem; font-weight:600; color:var(--gray-700);">Categoría *</label>
+                        <div class="input-container select-container">
+                            <i class="fas fa-tags input-icon"></i>
+                            <select id="productCategory" required>
+                                <option value="">Selecciona una categoría</option>
+                                <option value="Alimentos">Alimentos</option>
+                                <option value="Medicinas">Medicinas</option>
+                                <option value="Accesorios">Accesorios</option>
+                                <option value="Higiene">Higiene</option>
+                                <option value="Premios">Premios</option>
+                            </select>
+                            <div class="input-underline"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="input-group">
+                        <label style="display:block; margin-bottom:0.5rem; font-weight:600; color:var(--gray-700);">Precio *</label>
+                        <div class="input-container">
+                            <i class="fas fa-dollar-sign input-icon"></i>
+                            <input type="number" id="productPrice" step="0.01" min="0" required placeholder="0.00">
+                            <div class="input-underline"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="input-group">
+                        <label style="display:block; margin-bottom:0.5rem; font-weight:600; color:var(--gray-700);">Stock *</label>
+                        <div class="input-container">
+                            <i class="fas fa-boxes input-icon"></i>
+                            <input type="number" id="productStock" min="0" required placeholder="0">
+                            <div class="input-underline"></div>
+                        </div>
+                    </div>
+                    
+                </div>
+                
+                <div class="input-group" style="margin-bottom:1.5rem;">
+                    <label style="display:block; margin-bottom:0.5rem; font-weight:600; color:var(--gray-700); display:flex; align-items:center;">
+                        <i class="fas fa-align-left" style="color:var(--primary-color); margin-right:0.5rem;"></i>Descripción
+                    </label>
+                    <div class="input-container" style="position:relative; display:flex; align-items:flex-start;">
+                        <i class="fas fa-align-left input-icon" style="position:absolute; left:1rem; top:1rem; color:var(--gray-400); transition:color 0.3s ease;"></i>
+                        <textarea 
+                            id="productDescription" 
+                            rows="4" 
+                            placeholder="Descripción detallada del producto"
+                            style="width:100%; min-height:100px; padding:1rem 1rem 1rem calc(1rem + 24px); border:2px solid var(--gray-300); border-radius:var(--border-radius-lg); font-family:var(--font-family); font-size:var(--font-size-base); resize:vertical; transition:all 0.3s ease; background:var(--gray-50); color:var(--gray-900); line-height:1.5; outline:none;">
+                        </textarea>
+                        <div class="input-underline" style="position:absolute; bottom:0; left:0; width:0; height:2px; background:var(--primary-color); transition:width 0.3s ease; pointer-events:none;"></div>
+                    </div>
+                </div>
+                
+                <style>
+                    #productDescription:focus {
+                        background:var(--white);
+                        border-color:var(--primary-color);
+                        box-shadow:0 0 0 4px rgba(46, 139, 87, 0.1);
+                    }
+                    
+                    #productDescription:focus ~ .input-underline {
+                        width:100%;
+                    }
+                    
+                    #productDescription:focus ~ .input-icon {
+                        color:var(--primary-color);
+                    }
+                    
+                    #productDescription::placeholder {
+                        color:var(--gray-400);
+                    }
+                </style>
+                
+                <div class="patient-modal-footer" style="padding:1rem 1.5rem; border-top:1px solid var(--gray-200); display:flex; gap:0.75rem; justify-content:flex-end;">
+                    <button type="button" class="submit-btn btn-secondary" onclick="closeCreateProductModal()">
+                        Cancelar
+                    </button>
+                    <button type="submit" class="submit-btn">
+                        <i class="fa-solid fa-save"></i> Guardar Producto
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+</div>
+
+<!-- Acciones de la sección -->
+<div id="sectionActions" style="display:none;"></div>
+

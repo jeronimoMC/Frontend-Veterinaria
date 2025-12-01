@@ -1,0 +1,1028 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>VetUni - Panel del Cliente</title>
+    <link rel="stylesheet" href="../../assets/css/styles.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+        
+        html, body {
+            overflow-x: hidden;
+            width: 100%;
+            max-width: 100%;
+        }
+        
+        .app-container {
+            width: 100%;
+            max-width: 100%;
+            overflow-x: hidden;
+        }
+        
+        /* Estilos mejorados para botones y notificaciones */
+        .back-btn:hover {
+            transform: translateX(-4px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+        
+        .notif-bell-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        }
+        
+        .enhanced-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(0,0,0,0.2);
+        }
+        
+        .notif-dropdown {
+            animation: slideDown 0.3s ease;
+        }
+        
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .notif-dropdown-item {
+            padding: 1rem;
+            border-bottom: 1px solid var(--gray-200);
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .notif-dropdown-item:hover {
+            background: var(--gray-50);
+        }
+        
+        .notif-dropdown-item:last-child {
+            border-bottom: none;
+        }
+        
+        /* Posicionamiento responsive del dropdown - se maneja dinámicamente con JS */
+        .notif-dropdown {
+            transition: all 0.3s ease;
+        }
+        
+        /* ========== RESPONSIVE DESIGN ========== */
+        @media (max-width: 1200px) {
+            .dashboard-grid {
+                grid-template-columns: 1fr !important;
+                gap: 1.25rem !important;
+            }
+            
+            .form-container {
+                max-width: 100% !important;
+                padding: 1rem !important;
+                margin: 0 auto !important;
+            }
+            
+            .top-nav {
+                flex-wrap: wrap !important;
+            }
+            
+            .back-btn {
+                flex: 1 1 auto !important;
+                min-width: 120px !important;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            html, body {
+                overflow-x: hidden !important;
+                width: 100% !important;
+                max-width: 100% !important;
+            }
+            
+            .app-container {
+                padding: 1rem 0.5rem !important;
+                min-height: 100vh;
+                overflow-y: auto;
+                overflow-x: hidden !important;
+                width: 100% !important;
+                max-width: 100% !important;
+            }
+            
+            .form-container {
+                padding: 0.75rem !important;
+                width: 100% !important;
+                max-width: 100% !important;
+                overflow-x: hidden !important;
+            }
+            
+            .dashboard-grid {
+                width: 100% !important;
+                max-width: 100% !important;
+                overflow-x: hidden !important;
+            }
+            
+            .form-header {
+                margin-bottom: 1rem !important;
+            }
+            
+            .form-header h1 {
+                font-size: 1.5rem !important;
+            }
+            
+            .dashboard-grid {
+                gap: 1rem !important;
+            }
+            
+            .summary-card {
+                padding: 1rem !important;
+            }
+            
+            .enhanced-btn {
+                padding: 0.875rem 1.25rem !important;
+                font-size: 0.9rem !important;
+            }
+            
+            #historySummary > div {
+                grid-template-columns: 1fr !important;
+                gap: 0.5rem !important;
+            }
+            
+            .product-grid {
+                grid-template-columns: 1fr !important;
+                gap: 0.75rem !important;
+            }
+            
+            .product-card {
+                padding: 0.75rem !important;
+            }
+        }
+        
+            @media (max-width: 480px) {
+            .app-container {
+                padding: 0.5rem 0.25rem !important;
+            }
+            
+            .form-container {
+                padding: 0.5rem !important;
+            }
+            
+            .summary-card {
+                padding: 0.75rem !important;
+            }
+            
+            .enhanced-btn {
+                padding: 0.75rem 1rem !important;
+                font-size: 0.85rem !important;
+            }
+            
+            .enhanced-btn i {
+                font-size: 0.9rem !important;
+            }
+            
+            .form-header h1 {
+                font-size: 1.25rem !important;
+            }
+            
+            .form-container {
+                width: calc(100% - 1rem) !important;
+                max-width: calc(100% - 1rem) !important;
+                box-sizing: border-box !important;
+            }
+            
+            .summary-card {
+                width: 100% !important;
+                max-width: 100% !important;
+                box-sizing: border-box !important;
+            }
+            
+            .dashboard-grid {
+                width: 100% !important;
+                max-width: 100% !important;
+                box-sizing: border-box !important;
+            }
+        }
+        
+        @media (max-width: 400px) {
+            html, body {
+                overflow-x: hidden !important;
+                width: 100vw !important;
+                max-width: 100vw !important;
+            }
+            
+            .app-container {
+                padding: 0.15rem !important;
+                width: 100vw !important;
+                max-width: 100vw !important;
+                box-sizing: border-box !important;
+            }
+            
+            nav {
+                padding: 0 0.25rem !important;
+                width: 100% !important;
+                max-width: 100% !important;
+                box-sizing: border-box !important;
+            }
+            
+            .form-container {
+                padding: 0.4rem !important;
+                margin: 0.15rem auto !important;
+                width: calc(100vw - 0.3rem) !important;
+                max-width: calc(100vw - 0.3rem) !important;
+                box-sizing: border-box !important;
+            }
+            
+            .form-header h1 {
+                font-size: 1.1rem !important;
+            }
+            
+            .dashboard-grid {
+                gap: 0.75rem !important;
+            }
+            
+            .summary-card {
+                padding: 0.6rem !important;
+            }
+        }
+            
+            .subtitle {
+                font-size: 0.85rem !important;
+            }
+            
+            .services-grid {
+                grid-template-columns: 1fr !important;
+            }
+        }
+        
+        /* Servicios responsive */
+        /* Ocultar servicios del aside en móvil */
+        .services-section-desktop {
+            display: block;
+        }
+        
+        .services-section-mobile {
+            display: none;
+        }
+        
+        @media (max-width: 768px) {
+            .services-grid {
+                grid-template-columns: 1fr !important;
+            }
+            
+            /* Ocultar servicios del aside en móvil, mostrar los de abajo */
+            .services-section-desktop {
+                display: none !important;
+            }
+            
+            .services-section-mobile {
+                display: block !important;
+            }
+            
+            /* Forzar que el dashboard se apile */
+            .dashboard-grid {
+                grid-template-columns: 1fr !important;
+                display: grid !important;
+            }
+            
+            /* Asegurar que cards y quick-actions se apilen */
+            .cards,
+            .quick-actions {
+                width: 100% !important;
+                max-width: 100% !important;
+            }
+            
+            /* Mostrar botón de cita en móvil al inicio */
+            .appointment-card-mobile {
+                display: block !important;
+                order: -1; /* Aparece antes que otras cards */
+            }
+            
+            /* Ocultar en móvil el botón de cita del sidebar */
+            .appointment-card-desktop {
+                display: none !important;
+            }
+            
+            /* Mejor espaciado entre cards en móvil */
+            .cards, .quick-actions {
+                gap: 1.5rem !important;
+            }
+        }
+        
+        /* Asegurar scroll en móviles */
+        @media (max-width: 1200px) {
+            body {
+                overflow-x: hidden;
+            }
+            
+            .app-container {
+                overflow-y: auto;
+                -webkit-overflow-scrolling: touch;
+            }
+            
+            .top-nav {
+                padding: 0 0.5rem !important;
+            }
+            
+            .top-nav > div {
+                width: 100% !important;
+                justify-content: space-between !important;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .top-nav {
+                flex-direction: column !important;
+                align-items: stretch !important;
+            }
+            
+            .back-btn {
+                order: 1;
+            }
+            
+            .top-nav > div:last-child {
+                order: 2;
+                justify-content: space-between !important;
+                width: 100% !important;
+            }
+            
+            .notif-container {
+                width: 100% !important;
+                display: flex !important;
+                justify-content: center !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    <script src="../../assets/js/api.service.js"></script>
+    <div class="app-container" style="padding-top: 2rem; min-height: 100vh; overflow-y: auto; -webkit-overflow-scrolling: touch;">
+        <!-- Barra superior mejorada -->
+        <nav aria-label="Barra de navegación" class="top-nav" style="width:100%; max-width:1100px; margin-bottom: 1rem; display:flex; justify-content:space-between; align-items:center; flex-wrap: wrap; gap: 0.75rem;">
+            <!-- Notificaciones y carrito a la izquierda -->
+            <div style="display:flex; align-items:center; gap:1rem; position:relative;">
+                <!-- Carrito de compras -->
+                <a href="./cart.html" style="position:relative; background:var(--white); border:none; border-radius:50%; width:48px; height:48px; display:flex; align-items:center; justify-content:center; cursor:pointer; box-shadow:0 2px 8px rgba(0,0,0,0.1); transition:all 0.3s ease; text-decoration:none;">
+                    <i class="fa-solid fa-cart-shopping" style="color:var(--primary-color); font-size:1.2rem;"></i>
+                    <span class="cart-badge" style="position:absolute; top:-4px; right:-4px; background:#F44336; color:white; border-radius:50%; width:20px; height:20px; display:none; align-items:center; justify-content:center; font-size:0.7rem; font-weight:700; border:2px solid white;">0</span>
+                </a>
+                <div style="position:relative;" class="notif-container">
+                    <button id="notifToggle" class="notif-bell-btn" style="position:relative; background:var(--white); border:none; border-radius:50%; width:48px; height:48px; display:flex; align-items:center; justify-content:center; cursor:pointer; box-shadow:0 2px 8px rgba(0,0,0,0.1); transition:all 0.3s ease;">
+                        <i class="fa-solid fa-bell" style="color:var(--primary-color); font-size:1.2rem;"></i>
+                        <span id="notifBadge" class="notif-badge" style="position:absolute; top:-4px; right:-4px; background:#F44336; color:white; border-radius:50%; width:20px; height:20px; display:flex; align-items:center; justify-content:center; font-size:0.7rem; font-weight:700; border:2px solid white;">3</span>
+                    </button>
+                    <div id="notifDropdown" class="notif-dropdown" style="display:none; position:fixed; background:var(--white); border-radius:16px; box-shadow:0 8px 24px rgba(0,0,0,0.15); min-width:320px; max-width:400px; max-height:500px; overflow-y:auto; z-index:10000; padding:1rem; left:50%; transform:translateX(-50%);">
+                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem; padding-bottom:0.75rem; border-bottom:2px solid var(--gray-200);">
+                            <h3 style="margin:0; font-size:1.1rem; font-weight:700; color:var(--primary-dark);">
+                                <i class="fa-solid fa-bell"></i> Notificaciones
+                            </h3>
+                            <button id="closeNotifDropdown" style="background:none; border:none; color:var(--gray-600); cursor:pointer; font-size:1.2rem;">&times;</button>
+                        </div>
+                        <div id="notifDropdownList" class="notif-list">
+                            <!-- Las notificaciones se cargarán aquí -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <a href="../auth/index.html" class="back-btn" style="display:inline-flex; align-items:center; gap:0.5rem; padding:0.6rem 1rem; background:var(--white); border:none; border-radius:12px; color:var(--primary-color); font-weight:600; text-decoration:none; box-shadow:0 2px 8px rgba(0,0,0,0.1); transition:all 0.3s ease;">
+                <i class="fa-solid fa-arrow-left"></i> <span>Volver</span>
+            </a>
+            <div style="display:flex; align-items:center; gap:.5rem; color:var(--white); opacity:.95;">
+                <i class="fa-solid fa-user"></i>
+                <span style="font-weight:600;">Cliente</span>
+            </div>
+        </nav>
+        <!-- Header simple -->
+        <div class="form-container active" style="max-width: 1040px;">
+            <div class="form-header" style="margin-bottom: 1.25rem;">
+                <div class="logo-container">
+                    <div class="logo"><i class="fas fa-paw"></i></div>
+                    <h1 id="userGreeting">Hola, Usuario</h1>
+                    <p class="subtitle">Este es tu panel de cliente</p>
+                </div>
+            </div>
+
+            <!-- Grid principal - Mejorado para mejor organización -->
+            <div class="dashboard-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; align-items: start; width: 100%; max-width: 100%; overflow-x: hidden;">
+                <!-- Tarjetas a la izquierda -->
+                <section class="cards" aria-label="Resumen" style="display: grid; gap: 1.5rem;">
+                    <!-- Botón Agendar Cita - Solo visible en móvil, aparece primero -->
+                    <div class="appointment-card-mobile" style="background: linear-gradient(135deg, var(--primary-color), var(--primary-light)); color: var(--white); border-radius: var(--border-radius-2xl); padding: 1.5rem; box-shadow: var(--shadow-lg); display: none;">
+                        <div style="display:flex; align-items:center; gap:.75rem; font-weight: var(--font-weight-semibold); margin-bottom:0.75rem;">
+                            <i class="fa-solid fa-stethoscope" style="font-size:1.5rem;"></i>
+                            <div>
+                                <div style="font-size:1.1rem;">¿Necesitas una cita?</div>
+                                <div style="opacity:.9; font-size:0.9rem; font-weight:normal;">Agenda una nueva consulta</div>
+                            </div>
+                        </div>
+                        <button id="openAppointmentModalAltMobile" class="submit-btn" style="background: var(--white); color: var(--primary-dark); width:100%; padding:1rem; font-weight:600; margin-top:0.5rem;">
+                            <i class="fa-solid fa-calendar-plus"></i>
+                            <span class="btn-text">Agendar Cita</span>
+                        </button>
+                    </div>
+                    
+                    <div class="summary-card" style="background: var(--white); border-radius: var(--border-radius-2xl); padding: 1.5rem; box-shadow: var(--shadow-md); border: 1px solid var(--gray-200);">
+                        <div style="display:flex; align-items:center; gap:.75rem; color: var(--primary-dark); font-weight: var(--font-weight-semibold);">
+                            <i class="fa-solid fa-dog"></i>
+                            Mascotas Registradas
+                        </div>
+                        <div id="petChips" style="display:flex; gap:.75rem; margin-top: .75rem; flex-wrap: wrap;">
+                            <!-- Las mascotas se cargarán dinámicamente -->
+                        </div>
+                        <div id="noPets" style="display:none; margin-top:.75rem; background: var(--white); border:1px dashed var(--gray-300); border-radius: 12px; padding: .9rem; color: var(--gray-700);">
+                            <div style="display:flex; align-items:center; gap:.5rem;">
+                                <i class="fa-solid fa-paw" style="color: var(--primary-color);"></i>
+                                <span>Aún no tienes mascotas registradas.</span>
+                            </div>
+                        </div>
+                        <div style="display:flex; justify-content:flex-end; margin-top: .9rem;">
+                            <button id="openPetModal" class="submit-btn" style="width:auto; padding:.6rem .9rem;">
+                                <i class="fa-solid fa-plus"></i>
+                                <span class="btn-text">Registrar Mascota</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="summary-card" style="background: var(--white); border-radius: var(--border-radius-2xl); padding: 1.5rem; box-shadow: var(--shadow-md); border: 1px solid var(--gray-200);">
+                        <div style="display:flex; align-items:center; gap:.75rem; color: var(--primary-dark); font-weight: var(--font-weight-semibold);">
+                            <i class="fa-solid fa-calendar-check"></i>
+                            Próximas Citas
+                        </div>
+                        <ul id="upcomingAppointments" style="margin-top:.75rem; list-style:none; padding:0; display:grid; gap:.5rem;">
+                            <!-- Las citas se cargarán dinámicamente -->
+                        </ul>
+                        <div style="display:flex; justify-content:flex-end; margin-top:.75rem;">
+                            <a class="terms-link" href="./calendar.html">Ver calendario completo</a>
+                        </div>
+                    </div>
+
+                    <!-- Mis Citas -->
+                    <div class="summary-card" style="background: var(--white); border-radius: var(--border-radius-2xl); padding: 1.5rem; box-shadow: var(--shadow-md); border: 1px solid var(--gray-200);">
+                        <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:.75rem;">
+                            <div style="font-weight:600; color:var(--primary-dark); display:flex; align-items:center; gap:.5rem;">
+                                <i class="fa-solid fa-list-check"></i> Mis citas
+                            </div>
+                        </div>
+                        <div id="appointmentsList" class="notif-list"></div>
+                        <div style="display:flex; justify-content:flex-end; margin-top:.75rem;">
+                            <a href="./calendar.html" class="terms-link" style="color:var(--primary-color); font-weight:600; text-decoration:none;">
+                                Ver más <i class="fa-solid fa-arrow-right" style="margin-left:.25rem;"></i>
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- Catálogo de productos -->
+                    <div class="summary-card" style="background: var(--white); border-radius: var(--border-radius-2xl); padding: 1.5rem; box-shadow: var(--shadow-md); border: 1px solid var(--gray-200);">
+                        <div style="display:flex; align-items:center; gap:.75rem; color: var(--primary-dark); font-weight: var(--font-weight-semibold);">
+                            <i class="fa-solid fa-store"></i>
+                            Conoce nuestro catálogo
+                        </div>
+                        <p style="margin:.5rem 0 1rem 0; color:var(--gray-600);">Productos de cuidado, nutrición y bienestar para tu mascota.</p>
+                        <div class="product-grid">
+                            <div class="product-card">
+                                <div class="product-thumb"><i class="fa-solid fa-bowl-food"></i></div>
+                                <div>
+                                    <div class="product-title">Alimento Premium</div>
+                                    <div class="product-meta">Perro y gato • 1kg/5kg</div>
+                                </div>
+                            </div>
+                            <div class="product-card">
+                                <div class="product-thumb"><i class="fa-solid fa-syringe"></i></div>
+                                <div>
+                                    <div class="product-title">Desparasitante</div>
+                                    <div class="product-meta">Tabletas masticables</div>
+                                </div>
+                            </div>
+                            <div class="product-card">
+                                <div class="product-thumb"><i class="fa-solid fa-pump-soap"></i></div>
+                                <div>
+                                    <div class="product-title">Shampoo hipoalergénico</div>
+                                    <div class="product-meta">Dermatológicamente probado</div>
+                                </div>
+                            </div>
+                            <div class="product-card">
+                                <div class="product-thumb"><i class="fa-solid fa-bone"></i></div>
+                                <div>
+                                    <div class="product-title">Snacks saludables</div>
+                                    <div class="product-meta">Premios sin azúcar</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div style="display:flex; justify-content:flex-end; margin-top: 1rem;">
+                            <a href="../catalog/index.html" class="submit-btn" style="width:auto; padding:.6rem .9rem; text-decoration:none; display:inline-flex; align-items:center; gap:0.5rem;">
+                                <i class="fa-solid fa-arrow-right"></i>
+                                <span class="btn-text">Ver catálogo completo</span>
+                            </a>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Acciones rápidas a la derecha -->
+                <aside class="quick-actions" aria-label="Acciones rápidas" style="display: grid; gap: 1.5rem;">
+                    <!-- Botón Agendar Cita - Solo visible en desktop -->
+                    <div class="appointment-card-desktop" style="background: linear-gradient(135deg, var(--primary-color), var(--primary-light)); color: var(--white); border-radius: var(--border-radius-2xl); padding: 1.5rem; box-shadow: var(--shadow-lg);">
+                        <div style="display:flex; align-items:center; gap:.75rem; font-weight: var(--font-weight-semibold); margin-bottom:0.75rem;">
+                            <i class="fa-solid fa-stethoscope" style="font-size:1.5rem;"></i>
+                            <div>
+                                <div style="font-size:1.1rem;">¿Necesitas una cita?</div>
+                                <div style="opacity:.9; font-size:0.9rem; font-weight:normal;">Agenda una nueva consulta para tu mascota</div>
+                            </div>
+                        </div>
+                        <button id="openAppointmentModalAlt" class="submit-btn" style="background: var(--white); color: var(--primary-dark); width:100%; padding:1rem; font-weight:600;">
+                            <i class="fa-solid fa-calendar-plus"></i>
+                            <span class="btn-text">Agendar Cita</span>
+                        </button>
+                    </div>
+
+                    <!-- Historial Clínico - Mejorado -->
+                    <div class="summary-card" style="background: linear-gradient(135deg, #E8F5E9 0%, #F1F8F4 100%); border:2px solid var(--primary-color); border-radius: var(--border-radius-2xl); padding: 1.5rem; box-shadow: var(--shadow-lg);">
+                        <div style="display:flex; align-items:center; gap:.75rem; color: var(--primary-dark); font-weight: var(--font-weight-bold); margin-bottom:1rem;">
+                            <div style="background:var(--primary-color); color:white; width:40px; height:40px; border-radius:12px; display:flex; align-items:center; justify-content:center; font-size:1.2rem;">
+                                <i class="fa-solid fa-notes-medical"></i>
+                            </div>
+                            <span style="font-size:1.1rem;">Historial Clínico</span>
+                        </div>
+                        <a href="./history.html" class="enhanced-btn" style="display:flex; align-items:center; justify-content:center; gap:0.75rem; width:100%; padding:1rem 1.5rem; background:var(--primary-color); color:white; border:none; border-radius:12px; font-weight:600; font-size:1rem; text-decoration:none; box-shadow:0 4px 12px rgba(46,139,87,0.3); transition:all 0.3s ease; margin-bottom:1rem;">
+                            <i class="fa-solid fa-file-medical" style="font-size:1.1rem;"></i>
+                            <span>Ver historial completo</span>
+                            <i class="fa-solid fa-arrow-right" style="margin-left:auto;"></i>
+                        </a>
+                        <div id="historySummary" style="margin-top:1rem; padding-top:1rem; border-top:2px solid rgba(46,139,87,0.2);">
+                            <!-- Resumen del historial se cargará dinámicamente -->
+                        </div>
+                    </div>
+                    
+                    <!-- Mis Facturas -->
+                    <div class="summary-card" style="background: linear-gradient(135deg, #FFF3E0 0%, #FFE8CC 100%); border:2px solid #FF8C42; border-radius: var(--border-radius-2xl); padding: 1.5rem; box-shadow: var(--shadow-lg);">
+                        <div style="display:flex; align-items:center; gap:.75rem; color: var(--primary-dark); font-weight: var(--font-weight-bold); margin-bottom:1rem;">
+                            <div style="background:#FF8C42; color:white; width:40px; height:40px; border-radius:12px; display:flex; align-items:center; justify-content:center; font-size:1.2rem;">
+                                <i class="fa-solid fa-receipt"></i>
+                            </div>
+                            <span style="font-size:1.1rem;">Mis Facturas</span>
+                        </div>
+                        <div id="invoicesList" style="margin-bottom:1rem; max-height:200px; overflow-y:auto;">
+                            <!-- Las facturas se cargarán dinámicamente -->
+                        </div>
+                        <button onclick="openInvoicesModal()" class="enhanced-btn" style="display:flex; align-items:center; justify-content:center; gap:0.75rem; width:100%; padding:1rem 1.5rem; background:#FF8C42; color:white; border:none; border-radius:12px; font-weight:600; font-size:1rem; text-decoration:none; box-shadow:0 4px 12px rgba(255,140,66,0.3); transition:all 0.3s ease; cursor:pointer;">
+                            <i class="fa-solid fa-list" style="font-size:1.1rem;"></i>
+                            <span>Ver todas las facturas</span>
+                            <i class="fa-solid fa-arrow-right" style="margin-left:auto;"></i>
+                        </button>
+                    </div>
+                    
+                    <!-- Mi Perfil - Mejorado -->
+                    <div class="summary-card" style="background: linear-gradient(135deg, #E3F2FD 0%, #F0F7FF 100%); border:2px solid var(--accent-blue); border-radius: var(--border-radius-2xl); padding: 1.5rem; box-shadow: var(--shadow-lg);">
+                        <div style="display:flex; align-items:center; gap:.75rem; color: var(--primary-dark); font-weight: var(--font-weight-bold); margin-bottom:1rem;">
+                            <div style="background:var(--accent-blue); color:white; width:40px; height:40px; border-radius:12px; display:flex; align-items:center; justify-content:center; font-size:1.2rem;">
+                                <i class="fa-solid fa-user"></i>
+                            </div>
+                            <span style="font-size:1.1rem;">Mi Perfil</span>
+                        </div>
+                        <a href="./profile.html" class="enhanced-btn" style="display:flex; align-items:center; justify-content:center; gap:0.75rem; width:100%; padding:1rem 1.5rem; background:var(--accent-blue); color:white; border:none; border-radius:12px; font-weight:600; font-size:1rem; text-decoration:none; box-shadow:0 4px 12px rgba(74,144,226,0.3); transition:all 0.3s ease;">
+                            <i class="fa-solid fa-user-gear" style="font-size:1.1rem;"></i>
+                            <span>Editar perfil</span>
+                            <i class="fa-solid fa-arrow-right" style="margin-left:auto;"></i>
+                        </a>
+                    </div>
+                    
+                    <!-- Servicios - Movido aquí para PC -->
+                    <div class="summary-card services-section-desktop" style="background: var(--white); border-radius: var(--border-radius-2xl); padding: 1.5rem; box-shadow: var(--shadow-md);">
+                        <h2 class="form-title" style="text-align:left; margin-bottom:1rem; color:var(--primary-dark);">
+                            <i class="fa-solid fa-stethoscope" style="margin-right:.5rem;"></i> Servicios
+                        </h2>
+                        <div class="services-grid" style="display:grid; grid-template-columns: 1fr; gap: 1rem;">
+                            <div class="summary-card" style="background: var(--gray-50); border:1px solid var(--gray-200); border-radius: 16px; padding: 1rem; display:flex; gap:.75rem; align-items:center;">
+                                <i class="fa-solid fa-syringe" style="color: var(--primary-color); font-size:1.5rem;"></i>
+                                <div>
+                                    <strong>Vacunación</strong>
+                                    <p style="margin:0; color: var(--gray-600); font-size:.9rem;">Esquemas completos para perros y gatos</p>
+                                </div>
+                            </div>
+                            <div class="summary-card" style="background: var(--gray-50); border:1px solid var(--gray-200); border-radius: 16px; padding: 1rem; display:flex; gap:.75rem; align-items:center;">
+                                <i class="fa-solid fa-heart-pulse" style="color: var(--secondary-color); font-size:1.5rem;"></i>
+                                <div>
+                                    <strong>Consulta General</strong>
+                                    <p style="margin:0; color: var(--gray-600); font-size:.9rem;">Evaluación y diagnóstico</p>
+                                </div>
+                            </div>
+                            <div class="summary-card" style="background: var(--gray-50); border:1px solid var(--gray-200); border-radius: 16px; padding: 1rem; display:flex; gap:.75rem; align-items:center;">
+                                <i class="fa-solid fa-bone" style="color: var(--accent-blue); font-size:1.5rem;"></i>
+                                <div>
+                                    <strong>Cirugías</strong>
+                                    <p style="margin:0; color: var(--gray-600); font-size:.9rem;">Procedimientos programados</p>
+                                </div>
+                            </div>
+                            <div class="summary-card" style="background: var(--gray-50); border:1px solid var(--gray-200); border-radius: 16px; padding: 1rem; display:flex; gap:.75rem; align-items:center;">
+                                <i class="fa-solid fa-x-ray" style="color: var(--accent-purple); font-size:1.5rem;"></i>
+                                <div>
+                                    <strong>Diagnóstico</strong>
+                                    <p style="margin:0; color: var(--gray-600); font-size:.9rem;">Rayos X, laboratorio, ecos</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </aside>
+            </div>
+
+            <!-- Lista de servicios - Solo para móvil -->
+            <div style="margin-top: 1.5rem;" class="services-section-mobile">
+                <h2 class="form-title" style="text-align:left; margin-bottom:.75rem;">Servicios</h2>
+                <div class="services-grid" style="display:grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1rem;">
+                    <div class="summary-card" style="background: var(--white); border:1px solid var(--gray-200); border-radius: 16px; padding: 1rem; display:flex; gap:.75rem; align-items:center;">
+                        <i class="fa-solid fa-syringe" style="color: var(--primary-color);"></i>
+                        <div>
+                            <strong>Vacunación</strong>
+                            <p style="margin:0; color: var(--gray-600); font-size:.9rem;">Esquemas completos para perros y gatos</p>
+                        </div>
+                    </div>
+                    <div class="summary-card" style="background: var(--white); border:1px solid var(--gray-200); border-radius: 16px; padding: 1rem; display:flex; gap:.75rem; align-items:center;">
+                        <i class="fa-solid fa-heart-pulse" style="color: var(--secondary-color);"></i>
+                        <div>
+                            <strong>Consulta General</strong>
+                            <p style="margin:0; color: var(--gray-600); font-size:.9rem;">Evaluación y diagnóstico</p>
+                        </div>
+                    </div>
+                    <div class="summary-card" style="background: var(--white); border:1px solid var(--gray-200); border-radius: 16px; padding: 1rem; display:flex; gap:.75rem; align-items:center;">
+                        <i class="fa-solid fa-bone" style="color: var(--accent-blue);"></i>
+                        <div>
+                            <strong>Cirugías</strong>
+                            <p style="margin:0; color: var(--gray-600); font-size:.9rem;">Procedimientos programados</p>
+                        </div>
+                    </div>
+                    <div class="summary-card" style="background: var(--white); border:1px solid var(--gray-200); border-radius: 16px; padding: 1rem; display:flex; gap:.75rem; align-items:center;">
+                        <i class="fa-solid fa-x-ray" style="color: var(--accent-purple);"></i>
+                        <div>
+                            <strong>Diagnóstico</strong>
+                            <p style="margin:0; color: var(--gray-600); font-size:.9rem;">Rayos X, laboratorio, ecos</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal: Registro de Mascota -->
+        <div class="modal-backdrop" id="petModal" role="dialog" aria-modal="true" aria-labelledby="petModalTitle">
+            <div class="modal">
+                <header class="modal-header">
+                    <h2 id="petModalTitle" class="modal-title">Registrar Mascota</h2>
+                    <button class="modal-close" id="closePetModal" aria-label="Cerrar">
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
+                </header>
+                <div class="modal-body">
+                    <form id="petForm" class="auth-form" novalidate>
+                        <div class="form-grid">
+                            <div class="input-group">
+                                <div class="input-container">
+                                    <i class="fas fa-paw input-icon"></i>
+                                    <input type="text" id="petName" name="petName" placeholder="Nombre de la mascota" required>
+                                    <div class="input-underline"></div>
+                                </div>
+                                <span class="error-message" id="petNameError"></span>
+                            </div>
+
+                            <div class="input-group">
+                                <div class="input-container select-container">
+                                    <i class="fas fa-dog input-icon"></i>
+                                    <select id="species" name="species" required>
+                                        <option value="">Especie</option>
+                                        <option>Perro</option>
+                                        <option>Gato</option>
+                                    </select>
+                                    <div class="input-underline"></div>
+                                </div>
+                                <span class="error-message" id="speciesError"></span>
+                            </div>
+
+                            <div class="input-group">
+                                <div class="input-container">
+                                    <i class="fas fa-tag input-icon"></i>
+                                    <input type="text" id="breed" name="breed" placeholder="Raza (opcional)">
+                                    <div class="input-underline"></div>
+                                </div>
+                            </div>
+
+                            <div class="input-group">
+                                <div class="input-container select-container">
+                                    <i class="fas fa-venus-mars input-icon"></i>
+                                    <select id="sex" name="sex" required>
+                                        <option value="">Sexo</option>
+                                        <option>Hembra</option>
+                                        <option>Macho</option>
+                                    </select>
+                                    <div class="input-underline"></div>
+                                </div>
+                                <span class="error-message" id="sexError"></span>
+                            </div>
+
+                            <div class="input-group">
+                                <div class="input-container">
+                                    <i class="fas fa-cake-candles input-icon"></i>
+                                    <input type="date" id="birthdate" name="birthdate" placeholder="Fecha de nacimiento" required>
+                                    <div class="input-underline"></div>
+                                </div>
+                                <span class="error-message" id="birthdateError"></span>
+                            </div>
+
+                            <div class="input-group">
+                                <div class="input-container">
+                                    <i class="fas fa-weight-scale input-icon"></i>
+                                    <input type="number" id="weight" name="weight" min="0" step="0.1" placeholder="Peso (kg)" required>
+                                    <div class="input-underline"></div>
+                                </div>
+                                <span class="error-message" id="weightError"></span>
+                            </div>
+
+                            <div class="input-group">
+                                <div class="input-container">
+                                    <i class="fas fa-palette input-icon"></i>
+                                    <input type="text" id="color" name="color" placeholder="Color (opcional)">
+                                    <div class="input-underline"></div>
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <div class="input-group">
+                            <div class="avatar-uploader">
+                                <div class="avatar-preview" id="avatarPreview" aria-label="Foto de la mascota">
+                                    <i class="fa-solid fa-image"></i>
+                                </div>
+                                <div>
+                                    <label class="terms-link" for="petPhoto" style="cursor:pointer;">Subir foto (opcional)</label>
+                                    <input id="petPhoto" type="file" accept="image/*" style="display:none;">
+                                    <p style="margin:.25rem 0 0 0; color:var(--gray-600); font-size:.85rem;">JPG o PNG, máx. 2MB</p>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <footer class="modal-footer">
+                    <button class="submit-btn btn-secondary" id="cancelPet">Cancelar</button>
+                    <button class="submit-btn" id="savePet">
+                        <i class="fa-solid fa-floppy-disk"></i>
+                        Guardar Mascota
+                    </button>
+                </footer>
+            </div>
+        </div>
+
+        <!-- Modal: Detalle de Mascota -->
+        <div class="modal-backdrop" id="petDetailModal" role="dialog" aria-modal="true" aria-labelledby="petDetailTitle">
+            <div class="modal">
+                <header class="modal-header">
+                    <h2 id="petDetailTitle" class="modal-title">Detalle de Mascota</h2>
+                    <button class="modal-close" id="closePetDetail" aria-label="Cerrar">
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
+                </header>
+                <div class="modal-body">
+                    <div class="avatar-uploader" style="margin-bottom: 1rem;">
+                        <div class="avatar-preview" id="detailAvatar"><i class="fa-solid fa-image"></i></div>
+                        <div>
+                            <div class="form-title" id="detailName" style="text-align:left; font-size:1.25rem;"></div>
+                            <div class="product-meta" id="detailMeta"></div>
+                        </div>
+                    </div>
+
+                    <div class="form-grid">
+                        <div class="summary-card" style="padding:1rem;">
+                            <div style="font-weight:600; color:var(--primary-dark); margin-bottom:.5rem;"><i class="fa-solid fa-info-circle"></i> Información básica</div>
+                            <div class="product-meta" id="detailInfo"></div>
+                        </div>
+                        <div class="summary-card" style="padding:1rem;">
+                            <div style="font-weight:600; color:var(--primary-dark); margin-bottom:.5rem;"><i class="fa-solid fa-heart-pulse"></i> Estado</div>
+                            <div class="product-meta" id="detailStatus"></div>
+                        </div>
+                    </div>
+
+                    <div class="summary-card" style="margin-top:1rem; padding:1rem;">
+                        <div style="display:flex; align-items:center; gap:.5rem; color: var(--primary-dark); font-weight: 600;">
+                            <i class="fa-solid fa-notes-medical"></i>
+                            Historial médico
+                        </div>
+                        <div class="notif-list" id="detailHistory" style="margin-top:.75rem;"></div>
+                    </div>
+                </div>
+                <footer class="modal-footer">
+                    <button class="submit-btn" id="openFullHistory">
+                        <i class="fa-solid fa-file-medical"></i>
+                        Ver historial completo
+                    </button>
+                </footer>
+            </div>
+        </div>
+
+        <!-- Modal: Crear Cita -->
+        <div class="modal-backdrop" id="appointmentModal" role="dialog" aria-modal="true" aria-labelledby="appointmentTitle">
+            <div class="modal">
+                <header class="modal-header">
+                    <h2 id="appointmentTitle" class="modal-title">Crear Cita</h2>
+                    <button class="modal-close" id="closeAppointmentModal" aria-label="Cerrar">
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
+                </header>
+                <div class="modal-body">
+                    <form id="appointmentForm" class="auth-form" novalidate>
+                        <div class="form-grid">
+                            <div class="input-group">
+                                <div class="input-container select-container">
+                                    <i class="fas fa-paw input-icon"></i>
+                                    <select id="appointmentPet" required>
+                                        <option value="">Mascota</option>
+                                    </select>
+                                    <div class="input-underline"></div>
+                                </div>
+                                <span class="error-message" id="appointmentPetError"></span>
+                            </div>
+
+                            <div class="input-group">
+                                <div class="input-container select-container">
+                                    <i class="fas fa-stethoscope input-icon"></i>
+                                    <select id="appointmentService" required>
+                                        <option value="">Servicio</option>
+                                        <option>Consulta general</option>
+                                        <option>Vacunación</option>
+                                        <option>Control post-operatorio</option>
+                                        <option>Desparasitación</option>
+                                        <option>Radiografía</option>
+                                        <option>Cirugía</option>
+                                        <option>Laboratorio</option>
+                                        <option>Ecografía</option>
+                                    </select>
+                                    <div class="input-underline"></div>
+                                </div>
+                                <span class="error-message" id="appointmentServiceError"></span>
+                            </div>
+
+                            <div class="input-group">
+                                <div class="input-container select-container">
+                                    <i class="fas fa-exclamation-triangle input-icon"></i>
+                                    <select id="appointmentPriority" required>
+                                        <option value="">Prioridad</option>
+                                        <option value="BAJA">Baja - Rutinaria</option>
+                                        <option value="MEDIA">Media - Normal</option>
+                                        <option value="ALTA">Alta - Urgente</option>
+                                        <option value="CRITICA">Crítica - Emergencia</option>
+                                    </select>
+                                    <div class="input-underline"></div>
+                                </div>
+                                <span class="error-message" id="appointmentPriorityError"></span>
+                            </div>
+
+                            <div class="input-group">
+                                <div class="input-container">
+                                    <i class="fas fa-calendar-day input-icon"></i>
+                                    <input type="date" id="appointmentDate" required min="">
+                                    <div class="input-underline"></div>
+                                </div>
+                                <span class="error-message" id="appointmentDateError"></span>
+                            </div>
+
+                            <div class="input-group">
+                                <div class="input-container">
+                                    <i class="fas fa-clock input-icon"></i>
+                                    <input type="time" id="appointmentTime" required>
+                                    <div class="input-underline"></div>
+                                </div>
+                                <span class="error-message" id="appointmentTimeError"></span>
+                            </div>
+                        </div>
+
+                        <div class="input-group">
+                            <div class="input-container">
+                                <i class="fas fa-comment input-icon"></i>
+                                <input type="text" id="appointmentNotes" placeholder="Motivo o notas (opcional)">
+                                <div class="input-underline"></div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <footer class="modal-footer">
+                    <button class="submit-btn btn-secondary" id="cancelAppointment">Cancelar</button>
+                    <button class="submit-btn" id="saveAppointment">
+                        <i class="fa-solid fa-floppy-disk"></i>
+                        Guardar Cita
+                    </button>
+                </footer>
+            </div>
+        </div>
+
+        <!-- Modal: Facturas -->
+        <div class="modal-backdrop" id="invoicesModal" role="dialog" aria-modal="true" aria-labelledby="invoicesModalTitle">
+            <div class="modal" style="max-width:900px;">
+                <header class="modal-header">
+                    <h2 id="invoicesModalTitle" class="modal-title">
+                        <i class="fa-solid fa-receipt"></i> Mis Facturas
+                    </h2>
+                    <button class="modal-close" onclick="closeInvoicesModal()" aria-label="Cerrar">
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
+                </header>
+                <div class="modal-body">
+                    <div id="invoicesModalList" style="display:flex; flex-direction:column; gap:1rem;">
+                        <!-- Las facturas se cargarán dinámicamente -->
+                    </div>
+                </div>
+                <footer class="modal-footer">
+                    <button class="submit-btn btn-secondary" onclick="closeInvoicesModal()">Cerrar</button>
+                </footer>
+            </div>
+        </div>
+
+        <!-- Modal: Detalle de Factura -->
+        <div class="modal-backdrop" id="invoiceDetailModal" role="dialog" aria-modal="true" aria-labelledby="invoiceDetailTitle">
+            <div class="modal" style="max-width:800px;">
+                <header class="modal-header">
+                    <h2 id="invoiceDetailTitle" class="modal-title">
+                        <i class="fa-solid fa-file-invoice"></i> Detalle de Factura
+                    </h2>
+                    <button class="modal-close" onclick="closeInvoiceDetailModal()" aria-label="Cerrar">
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
+                </header>
+                <div class="modal-body" id="invoiceDetailContent">
+                    <!-- Se cargará dinámicamente -->
+                </div>
+                <footer class="modal-footer">
+                    <button class="submit-btn btn-secondary" onclick="closeInvoiceDetailModal()">Cerrar</button>
+                    <button class="submit-btn" onclick="downloadInvoice()" id="downloadInvoiceBtn">
+                        <i class="fa-solid fa-download"></i> Descargar PDF
+                    </button>
+                </footer>
+            </div>
+        </div>
+
+        <!-- Modal: Detalle de Cita -->
+        <div class="modal-backdrop" id="appointmentDetailModal" role="dialog" aria-modal="true" aria-labelledby="appointmentDetailTitle">
+            <div class="modal">
+                <header class="modal-header">
+                    <h2 id="appointmentDetailTitle" class="modal-title">Detalle de Cita</h2>
+                    <button class="modal-close" id="closeAppointmentDetail" aria-label="Cerrar">
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
+                </header>
+                <div class="modal-body">
+                    <div class="form-grid">
+                        <div class="summary-card" style="padding:1rem;">
+                            <div style="font-weight:600; color:var(--primary-dark); margin-bottom:.5rem;"><i class="fa-solid fa-paw"></i> Mascota / Servicio</div>
+                            <div class="product-meta" id="apptDetailHeader"></div>
+                        </div>
+                        <div class="summary-card" style="padding:1rem;">
+                            <div style="font-weight:600; color:var(--primary-dark); margin-bottom:.5rem;"><i class="fa-solid fa-circle-info"></i> Estado</div>
+                            <div class="product-meta" id="apptDetailStatus"></div>
+                        </div>
+                    </div>
+                    <div class="summary-card" style="padding:1rem; margin-top:1rem;">
+                        <div style="font-weight:600; color:var(--primary-dark); margin-bottom:.5rem;"><i class="fa-solid fa-building"></i> Módulo / Área</div>
+                        <div class="product-meta" id="apptDetailModule"></div>
+                    </div>
+                    <div class="summary-card" style="padding:1rem; margin-top:1rem;">
+                        <div style="font-weight:600; color:var(--primary-dark); margin-bottom:.5rem;"><i class="fa-solid fa-note-sticky"></i> Motivo / Notas</div>
+                        <div class="product-meta" id="apptDetailNotes"></div>
+                    </div>
+                </div>
+                <footer class="modal-footer">
+                    <button class="submit-btn btn-secondary" id="apptDetailClose">Cerrar</button>
+                </footer>
+            </div>
+        </div>
+
+        <div class="background-decoration">
+            <div class="decoration-shape shape-1"></div>
+            <div class="decoration-shape shape-2"></div>
+            <div class="decoration-shape shape-3"></div>
+            <div class="floating-icons">
+                <i class="fas fa-paw floating-icon" style="--delay:0s"></i>
+                <i class="fas fa-bone floating-icon" style="--delay:1s"></i>
+                <i class="fas fa-heart floating-icon" style="--delay:2s"></i>
+                <i class="fas fa-stethoscope floating-icon" style="--delay:3s"></i>
+            </div>
+        </div>
+    </div>
+
+    <!-- API Service -->
+    <script src="../../assets/js/api.service.js"></script>
+    <script src="./client.js"></script>
+    <script>
+        // Cargar funciones del carrito para actualizar badge
+        if (typeof window.updateCartBadge === 'function') {
+            window.updateCartBadge();
+        } else {
+            const script = document.createElement('script');
+            script.src = './cart.js';
+            script.onload = () => {
+                if (typeof window.updateCartBadge === 'function') {
+                    window.updateCartBadge();
+                }
+            };
+            document.head.appendChild(script);
+        }
+    </script>
+</body>
+</html>
+

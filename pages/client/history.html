@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>VetUni - Historial Clínico</title>
+    <link rel="stylesheet" href="../../assets/css/styles.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+        
+        html, body {
+            overflow-x: hidden;
+            width: 100%;
+            max-width: 100%;
+        }
+        
+        .app-container {
+            width: 100%;
+            max-width: 100%;
+            overflow-x: hidden;
+        }
+        
+        .history-container {
+            max-width: 100%;
+            width: 100%;
+            margin: 0 auto;
+            padding: 2rem;
+            background: var(--white);
+            border-radius: var(--border-radius-2xl);
+            box-shadow: var(--shadow-md);
+            overflow-x: hidden;
+        }
+        
+        .history-header {
+            text-align: center;
+            margin-bottom: 2.5rem;
+            padding-bottom: 2rem;
+            border-bottom: 2px solid var(--gray-100);
+        }
+        
+        .history-header h1 {
+            font-size: var(--font-size-3xl);
+            font-weight: var(--font-weight-bold);
+            color: var(--gray-900);
+            margin-bottom: 0.5rem;
+        }
+        
+        .pet-selector {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        
+        .pet-chip-selector {
+            padding: 0.75rem 1.5rem;
+            border: 2px solid var(--gray-300);
+            border-radius: var(--border-radius-full);
+            background: var(--white);
+            cursor: pointer;
+            transition: all var(--transition-normal);
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: var(--font-weight-medium);
+        }
+        
+        .pet-chip-selector:hover {
+            border-color: var(--primary-color);
+            background: var(--gray-50);
+        }
+        
+        .pet-chip-selector.active {
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
+            color: var(--white);
+            border-color: transparent;
+        }
+        
+        .history-section {
+            margin-bottom: 3rem;
+        }
+        
+        .section-title {
+            font-size: var(--font-size-xl);
+            font-weight: var(--font-weight-bold);
+            color: var(--primary-dark);
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 2px solid var(--gray-200);
+        }
+        
+        .timeline {
+            position: relative;
+            padding-left: 2rem;
+        }
+        
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 0.5rem;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: var(--gray-300);
+        }
+        
+        .timeline-item {
+            position: relative;
+            margin-bottom: 2rem;
+            background: var(--gray-50);
+            border-radius: var(--border-radius-xl);
+            padding: 1.5rem;
+            box-shadow: var(--shadow-sm);
+            border-left: 4px solid var(--primary-color);
+        }
+        
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -2.25rem;
+            top: 1.5rem;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: var(--primary-color);
+            border: 3px solid var(--white);
+            box-shadow: 0 0 0 2px var(--primary-color);
+        }
+        
+        .timeline-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+        }
+        
+        .timeline-title {
+            font-size: var(--font-size-lg);
+            font-weight: var(--font-weight-semibold);
+            color: var(--gray-900);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .timeline-date {
+            font-size: var(--font-size-sm);
+            color: var(--gray-600);
+            background: var(--white);
+            padding: 0.4rem 0.9rem;
+            border-radius: var(--border-radius-full);
+        }
+        
+        .timeline-content {
+            color: var(--gray-700);
+            line-height: 1.6;
+        }
+        
+        .timeline-meta {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+            flex-wrap: wrap;
+        }
+        
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: var(--font-size-sm);
+            color: var(--gray-600);
+        }
+        
+        .status-badge {
+            padding: 0.4rem 0.9rem;
+            border-radius: var(--border-radius-full);
+            font-size: var(--font-size-xs);
+            font-weight: var(--font-weight-semibold);
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .status-completed {
+            background: #E8F5E9;
+            color: #2E7D32;
+        }
+        
+        .status-pending {
+            background: #FFF3E0;
+            color: #E65100;
+        }
+        
+        .status-cancelled {
+            background: #FFEBEE;
+            color: #C62828;
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 4rem 2rem;
+            color: var(--gray-600);
+        }
+        
+        .empty-state i {
+            font-size: 5rem;
+            color: var(--gray-300);
+            margin-bottom: 1.5rem;
+        }
+        
+        .prescription-card {
+            background: var(--white);
+            border: 2px solid var(--gray-200);
+            border-radius: var(--border-radius-xl);
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .prescription-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--gray-200);
+        }
+        
+        .prescription-medications {
+            display: grid;
+            gap: 0.75rem;
+        }
+        
+        .medication-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.75rem;
+            background: var(--gray-50);
+            border-radius: var(--border-radius-lg);
+        }
+        
+        .medication-info {
+            flex: 1;
+        }
+        
+        .medication-name {
+            font-weight: var(--font-weight-semibold);
+            color: var(--gray-900);
+            margin-bottom: 0.25rem;
+        }
+        
+        .medication-details {
+            font-size: var(--font-size-sm);
+            color: var(--gray-600);
+        }
+        
+        .back-btn:hover {
+            transform: translateX(-4px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+        
+        #exportPDFBtn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(46,139,87,0.4);
+        }
+        
+        /* ========== RESPONSIVE DESIGN ========== */
+        @media (max-width: 1200px) {
+            .history-container {
+                max-width: 100% !important;
+                padding: 1.5rem !important;
+            }
+            
+            nav {
+                flex-wrap: wrap !important;
+                padding: 0 1rem !important;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            html, body {
+                overflow-x: hidden !important;
+                width: 100% !important;
+                max-width: 100% !important;
+            }
+            
+            .app-container {
+                padding: 1rem 0.5rem !important;
+                min-height: 100vh;
+                overflow-y: auto;
+                overflow-x: hidden !important;
+                -webkit-overflow-scrolling: touch;
+                width: 100% !important;
+                max-width: 100% !important;
+            }
+            
+            .history-container {
+                padding: 1rem !important;
+                margin: 0.5rem auto !important;
+                border-radius: var(--border-radius-lg) !important;
+                width: calc(100% - 1rem) !important;
+                max-width: 100% !important;
+                overflow-x: hidden !important;
+            }
+            
+            .history-header {
+                margin-bottom: 1.5rem !important;
+                padding-bottom: 1rem !important;
+            }
+            
+            .history-header h1 {
+                font-size: var(--font-size-2xl) !important;
+            }
+            
+            nav {
+                flex-direction: column !important;
+                align-items: stretch !important;
+                gap: 0.75rem !important;
+                padding: 0 0.5rem !important;
+            }
+            
+            .back-btn {
+                width: 100% !important;
+                justify-content: center !important;
+            }
+            
+            .pet-selector {
+                gap: 0.5rem !important;
+                margin-bottom: 1.5rem !important;
+            }
+            
+            .pet-chip-selector {
+                padding: 0.5rem 1rem !important;
+                font-size: var(--font-size-sm) !important;
+            }
+            
+            .history-section {
+                margin-bottom: 2rem !important;
+            }
+            
+            .section-title {
+                font-size: var(--font-size-lg) !important;
+                margin-bottom: 1rem !important;
+            }
+            
+            .timeline-item {
+                padding: 1rem !important;
+            }
+            
+            .prescription-card {
+                padding: 1rem !important;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .app-container {
+                padding: 0.25rem !important;
+            }
+            
+            .history-container {
+                padding: 0.5rem !important;
+                margin: 0.25rem auto !important;
+                width: calc(100% - 0.5rem) !important;
+                max-width: calc(100% - 0.5rem) !important;
+                box-sizing: border-box !important;
+            }
+            
+            .history-header {
+                margin-bottom: 1rem !important;
+                padding-bottom: 0.75rem !important;
+            }
+            
+            .history-header h1 {
+                font-size: var(--font-size-xl) !important;
+            }
+            
+            .history-header p {
+                font-size: var(--font-size-xs) !important;
+            }
+            
+            nav {
+                padding: 0 0.25rem !important;
+                margin-bottom: 0.75rem !important;
+                width: 100% !important;
+                max-width: 100% !important;
+                box-sizing: border-box !important;
+            }
+            
+            .pet-selector {
+                gap: 0.4rem !important;
+                margin-bottom: 1rem !important;
+                width: 100% !important;
+                max-width: 100% !important;
+                overflow-x: hidden !important;
+            }
+            
+            .pet-chip-selector {
+                padding: 0.4rem 0.8rem !important;
+                font-size: var(--font-size-xs) !important;
+            }
+            
+            .section-title {
+                font-size: var(--font-size-base) !important;
+                margin-bottom: 0.75rem !important;
+            }
+            
+            .timeline-item {
+                padding: 0.75rem !important;
+                width: 100% !important;
+                max-width: 100% !important;
+                box-sizing: border-box !important;
+            }
+            
+            .timeline-title {
+                font-size: var(--font-size-base) !important;
+            }
+            
+            .prescription-card {
+                padding: 0.75rem !important;
+                width: 100% !important;
+                max-width: 100% !important;
+                box-sizing: border-box !important;
+            }
+        }
+        
+        @media (max-width: 400px) {
+            html, body {
+                overflow-x: hidden !important;
+                width: 100vw !important;
+                max-width: 100vw !important;
+            }
+            
+            .app-container {
+                padding: 0.15rem !important;
+                width: 100vw !important;
+                max-width: 100vw !important;
+                box-sizing: border-box !important;
+            }
+            
+            .history-container {
+                padding: 0.4rem !important;
+                margin: 0.15rem auto !important;
+                width: calc(100vw - 0.3rem) !important;
+                max-width: calc(100vw - 0.3rem) !important;
+                box-sizing: border-box !important;
+            }
+            
+            .history-header h1 {
+                font-size: 1.1rem !important;
+            }
+            
+            .history-header p {
+                font-size: 0.7rem !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    
+    <div class="app-container" style="padding-top: 2rem; min-height: 100vh; overflow-y: auto; -webkit-overflow-scrolling: touch;">
+        <!-- Barra de navegación -->
+        <nav aria-label="Barra de navegación" class="top-nav" style="width:100%; max-width:1200px; margin:0 auto 2rem; display:flex; justify-content:space-between; align-items:center; padding:0 2rem; flex-wrap: wrap; gap: 0.75rem;">
+            <div style="display:flex; align-items:center; gap:.5rem; color:var(--white); opacity:.95; width:100%; justify-content:center; order: 2;">
+                <i class="fa-solid fa-notes-medical"></i>
+                <span style="font-weight:600;">Historial Clínico</span>
+            </div>
+            <a href="./index.html" class="back-btn" style="display:inline-flex; align-items:center; gap:0.5rem; padding:0.6rem 1rem; background:var(--white); border:none; border-radius:12px; color:var(--primary-color); font-weight:600; text-decoration:none; box-shadow:0 2px 8px rgba(0,0,0,0.1); transition:all 0.3s ease; width:100%; justify-content:center; order: 1;">
+                <i class="fa-solid fa-arrow-left"></i> <span>Volver</span>
+            </a>
+        </nav>
+
+        <div class="history-container">
+            <!-- Header -->
+            <div class="history-header">
+                <h1><i class="fa-solid fa-notes-medical"></i> Historial Clínico</h1>
+                <p style="color: var(--gray-600);">Consulta el historial médico completo de tus mascotas</p>
+            </div>
+
+            <!-- Selector de mascota -->
+            <div class="pet-selector" id="petSelector">
+                <!-- Se cargará dinámicamente -->
+            </div>
+
+            <!-- Sección: Citas -->
+            <div class="history-section" id="citasSection">
+                <div class="section-title">
+                    <i class="fa-solid fa-calendar-check"></i> Citas Médicas
+                </div>
+                <div class="timeline" id="citasTimeline">
+                    <!-- Se cargará dinámicamente -->
+                </div>
+            </div>
+
+            <!-- Sección: Recetas y Tratamientos -->
+            <div class="history-section" id="recetasSection">
+                <div class="section-title" id="recetas">
+                    <i class="fa-solid fa-prescription-bottle-medical"></i> Recetas y Tratamientos
+                </div>
+                <div id="recetasList">
+                    <!-- Se cargará dinámicamente -->
+                </div>
+            </div>
+
+            <!-- Sección: Vacunaciones -->
+            <div class="history-section" id="vacunasSection">
+                <div class="section-title">
+                    <i class="fa-solid fa-syringe"></i> Vacunaciones
+                </div>
+                <div class="timeline" id="vacunasTimeline">
+                    <!-- Se cargará dinámicamente -->
+                </div>
+            </div>
+
+            <!-- Sección: Procedimientos -->
+            <div class="history-section" id="procedimientosSection">
+                <div class="section-title">
+                    <i class="fa-solid fa-stethoscope"></i> Procedimientos
+                </div>
+                <div class="timeline" id="procedimientosTimeline">
+                    <!-- Se cargará dinámicamente -->
+                </div>
+            </div>
+
+            <!-- Sección: Exportar PDF -->
+            <div class="history-section" style="margin-top:3rem; padding-top:2rem; border-top:3px solid var(--gray-200);">
+                <div style="text-align:center; background:linear-gradient(135deg, var(--gray-50), var(--white)); padding:2rem; border-radius:var(--border-radius-xl); border:2px dashed var(--gray-300);">
+                    <div style="font-size:3rem; color:var(--primary-color); margin-bottom:1rem;">
+                        <i class="fa-solid fa-file-pdf"></i>
+                    </div>
+                    <h3 style="font-size:1.5rem; font-weight:700; color:var(--gray-900); margin-bottom:0.5rem;">
+                        Exportar Historial Clínico
+                    </h3>
+                    <p style="color:var(--gray-600); margin-bottom:1.5rem; max-width:500px; margin-left:auto; margin-right:auto;">
+                        Descarga el historial clínico completo de tu mascota en formato PDF para tener un respaldo o compartirlo con otros veterinarios.
+                    </p>
+                    <button id="exportPDFBtn" class="submit-btn" style="padding:1rem 2rem; font-size:1.1rem; font-weight:600; box-shadow:0 4px 12px rgba(46,139,87,0.3);">
+                        <i class="fa-solid fa-download"></i>
+                        Exportar como PDF
+                    </button>
+                    <p style="margin-top:1rem; font-size:0.85rem; color:var(--gray-500);">
+                        <i class="fa-solid fa-info-circle"></i> Esta funcionalidad estará disponible próximamente
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="../../assets/js/api.service.js"></script>
+    <script src="./history.js"></script>
+</body>
+</html>
+

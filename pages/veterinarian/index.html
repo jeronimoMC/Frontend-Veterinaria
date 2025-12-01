@@ -1,0 +1,2433 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>VetUni - Panel de Veterinario</title>
+    <link rel="stylesheet" href="../../assets/css/styles.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+        
+        html, body {
+            overflow-x: hidden;
+            width: 100%;
+            max-width: 100%;
+        }
+        
+        .veterinarian-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 1.5rem;
+            width: 100%;
+        }
+        
+        .veterinarian-header {
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
+            color: var(--white);
+            border-radius: var(--border-radius-2xl);
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: var(--shadow-lg);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .veterinarian-header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -10%;
+            width: 300px;
+            height: 300px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+        }
+        
+        .veterinarian-header h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .veterinarian-header p {
+            opacity: 0.95;
+            font-size: 1rem;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .veterinarian-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .veterinarian-card {
+            background: var(--white);
+            border-radius: var(--border-radius-xl);
+            padding: 1.5rem;
+            box-shadow: var(--shadow-md);
+            border: 1px solid var(--gray-200);
+            transition: all 0.3s ease;
+        }
+        
+        .veterinarian-card:hover {
+            box-shadow: var(--shadow-lg);
+        }
+        
+        .veterinarian-card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid var(--gray-100);
+            flex-wrap: wrap;
+            gap: 0.75rem;
+        }
+        
+        .veterinarian-card-header h2 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--primary-dark);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .stat-card {
+            background: var(--white);
+            border-radius: var(--border-radius-xl);
+            padding: 1.5rem;
+            box-shadow: var(--shadow-md);
+            border-left: 4px solid var(--primary-color);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary-color), var(--primary-light));
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-lg);
+        }
+        
+        .stat-card:hover::before {
+            transform: scaleX(1);
+        }
+        
+        .stat-card h3 {
+            font-size: 0.9rem;
+            color: var(--gray-600);
+            margin-bottom: 0.75rem;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .stat-card .stat-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            line-height: 1;
+        }
+        
+        .patient-list, .appointment-list, .notification-list {
+            display: grid;
+            gap: 0.75rem;
+            max-height: 500px;
+            overflow-y: auto;
+            padding-right: 0.5rem;
+        }
+        
+        .patient-list::-webkit-scrollbar,
+        .appointment-list::-webkit-scrollbar,
+        .notification-list::-webkit-scrollbar {
+            width: 6px;
+        }
+        
+        .patient-list::-webkit-scrollbar-track,
+        .appointment-list::-webkit-scrollbar-track,
+        .notification-list::-webkit-scrollbar-track {
+            background: var(--gray-100);
+            border-radius: 10px;
+        }
+        
+        .patient-list::-webkit-scrollbar-thumb,
+        .appointment-list::-webkit-scrollbar-thumb,
+        .notification-list::-webkit-scrollbar-thumb {
+            background: var(--primary-color);
+            border-radius: 10px;
+        }
+        
+        .patient-item, .appointment-item, .notification-item {
+            background: var(--gray-50);
+            border-radius: var(--border-radius-lg);
+            padding: 1rem;
+            border: 1px solid var(--gray-200);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .patient-item:hover, .appointment-item:hover, .notification-item:hover {
+            background: var(--white);
+            box-shadow: var(--shadow-md);
+            transform: translateY(-2px);
+            border-color: var(--primary-color);
+        }
+        
+        .notification-item {
+            border-left: 4px solid var(--primary-color);
+        }
+        
+        .notification-item.pending {
+            border-left-color: #FF9800;
+        }
+        
+        .notification-item.urgent {
+            border-left-color: #F44336;
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 0.75rem;
+            flex-wrap: wrap;
+        }
+        
+        .btn-action {
+            padding: 0.6rem 1.25rem;
+            border: none;
+            border-radius: var(--border-radius-md);
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-family: var(--font-family);
+        }
+        
+        .btn-accept {
+            background: linear-gradient(135deg, var(--success-color), #66BB6A);
+            color: var(--white);
+        }
+        
+        .btn-reject {
+            background: linear-gradient(135deg, var(--error-color), #F87171);
+            color: var(--white);
+        }
+        
+        .btn-postpone {
+            background: linear-gradient(135deg, var(--warning-color), #FFB74D);
+            color: var(--white);
+        }
+        
+        .btn-view {
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
+            color: var(--white);
+        }
+        
+        .btn-action:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+        
+        /* Estilos para botón de notificaciones */
+        .notif-bell-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        }
+        
+        /* Estilos para el botón del nombre del veterinario */
+        #veterinarianProfileBtn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
+            color: var(--white);
+        }
+        
+        #veterinarianProfileBtn:hover i {
+            color: var(--white);
+        }
+        
+        /* Modal de notificaciones */
+        .notifications-modal {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,.35);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: var(--spacing-md);
+            z-index: var(--z-modal);
+        }
+        
+        .notifications-modal.open {
+            display: flex;
+        }
+        
+        .notifications-modal-content {
+            width: 100%;
+            max-width: 600px;
+            max-height: 90vh;
+            background: var(--white);
+            border-radius: var(--border-radius-2xl);
+            box-shadow: var(--shadow-xl);
+            overflow: hidden;
+            animation: slideUp .35s ease;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .notifications-modal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: var(--spacing-lg) var(--spacing-xl) var(--spacing-md) var(--spacing-xl);
+            border-bottom: 1px solid var(--gray-200);
+            flex-shrink: 0;
+        }
+        
+        .notifications-modal-title {
+            font-size: var(--font-size-xl);
+            font-weight: var(--font-weight-bold);
+            color: var(--gray-800);
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .notifications-modal-close {
+            border: none;
+            background: var(--gray-100);
+            border-radius: var(--border-radius-full);
+            width: 36px;
+            height: 36px;
+            display: grid;
+            place-items: center;
+            color: var(--gray-700);
+            cursor: pointer;
+            transition: background var(--transition-normal);
+        }
+        
+        .notifications-modal-close:hover {
+            background: var(--gray-200);
+        }
+        
+            .notifications-modal-body {
+                padding: var(--spacing-xl);
+                overflow-y: auto;
+                flex: 1;
+                -webkit-overflow-scrolling: touch;
+            }
+            
+            .notifications-modal-body::-webkit-scrollbar {
+                width: 6px;
+            }
+            
+            .notifications-modal-body::-webkit-scrollbar-track {
+                background: var(--gray-100);
+                border-radius: 10px;
+            }
+            
+            .notifications-modal-body::-webkit-scrollbar-thumb {
+                background: var(--primary-color);
+                border-radius: 10px;
+            }
+            
+        /* Notificaciones con acordeón */
+        .notification-accordion-item {
+            background: var(--white);
+            border: 1px solid var(--gray-200);
+            border-radius: var(--border-radius-lg);
+            margin-bottom: 0.75rem;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+        
+        .notification-accordion-item:hover {
+            box-shadow: var(--shadow-sm);
+            border-color: var(--primary-color);
+        }
+        
+        .notification-accordion-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1rem 1.25rem;
+            cursor: pointer;
+            transition: background 0.2s ease;
+        }
+        
+        .notification-accordion-header:hover {
+            background: var(--gray-50);
+        }
+        
+        .notification-accordion-header.active {
+            background: var(--gray-50);
+        }
+        
+        .notification-accordion-title-section {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        
+        .notification-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+            flex-shrink: 0;
+        }
+        
+        .notification-title-content {
+            flex: 1;
+            min-width: 0;
+        }
+        
+        .notification-title {
+            font-weight: var(--font-weight-semibold);
+            color: var(--gray-900);
+            margin-bottom: 0.25rem;
+            font-size: 0.95rem;
+        }
+        
+        .notification-date {
+            font-size: 0.75rem;
+            color: var(--gray-600);
+        }
+        
+        .notification-accordion-toggle {
+            background: none;
+            border: none;
+            color: var(--gray-600);
+            cursor: pointer;
+            padding: 0.25rem;
+            border-radius: 50%;
+            width: 28px;
+            height: 28px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+            flex-shrink: 0;
+        }
+        
+        .notification-accordion-toggle:hover {
+            background: var(--gray-200);
+        }
+        
+        .notification-accordion-toggle i {
+            transition: transform 0.3s ease;
+        }
+        
+        .notification-accordion-item.open .notification-accordion-toggle i {
+            transform: rotate(180deg);
+        }
+        
+        .notification-accordion-body {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+            padding: 0 1.25rem;
+        }
+        
+        .notification-accordion-item.open .notification-accordion-body {
+            max-height: 500px;
+            padding: 0 1.25rem 1rem 1.25rem;
+        }
+        
+        .notification-description {
+            color: var(--gray-700);
+            font-size: 0.9rem;
+            line-height: 1.6;
+            padding-top: 0.5rem;
+            border-top: 1px solid var(--gray-200);
+            margin-top: 0.5rem;
+        }
+        
+        .notification-empty {
+            text-align: center;
+            padding: 3rem 1rem;
+            color: var(--gray-600);
+        }
+        
+        .notification-empty i {
+            font-size: 3rem;
+            color: var(--gray-300);
+            margin-bottom: 1rem;
+        }
+        
+        @media (max-width: 768px) {
+            .notifications-modal {
+                padding: var(--spacing-sm);
+            }
+            
+            .notifications-modal-content {
+                max-width: 100%;
+                max-height: 95vh;
+                border-radius: var(--border-radius-xl);
+            }
+            
+            .notifications-modal-header {
+                padding: var(--spacing-md) var(--spacing-lg);
+            }
+            
+            .notifications-modal-title {
+                font-size: var(--font-size-lg);
+            }
+            
+            .notifications-modal-body {
+                padding: var(--spacing-lg);
+            }
+            
+            .notification-accordion-header {
+                padding: 0.875rem 1rem;
+            }
+            
+            .notification-title {
+                font-size: 0.9rem;
+            }
+            
+            .notification-accordion-title-section {
+                gap: 0.5rem;
+            }
+            
+            .notification-icon {
+                width: 36px;
+                height: 36px;
+                font-size: 1rem;
+            }
+            
+            nav {
+                flex-direction: row !important;
+                justify-content: space-between !important;
+            }
+            
+            #notificationsToggle {
+                order: 1 !important;
+            }
+            
+            .back-btn {
+                order: 2 !important;
+            }
+            
+            #veterinarianProfileBtn {
+                order: 3 !important;
+                flex: 1;
+                justify-content: center;
+                margin-left: auto;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .notifications-modal-content {
+                max-width: 100%;
+                max-height: 100vh;
+                border-radius: var(--border-radius-lg) var(--border-radius-lg) 0 0;
+            }
+            
+            .notifications-modal-header {
+                padding: var(--spacing-md);
+            }
+            
+            .notifications-modal-body {
+                padding: var(--spacing-md);
+            }
+            
+            .notification-accordion-header {
+                padding: 0.75rem;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+            }
+            
+            .btn-action {
+                width: 100%;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            #veterinarianProfileBtn span {
+                display: none;
+            }
+            
+            #veterinarianProfileBtn {
+                width: 48px;
+                padding: 0.75rem;
+            }
+        }
+
+        /* ========== CALENDARIO SEMANAL ========== */
+        .weekly-calendar {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 0.75rem;
+            margin-top: 1rem;
+        }
+
+        .calendar-day {
+            background: var(--gray-50);
+            border: 1px solid var(--gray-200);
+            border-radius: var(--border-radius-lg);
+            min-height: 400px;
+            padding: 0.75rem;
+            transition: all 0.3s ease;
+        }
+
+        .calendar-day:hover {
+            box-shadow: var(--shadow-sm);
+        }
+
+        .calendar-day-header {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 0.75rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 2px solid var(--gray-200);
+        }
+
+        .calendar-day-name {
+            font-weight: 600;
+            color: var(--gray-700);
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            margin-bottom: 0.25rem;
+        }
+
+        .calendar-day-number {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary-dark);
+        }
+
+        .calendar-day.today .calendar-day-header {
+            border-bottom-color: var(--primary-color);
+        }
+
+        .calendar-day.today .calendar-day-number {
+            background: var(--primary-color);
+            color: var(--white);
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .calendar-appointments {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            max-height: 320px;
+            overflow-y: auto;
+            padding-right: 0.25rem;
+        }
+
+        .calendar-appointments::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        .calendar-appointments::-webkit-scrollbar-track {
+            background: var(--gray-100);
+            border-radius: 10px;
+        }
+
+        .calendar-appointments::-webkit-scrollbar-thumb {
+            background: var(--primary-color);
+            border-radius: 10px;
+        }
+
+        .calendar-appointment-item {
+            background: var(--white);
+            border-radius: var(--border-radius-md);
+            padding: 0.6rem;
+            border-left: 4px solid var(--primary-color);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            position: relative;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        .calendar-appointment-item:hover {
+            transform: translateX(4px);
+            box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+        }
+
+        .calendar-appointment-time {
+            font-weight: 700;
+            font-size: 0.85rem;
+            color: var(--gray-900);
+            margin-bottom: 0.25rem;
+        }
+
+        .calendar-appointment-client {
+            font-size: 0.75rem;
+            color: var(--gray-600);
+            margin-bottom: 0.15rem;
+        }
+
+        .calendar-appointment-pet {
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--gray-700);
+            margin-bottom: 0.15rem;
+        }
+
+        .calendar-appointment-service {
+            font-size: 0.7rem;
+            color: var(--gray-500);
+            margin-top: 0.25rem;
+        }
+
+        .calendar-appointment-actions {
+            display: flex;
+            gap: 0.25rem;
+            margin-top: 0.5rem;
+            padding-top: 0.5rem;
+            border-top: 1px solid var(--gray-200);
+        }
+
+        .calendar-appointment-btn {
+            flex: 1;
+            padding: 0.35rem 0.5rem;
+            border: none;
+            border-radius: 6px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.25rem;
+        }
+
+        .calendar-appointment-btn.accept {
+            background: #4CAF50;
+            color: white;
+        }
+
+        .calendar-appointment-btn.reject {
+            background: #F44336;
+            color: white;
+        }
+
+        .calendar-appointment-btn.postpone {
+            background: #FF9800;
+            color: white;
+        }
+
+        .calendar-appointment-btn.cancel {
+            background: #F44336;
+            color: white;
+        }
+
+        .calendar-appointment-btn:hover {
+            transform: scale(1.05);
+        }
+
+        .calendar-appointment-btn.color {
+            background: var(--gray-600);
+            color: white;
+            position: relative;
+        }
+
+        .color-picker-modal {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.4);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 10000;
+            padding: 1rem;
+        }
+
+        .color-picker-modal.show {
+            display: flex;
+        }
+
+        .color-picker-content {
+            background: var(--white);
+            border-radius: var(--border-radius-xl);
+            box-shadow: var(--shadow-xl);
+            padding: 1.5rem;
+            max-width: 320px;
+            width: 100%;
+            animation: slideUp 0.3s ease;
+        }
+
+        .color-picker-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.25rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 2px solid var(--gray-200);
+        }
+
+        .color-picker-title {
+            font-weight: 700;
+            color: var(--primary-dark);
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .color-picker-close {
+            background: none;
+            border: none;
+            color: var(--gray-600);
+            cursor: pointer;
+            font-size: 1.5rem;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: all 0.2s ease;
+        }
+
+        .color-picker-close:hover {
+            background: var(--gray-100);
+        }
+
+        .color-picker-options {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.75rem;
+        }
+
+        .color-option {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 1rem;
+            border-radius: var(--border-radius-lg);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border: 2px solid var(--gray-200);
+            background: var(--white);
+        }
+
+        .color-option:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+            border-color: var(--gray-400);
+        }
+
+        .color-option.selected {
+            border-color: var(--primary-color);
+            background: var(--gray-50);
+        }
+
+        .color-circle {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            border: 3px solid var(--gray-300);
+            flex-shrink: 0;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .color-circle i {
+            font-size: 1.25rem;
+            color: white;
+            display: block;
+            line-height: 1;
+        }
+
+        .color-option:hover .color-circle {
+            transform: scale(1.1);
+            border-width: 4px;
+        }
+
+        .color-option[data-color="green"] .color-circle {
+            background: #4CAF50;
+        }
+
+        .color-option[data-color="yellow"] .color-circle {
+            background: #FFC107;
+        }
+
+        .color-option[data-color="red"] .color-circle {
+            background: #F44336;
+        }
+
+        .color-option[data-color="blue"] .color-circle {
+            background: #2196F3;
+        }
+
+        .color-label {
+            font-size: 0.9rem;
+            color: var(--gray-700);
+            font-weight: 600;
+            text-align: center;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @media (max-width: 480px) {
+            .color-picker-content {
+                padding: 1.25rem;
+                max-width: 100%;
+            }
+
+            .color-picker-options {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* ========== MODALES DE PACIENTES ========== */
+        .patient-modal {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.5);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 10000;
+            padding: 1rem;
+            overflow-y: auto;
+        }
+
+        .patient-modal.show {
+            display: flex;
+        }
+
+        .patient-modal-content {
+            background: var(--white);
+            border-radius: var(--border-radius-2xl);
+            box-shadow: var(--shadow-xl);
+            width: 100%;
+            max-width: 600px;
+            max-height: 90vh;
+            display: flex;
+            flex-direction: column;
+            animation: slideUp 0.3s ease;
+        }
+
+        .patient-modal-content.large {
+            max-width: 900px;
+        }
+
+        .patient-modal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1.5rem;
+            border-bottom: 2px solid var(--gray-200);
+            flex-shrink: 0;
+        }
+
+        .patient-modal-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--primary-dark);
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .patient-modal-close {
+            background: var(--gray-100);
+            border: none;
+            border-radius: 50%;
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--gray-700);
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .patient-modal-close:hover {
+            background: var(--gray-200);
+        }
+
+        .patient-modal-body {
+            padding: 1.5rem;
+            overflow-y: auto;
+            flex: 1;
+        }
+
+        /* Tabs de navegación */
+        .patient-tabs {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+            border-bottom: 2px solid var(--gray-200);
+            overflow-x: auto;
+        }
+
+        .patient-tab {
+            padding: 0.75rem 1.25rem;
+            background: none;
+            border: none;
+            border-bottom: 3px solid transparent;
+            color: var(--gray-600);
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            white-space: nowrap;
+            font-size: 0.9rem;
+        }
+
+        .patient-tab:hover {
+            color: var(--primary-color);
+            background: var(--gray-50);
+        }
+
+        .patient-tab.active {
+            color: var(--primary-color);
+            border-bottom-color: var(--primary-color);
+        }
+
+        .patient-tab-content {
+            display: none;
+        }
+
+        .patient-tab-content.active {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Resultados de búsqueda */
+        .patient-search-results {
+            display: grid;
+            gap: 1rem;
+            max-height: 500px;
+            overflow-y: auto;
+        }
+
+        /* Información del paciente */
+        .patient-info-header {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            padding: 1.5rem;
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
+            border-radius: var(--border-radius-lg);
+            color: var(--white);
+            margin-bottom: 1.5rem;
+        }
+
+        .patient-info-avatar {
+            width: 80px;
+            height: 80px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5rem;
+        }
+
+        .patient-info-details h3 {
+            margin: 0 0 0.5rem 0;
+            font-size: 1.5rem;
+        }
+
+        .patient-info-details p {
+            margin: 0.25rem 0;
+            opacity: 0.95;
+        }
+
+        .patient-info-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .patient-info-item {
+            background: var(--gray-50);
+            padding: 1rem;
+            border-radius: var(--border-radius-md);
+        }
+
+        .patient-info-item-label {
+            font-size: 0.85rem;
+            color: var(--gray-600);
+            margin-bottom: 0.25rem;
+        }
+
+        .patient-info-item-value {
+            font-weight: 600;
+            color: var(--gray-900);
+        }
+
+        .patient-actions {
+            display: flex;
+            gap: 0.75rem;
+            flex-wrap: wrap;
+            margin-top: 1.5rem;
+        }
+
+        /* Lista de historial y citas */
+        .history-list, .appointments-list-patients {
+            display: grid;
+            gap: 1rem;
+        }
+
+        .history-item, .appointment-item-patients {
+            background: var(--gray-50);
+            border-radius: var(--border-radius-lg);
+            padding: 1rem;
+            border-left: 4px solid var(--primary-color);
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .history-item:hover, .appointment-item-patients:hover {
+            background: var(--white);
+            box-shadow: var(--shadow-sm);
+            transform: translateX(4px);
+        }
+
+        .history-item-header, .appointment-item-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 0.75rem;
+        }
+
+        .history-item-title {
+            font-weight: 700;
+            color: var(--gray-900);
+            margin-bottom: 0.25rem;
+        }
+
+        .history-item-date {
+            font-size: 0.85rem;
+            color: var(--gray-600);
+        }
+
+        .history-item-type {
+            display: inline-block;
+            background: var(--primary-color);
+            color: white;
+            padding: 0.25rem 0.75rem;
+            border-radius: 999px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .history-item-content {
+            color: var(--gray-700);
+            font-size: 0.9rem;
+            line-height: 1.6;
+        }
+
+        /* Notificaciones enviadas */
+        .notification-list-patient {
+            display: grid;
+            gap: 1rem;
+        }
+
+        .notification-item-patient {
+            background: var(--gray-50);
+            border-radius: var(--border-radius-lg);
+            padding: 1rem;
+            border-left: 4px solid var(--primary-color);
+        }
+
+        .notification-item-patient-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+
+        .notification-item-patient-title {
+            font-weight: 700;
+            color: var(--gray-900);
+        }
+
+        .notification-item-patient-date {
+            font-size: 0.75rem;
+            color: var(--gray-600);
+        }
+
+        .notification-item-patient-message {
+            color: var(--gray-700);
+            font-size: 0.9rem;
+            line-height: 1.6;
+        }
+
+        /* Mejorar estilos de inputs en modales */
+        .patient-modal-body .input-container input,
+        .patient-modal-body .input-container select,
+        .patient-modal-body .input-container textarea {
+            background: var(--white) !important;
+            border: 2px solid var(--gray-300) !important;
+            color: var(--gray-900) !important;
+            padding: 1rem 1.125rem 1rem calc(1.125rem + 28px) !important;
+            font-size: var(--font-size-base) !important;
+            font-family: var(--font-family) !important;
+            font-weight: var(--font-weight-normal) !important;
+            border-radius: var(--border-radius-lg) !important;
+            transition: all 0.2s ease !important;
+            line-height: 1.5 !important;
+        }
+
+        .patient-modal-body .input-container input:focus,
+        .patient-modal-body .input-container select:focus,
+        .patient-modal-body .input-container textarea:focus {
+            background: var(--white) !important;
+            border-color: var(--primary-color) !important;
+            box-shadow: 0 0 0 3px rgba(46, 139, 87, 0.1) !important;
+            outline: none !important;
+        }
+
+        .patient-modal-body .input-container textarea {
+            padding: 1rem !important;
+            padding-left: calc(1rem + 28px) !important;
+            min-height: 120px;
+            resize: vertical;
+            line-height: 1.6 !important;
+            font-size: var(--font-size-base) !important;
+            font-family: var(--font-family) !important;
+            font-weight: var(--font-weight-normal) !important;
+            width: 100% !important;
+        }
+
+        /* Asegurar que los iconos en textareas estén bien posicionados */
+        .patient-modal-body .input-container textarea ~ .input-icon {
+            top: 1rem !important;
+            align-self: flex-start !important;
+        }
+
+        .patient-modal-body .input-icon {
+            color: var(--gray-500) !important;
+            font-size: 1.1rem !important;
+        }
+
+        .patient-modal-body .input-container input:focus ~ .input-icon,
+        .patient-modal-body .input-container select:focus ~ .input-icon,
+        .patient-modal-body .input-container textarea:focus ~ .input-icon {
+            color: var(--primary-color) !important;
+        }
+
+        .patient-modal-body .input-container input::placeholder,
+        .patient-modal-body .input-container textarea::placeholder {
+            color: var(--gray-400) !important;
+            opacity: 1 !important;
+            font-size: var(--font-size-base) !important;
+            font-family: var(--font-family) !important;
+            font-weight: var(--font-weight-normal) !important;
+        }
+
+        .patient-modal-body .select-container select {
+            cursor: pointer;
+            appearance: none;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+        }
+
+        .patient-modal-body .select-container::after {
+            content: '\f078';
+            font-family: 'Font Awesome 6 Free';
+            font-weight: 900;
+            position: absolute;
+            right: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--gray-500);
+            pointer-events: none;
+            z-index: 2;
+        }
+
+        .patient-modal-body .select-container select:focus ~ .input-icon,
+        .patient-modal-body .select-container:focus-within .input-icon {
+            color: var(--primary-color) !important;
+        }
+
+        @media (max-width: 768px) {
+            .patient-modal-content {
+                max-width: 100%;
+                max-height: 100vh;
+                border-radius: var(--border-radius-lg) var(--border-radius-lg) 0 0;
+            }
+
+            .patient-info-header {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .patient-info-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .patient-tabs {
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+            }
+
+            .patient-modal-body .input-container input,
+            .patient-modal-body .input-container select,
+            .patient-modal-body .input-container textarea {
+                padding: 0.875rem 1rem 0.875rem calc(1rem + 28px) !important;
+                font-size: var(--font-size-base) !important;
+                border-radius: var(--border-radius-lg) !important;
+            }
+
+            .patient-modal-body .input-container textarea {
+                padding: 0.875rem !important;
+                padding-left: calc(0.875rem + 28px) !important;
+                font-size: var(--font-size-base) !important;
+            }
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.2);
+            }
+        }
+
+        /* Colores de estado de citas */
+        .calendar-appointment-item.status-confirmed {
+            border-left-color: #4CAF50;
+        }
+
+        .calendar-appointment-item.status-pending {
+            border-left-color: #FFC107;
+        }
+
+        .calendar-appointment-item.status-urgent {
+            border-left-color: #F44336;
+        }
+
+        .calendar-appointment-item.status-general {
+            border-left-color: #2196F3;
+        }
+
+        .calendar-appointment-item[data-status-color="green"] {
+            border-left-color: #4CAF50;
+        }
+
+        .calendar-appointment-item[data-status-color="yellow"] {
+            border-left-color: #FFC107;
+        }
+
+        .calendar-appointment-item[data-status-color="red"] {
+            border-left-color: #F44336;
+        }
+
+        .calendar-appointment-item[data-status-color="blue"] {
+            border-left-color: #2196F3;
+        }
+
+        @media (max-width: 1200px) {
+            .weekly-calendar {
+                grid-template-columns: repeat(4, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .weekly-calendar {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 0.5rem;
+            }
+
+            .calendar-day {
+                min-height: 300px;
+                padding: 0.5rem;
+            }
+
+            .calendar-appointments {
+                max-height: 220px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .weekly-calendar {
+                grid-template-columns: 1fr;
+            }
+
+            .calendar-day {
+                min-height: auto;
+            }
+
+            .calendar-appointments {
+                max-height: none;
+            }
+        }
+        
+        @media (max-width: 1200px) {
+            .veterinarian-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .veterinarian-container {
+                padding: 1rem;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            html, body {
+                overflow-x: hidden !important;
+            }
+            
+            .veterinarian-container {
+                padding: 1rem 0.5rem;
+                width: 100%;
+                max-width: 100%;
+            }
+            
+            .veterinarian-header {
+                padding: 1.5rem;
+                margin-bottom: 1.5rem;
+            }
+            
+            .veterinarian-header h1 {
+                font-size: 1.5rem;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+            
+            .stat-card .stat-value {
+                font-size: 2rem;
+            }
+            
+            .veterinarian-card {
+                padding: 1.25rem;
+            }
+            
+            .veterinarian-card-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+            }
+            
+            .btn-action {
+                width: 100%;
+            }
+            
+            nav {
+                flex-direction: row !important;
+                justify-content: space-between !important;
+                align-items: center !important;
+            }
+            
+            #notificationsToggle {
+                order: 1 !important;
+                flex-shrink: 0;
+            }
+            
+            .back-btn {
+                order: 2 !important;
+                flex: 1;
+                justify-content: center;
+            }
+            
+            #veterinarianProfileBtn {
+                order: 3 !important;
+                flex: 1;
+                justify-content: center;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .veterinarian-container {
+                padding: 0.5rem;
+            }
+            
+            .veterinarian-header {
+                padding: 1rem;
+            }
+            
+            .veterinarian-header h1 {
+                font-size: 1.25rem;
+            }
+            
+            .stat-card {
+                padding: 1rem;
+            }
+            
+            .stat-card .stat-value {
+                font-size: 1.75rem;
+            }
+            
+            .veterinarian-card {
+                padding: 1rem;
+            }
+            
+            nav {
+                padding: 0 0.5rem !important;
+            }
+            
+            #veterinarianProfileBtn span {
+                display: none;
+            }
+            
+            #veterinarianProfileBtn {
+                width: 48px;
+                padding: 0.75rem;
+                justify-content: center;
+            }
+            
+            #veterinarianProfileBtn i:last-child {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <script src="../../assets/js/api.service.js"></script>
+    
+    <div class="app-container" style="padding-top: 2rem;">
+        <!-- Barra de navegación -->
+        <nav aria-label="Barra de navegación" class="top-nav" style="width:100%; max-width:1400px; margin:0 auto 2rem; display:flex; justify-content:space-between; align-items:center; padding:0 2rem; flex-wrap: wrap; gap: 0.75rem;">
+            <!-- Botón de Notificaciones - Primer elemento -->
+            <div style="display:flex; align-items:center; gap:1rem; order: 1;">
+                <button id="notificationsToggle" class="notif-bell-btn" style="position:relative; background:var(--white); border:none; border-radius:50%; width:48px; height:48px; display:flex; align-items:center; justify-content:center; cursor:pointer; box-shadow:0 2px 8px rgba(0,0,0,0.1); transition:all 0.3s ease;">
+                    <i class="fa-solid fa-bell" style="color:var(--primary-color); font-size:1.2rem;"></i>
+                    <span id="notificationsBadge" class="notif-badge" style="position:absolute; top:-4px; right:-4px; background:#F44336; color:white; border-radius:50%; width:20px; height:20px; display:none; align-items:center; justify-content:center; font-size:0.7rem; font-weight:700; border:2px solid white;">0</span>
+                </button>
+            </div>
+            
+            <!-- Botón Salir -->
+            <a href="../auth/index.html" class="back-btn" style="display:inline-flex; align-items:center; gap:0.5rem; padding:0.6rem 1rem; background:var(--white); border:none; border-radius:12px; color:var(--primary-color); font-weight:600; text-decoration:none; box-shadow:0 2px 8px rgba(0,0,0,0.1); transition:all 0.3s ease; order: 2;">
+                <i class="fa-solid fa-arrow-left"></i> <span>Salir</span>
+            </a>
+            
+            <!-- Nombre del Veterinario como Botón -->
+            <button id="veterinarianProfileBtn" onclick="window.location.href='./profile.html'" style="display:flex; align-items:center; gap:.5rem; color:var(--primary-dark); font-weight:600; background:var(--white); padding:0.75rem 1.5rem; border:none; border-radius:12px; box-shadow:0 2px 8px rgba(0,0,0,0.1); cursor:pointer; transition:all 0.3s ease; order: 3; font-family:var(--font-family);">
+                <i class="fa-solid fa-user-doctor"></i>
+                <span id="veterinarianName">Veterinario</span>
+                <i class="fa-solid fa-chevron-right" style="font-size:0.85rem;"></i>
+            </button>
+        </nav>
+
+        <div class="veterinarian-container">
+            <!-- Header -->
+            <div class="veterinarian-header">
+                <h1>
+                    <i class="fa-solid fa-stethoscope"></i>
+                    Panel de Veterinario
+                </h1>
+                <p>Gestión de pacientes, historiales clínicos y citas médicas</p>
+            </div>
+
+            <!-- Estadísticas -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <h3><i class="fa-solid fa-users"></i> Pacientes Activos</h3>
+                    <div class="stat-value" id="statPatients">0</div>
+                </div>
+                <div class="stat-card">
+                    <h3><i class="fa-solid fa-calendar-check"></i> Citas Hoy</h3>
+                    <div class="stat-value" id="statAppointmentsToday">0</div>
+                </div>
+            </div>
+
+            <!-- Calendario Semanal -->
+            <div class="veterinarian-card" style="margin-bottom: 2rem;">
+                <div class="veterinarian-card-header">
+                    <h2><i class="fa-solid fa-calendar-week"></i> Calendario Semanal</h2>
+                    <div style="display:flex; gap:0.5rem; align-items:center; flex-wrap:wrap;">
+                        <button class="btn-action btn-view" onclick="previousWeek()" style="padding:0.5rem;">
+                            <i class="fa-solid fa-chevron-left"></i>
+                        </button>
+                        <span id="weekRange" style="font-weight:600; color:var(--primary-dark); white-space:nowrap;">Semana actual</span>
+                        <button class="btn-action btn-view" onclick="nextWeek()" style="padding:0.5rem;">
+                            <i class="fa-solid fa-chevron-right"></i>
+                        </button>
+                        <button class="btn-action btn-view" onclick="goToToday()" style="padding:0.5rem;">
+                            <i class="fa-solid fa-calendar-day"></i> Hoy
+                        </button>
+                    </div>
+                </div>
+                <div id="weeklyCalendar" class="weekly-calendar">
+                    <!-- Se cargará dinámicamente -->
+                </div>
+            </div>
+
+            <!-- Grid principal -->
+            <div class="veterinarian-grid">
+                <!-- Pacientes -->
+                <div class="veterinarian-card">
+                    <div class="veterinarian-card-header">
+                        <h2><i class="fa-solid fa-users"></i> Mis Pacientes</h2>
+                        <button class="btn-action btn-view" onclick="openPatientSearch()">
+                            <i class="fa-solid fa-search"></i> Buscar
+                        </button>
+                    </div>
+                    <div class="patient-list" id="patientsList">
+                        <!-- Se cargará dinámicamente -->
+                    </div>
+                </div>
+
+                <!-- Citas del día -->
+                <div class="veterinarian-card">
+                    <div class="veterinarian-card-header">
+                        <h2><i class="fa-solid fa-calendar-day"></i> Citas de Hoy</h2>
+                        <button class="btn-action btn-view" onclick="openCreateAppointment()">
+                            <i class="fa-solid fa-plus"></i> Nueva
+                        </button>
+                    </div>
+                    <div class="appointment-list" id="appointmentsTodayList">
+                        <!-- Se cargará dinámicamente -->
+                    </div>
+                </div>
+            </div>
+
+
+            <!-- Historiales clínicos recientes -->
+            <div class="veterinarian-card" style="margin-bottom:1.5rem;">
+                <div class="veterinarian-card-header">
+                    <h2><i class="fa-solid fa-file-medical"></i> Historiales Clínicos Recientes</h2>
+                    <button class="btn-action btn-view" onclick="openHistoryManager()">
+                        <i class="fa-solid fa-folder-open"></i> Gestionar
+                    </button>
+                </div>
+                <div class="patient-list" id="recentHistoriesList">
+                    <!-- Se cargará dinámicamente -->
+                </div>
+            </div>
+
+            <!-- Facturación -->
+            <div class="veterinarian-card">
+                <div class="veterinarian-card-header">
+                    <h2><i class="fa-solid fa-receipt"></i> Facturación</h2>
+                    <button class="btn-action btn-accept" onclick="openCreateInvoiceModal()">
+                        <i class="fa-solid fa-plus"></i> Nueva Factura
+                    </button>
+                </div>
+                <div style="padding:1rem; text-align:center; color:var(--gray-600);">
+                    <i class="fa-solid fa-file-invoice" style="font-size:3rem; margin-bottom:0.5rem; opacity:0.3;"></i>
+                    <p>Gestiona las facturas de tus servicios</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Notificaciones -->
+    <div class="notifications-modal" id="notificationsModal" role="dialog" aria-modal="true" aria-labelledby="notificationsModalTitle">
+        <div class="notifications-modal-content">
+            <header class="notifications-modal-header">
+                <h2 id="notificationsModalTitle" class="notifications-modal-title">
+                    <i class="fa-solid fa-bell"></i> Notificaciones
+                </h2>
+                <button class="notifications-modal-close" id="closeNotificationsModal" aria-label="Cerrar">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </header>
+            <div class="notifications-modal-body" id="notificationsModalBody">
+                <!-- Las notificaciones se cargarán aquí dinámicamente -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Selector de Color -->
+    <div class="color-picker-modal" id="colorPickerModal" onclick="if(event.target===this) closeColorPickerModal()">
+        <div class="color-picker-content">
+            <div class="color-picker-header">
+                <h3 class="color-picker-title">
+                    <i class="fa-solid fa-palette"></i> Cambiar Color de Cita
+                </h3>
+                <button class="color-picker-close" onclick="closeColorPickerModal()" aria-label="Cerrar">
+                    <i class="fa-solid fa-times"></i>
+                </button>
+            </div>
+            <div class="color-picker-options" id="colorPickerOptions">
+                <!-- Se llenará dinámicamente -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Búsqueda de Pacientes -->
+    <div class="patient-modal" id="patientSearchModal" onclick="if(event.target===this) closePatientSearchModal()">
+        <div class="patient-modal-content">
+            <div class="patient-modal-header">
+                <h2 class="patient-modal-title">
+                    <i class="fa-solid fa-search"></i> Buscar Pacientes
+                </h2>
+                <button class="patient-modal-close" onclick="closePatientSearchModal()">
+                    <i class="fa-solid fa-times"></i>
+                </button>
+            </div>
+            <div class="patient-modal-body">
+                <div style="margin-bottom:1.5rem;">
+                    <div class="input-container" style="position:relative;">
+                        <i class="fas fa-search input-icon"></i>
+                        <input type="text" id="patientSearchInput" placeholder="Buscar por nombre, especie, raza..." style="width:100%; padding-left:3rem;">
+                        <div class="input-underline"></div>
+                    </div>
+                </div>
+                <div id="patientSearchResults" class="patient-search-results">
+                    <!-- Se cargará dinámicamente -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Detalles del Paciente -->
+    <div class="patient-modal" id="patientDetailModal" onclick="if(event.target===this) closePatientDetailModal()">
+        <div class="patient-modal-content large">
+            <div class="patient-modal-header">
+                <h2 class="patient-modal-title" id="patientDetailTitle">
+                    <i class="fa-solid fa-paw"></i> Detalles del Paciente
+                </h2>
+                <button class="patient-modal-close" onclick="closePatientDetailModal()">
+                    <i class="fa-solid fa-times"></i>
+                </button>
+            </div>
+            <div class="patient-modal-body">
+                <!-- Tabs de navegación -->
+                <div class="patient-tabs">
+                    <button class="patient-tab active" onclick="switchPatientTab('info')" data-tab="info">
+                        <i class="fa-solid fa-info-circle"></i> Información
+                    </button>
+                    <button class="patient-tab" onclick="switchPatientTab('history')" data-tab="history">
+                        <i class="fa-solid fa-file-medical"></i> Historial
+                    </button>
+                    <button class="patient-tab" onclick="switchPatientTab('appointments')" data-tab="appointments">
+                        <i class="fa-solid fa-calendar"></i> Citas
+                    </button>
+                    <button class="patient-tab" onclick="switchPatientTab('notifications')" data-tab="notifications">
+                        <i class="fa-solid fa-bell"></i> Notificaciones
+                    </button>
+                </div>
+
+                <!-- Contenido de las tabs -->
+                <div id="patientTabInfo" class="patient-tab-content active">
+                    <!-- Se cargará dinámicamente -->
+                </div>
+
+                <div id="patientTabHistory" class="patient-tab-content">
+                    <!-- Se cargará dinámicamente -->
+                </div>
+
+                <div id="patientTabAppointments" class="patient-tab-content">
+                    <!-- Se cargará dinámicamente -->
+                </div>
+
+                <div id="patientTabNotifications" class="patient-tab-content">
+                    <!-- Se cargará dinámicamente -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Editor de Historial Clínico -->
+    <div class="patient-modal" id="historyEditorModal" onclick="if(event.target===this) closeHistoryEditorModal()">
+        <div class="patient-modal-content">
+            <div class="patient-modal-header">
+                <h2 class="patient-modal-title" id="historyEditorTitle">
+                    <i class="fa-solid fa-file-medical"></i> Nuevo Historial Clínico
+                </h2>
+                <button class="patient-modal-close" onclick="closeHistoryEditorModal()">
+                    <i class="fa-solid fa-times"></i>
+                </button>
+            </div>
+            <div class="patient-modal-body">
+                <form id="historyEditorForm" class="auth-form">
+                    <div class="input-group">
+                        <div class="input-container">
+                            <i class="fas fa-heading input-icon"></i>
+                            <input type="text" id="historyTitle" placeholder="Título (ej: Consulta general, Vacunación)" required>
+                            <div class="input-underline"></div>
+                        </div>
+                        <span class="error-message" id="historyTitleError"></span>
+                    </div>
+
+                    <div class="input-group">
+                        <div class="input-container">
+                            <i class="fas fa-calendar input-icon"></i>
+                            <input type="date" id="historyDate" required>
+                            <div class="input-underline"></div>
+                        </div>
+                        <span class="error-message" id="historyDateError"></span>
+                    </div>
+
+                    <div class="input-group">
+                        <div class="input-container select-container">
+                            <i class="fas fa-tag input-icon"></i>
+                            <select id="historyType" required>
+                                <option value="">Tipo de consulta</option>
+                                <option value="CONSULTA">Consulta General</option>
+                                <option value="VACUNACION">Vacunación</option>
+                                <option value="CIRUGIA">Cirugía</option>
+                                <option value="LABORATORIO">Laboratorio</option>
+                                <option value="RADIOGRAFIA">Radiografía</option>
+                                <option value="CONTROL">Control Post-Operatorio</option>
+                                <option value="OTRO">Otro</option>
+                            </select>
+                            <div class="input-underline"></div>
+                        </div>
+                        <span class="error-message" id="historyTypeError"></span>
+                    </div>
+
+                    <div class="input-group">
+                        <div class="input-container">
+                            <i class="fas fa-weight input-icon"></i>
+                            <input type="number" id="historyWeight" placeholder="Peso (kg)" step="0.1" min="0">
+                            <div class="input-underline"></div>
+                        </div>
+                    </div>
+
+                    <div class="input-group">
+                        <div class="input-container">
+                            <i class="fas fa-exclamation-triangle input-icon"></i>
+                            <textarea id="historySymptoms" placeholder="Síntomas presentados" rows="3"></textarea>
+                            <div class="input-underline"></div>
+                        </div>
+                    </div>
+
+                    <div class="input-group">
+                        <div class="input-container">
+                            <i class="fas fa-stethoscope input-icon"></i>
+                            <textarea id="historyDiagnosis" placeholder="Diagnóstico" rows="3"></textarea>
+                            <div class="input-underline"></div>
+                        </div>
+                    </div>
+
+                    <div class="input-group">
+                        <div class="input-container">
+                            <i class="fas fa-prescription input-icon"></i>
+                            <textarea id="historyTreatment" placeholder="Tratamiento recetado (medicamentos, dosis, frecuencia)" rows="4"></textarea>
+                            <div class="input-underline"></div>
+                        </div>
+                    </div>
+
+                    <div class="input-group">
+                        <div class="input-container">
+                            <i class="fas fa-file-medical input-icon"></i>
+                            <textarea id="historyPrescription" placeholder="Receta médica detallada (medicamentos, dosis, duración)" rows="4"></textarea>
+                            <div class="input-underline"></div>
+                        </div>
+                    </div>
+
+                    <div class="input-group">
+                        <div class="input-container">
+                            <i class="fas fa-calendar-check input-icon"></i>
+                            <textarea id="historyFollowUp" placeholder="Control posterior (cuándo y qué revisar)" rows="2"></textarea>
+                            <div class="input-underline"></div>
+                        </div>
+                    </div>
+
+                    <div class="input-group">
+                        <div class="input-container">
+                            <i class="fas fa-comment-medical input-icon"></i>
+                            <textarea id="historyNotes" placeholder="Observaciones adicionales" rows="3"></textarea>
+                            <div class="input-underline"></div>
+                        </div>
+                    </div>
+
+                    <div style="display:flex; gap:1rem; margin-top:1.5rem;">
+                        <button type="button" class="submit-btn btn-secondary" onclick="closeHistoryEditorModal()" style="flex:1;">Cancelar</button>
+                        <button type="submit" class="submit-btn" style="flex:1;">
+                            <i class="fa-solid fa-save"></i> Guardar Historial
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Nueva Cita desde Paciente -->
+    <div class="patient-modal" id="patientAppointmentModal" onclick="if(event.target===this) closePatientAppointmentModal()">
+        <div class="patient-modal-content">
+            <div class="patient-modal-header">
+                <h2 class="patient-modal-title">
+                    <i class="fa-solid fa-calendar-plus"></i> Programar Cita
+                </h2>
+                <button class="patient-modal-close" onclick="closePatientAppointmentModal()">
+                    <i class="fa-solid fa-times"></i>
+                </button>
+            </div>
+            <div class="patient-modal-body">
+                <form id="patientAppointmentForm" class="auth-form">
+                    <div class="input-group">
+                        <div class="input-container select-container">
+                            <i class="fas fa-briefcase-medical input-icon"></i>
+                            <select id="appointmentServiceFromPatient" required>
+                                <option value="">Selecciona un servicio</option>
+                                <option value="Consulta general">Consulta general</option>
+                                <option value="Vacunación">Vacunación</option>
+                                <option value="Desparasitación">Desparasitación</option>
+                                <option value="Cirugía">Cirugía</option>
+                                <option value="Radiografía">Radiografía</option>
+                                <option value="Laboratorio">Laboratorio</option>
+                                <option value="Ecografía">Ecografía</option>
+                                <option value="Control post-operatorio">Control post-operatorio</option>
+                            </select>
+                            <div class="input-underline"></div>
+                        </div>
+                        <span class="error-message" id="appointmentServiceFromPatientError"></span>
+                    </div>
+
+                    <div class="input-group">
+                        <div class="input-container">
+                            <i class="fas fa-calendar input-icon"></i>
+                            <input type="date" id="appointmentDateFromPatient" required>
+                            <div class="input-underline"></div>
+                        </div>
+                        <span class="error-message" id="appointmentDateFromPatientError"></span>
+                    </div>
+
+                    <div class="input-group">
+                        <div class="input-container">
+                            <i class="fas fa-clock input-icon"></i>
+                            <input type="time" id="appointmentTimeFromPatient" required>
+                            <div class="input-underline"></div>
+                        </div>
+                        <span class="error-message" id="appointmentTimeFromPatientError"></span>
+                    </div>
+
+                    <div class="input-group">
+                        <div class="input-container select-container">
+                            <i class="fas fa-exclamation-triangle input-icon"></i>
+                            <select id="appointmentPriorityFromPatient" required>
+                                <option value="">Prioridad</option>
+                                <option value="BAJA">Baja</option>
+                                <option value="MEDIA">Media</option>
+                                <option value="ALTA">Alta</option>
+                                <option value="CRITICA">Crítica</option>
+                            </select>
+                            <div class="input-underline"></div>
+                        </div>
+                        <span class="error-message" id="appointmentPriorityFromPatientError"></span>
+                    </div>
+
+                    <div class="input-group">
+                        <div class="input-container">
+                            <i class="fas fa-comment input-icon"></i>
+                            <textarea id="appointmentNotesFromPatient" placeholder="Notas adicionales" rows="4"></textarea>
+                            <div class="input-underline"></div>
+                        </div>
+                    </div>
+
+                    <div style="display:flex; gap:1rem; margin-top:1.5rem;">
+                        <button type="button" class="submit-btn btn-secondary" onclick="closePatientAppointmentModal()" style="flex:1;">Cancelar</button>
+                        <button type="submit" class="submit-btn" style="flex:1;">
+                            <i class="fa-solid fa-calendar-check"></i> Programar Cita
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Nueva Cita (desde botón + Nueva) -->
+    <div class="patient-modal" id="createAppointmentModal" onclick="if(event.target===this) closeCreateAppointmentModal()">
+        <div class="patient-modal-content">
+            <div class="patient-modal-header">
+                <h2 class="patient-modal-title">
+                    <i class="fa-solid fa-calendar-plus"></i> Nueva Cita
+                </h2>
+                <button class="patient-modal-close" onclick="closeCreateAppointmentModal()">
+                    <i class="fa-solid fa-times"></i>
+                </button>
+            </div>
+            <div class="patient-modal-body">
+                <form id="createAppointmentForm" class="auth-form" onsubmit="event.preventDefault(); saveCreateAppointment();">
+                    <div class="input-group">
+                        <div class="input-container select-container">
+                            <i class="fas fa-paw input-icon"></i>
+                            <select id="createAppointmentPet" required>
+                                <option value="">Selecciona una mascota</option>
+                                <!-- Se llenará dinámicamente -->
+                            </select>
+                            <div class="input-underline"></div>
+                        </div>
+                        <span class="error-message" id="createAppointmentPetError"></span>
+                    </div>
+
+                    <div class="input-group">
+                        <div class="input-container select-container">
+                            <i class="fas fa-briefcase-medical input-icon"></i>
+                            <select id="createAppointmentService" required>
+                                <option value="">Selecciona un servicio</option>
+                                <option value="Consulta general">Consulta general</option>
+                                <option value="Vacunación">Vacunación</option>
+                                <option value="Desparasitación">Desparasitación</option>
+                                <option value="Cirugía">Cirugía</option>
+                                <option value="Radiografía">Radiografía</option>
+                                <option value="Laboratorio">Laboratorio</option>
+                                <option value="Ecografía">Ecografía</option>
+                                <option value="Control post-operatorio">Control post-operatorio</option>
+                            </select>
+                            <div class="input-underline"></div>
+                        </div>
+                        <span class="error-message" id="createAppointmentServiceError"></span>
+                    </div>
+
+                    <div class="input-group">
+                        <div class="input-container">
+                            <i class="fas fa-calendar input-icon"></i>
+                            <input type="date" id="createAppointmentDate" required>
+                            <div class="input-underline"></div>
+                        </div>
+                        <span class="error-message" id="createAppointmentDateError"></span>
+                    </div>
+
+                    <div class="input-group">
+                        <div class="input-container">
+                            <i class="fas fa-clock input-icon"></i>
+                            <input type="time" id="createAppointmentTime" required>
+                            <div class="input-underline"></div>
+                        </div>
+                        <span class="error-message" id="createAppointmentTimeError"></span>
+                    </div>
+
+                    <div class="input-group">
+                        <div class="input-container select-container">
+                            <i class="fas fa-exclamation-triangle input-icon"></i>
+                            <select id="createAppointmentPriority" required>
+                                <option value="">Prioridad</option>
+                                <option value="BAJA">Baja</option>
+                                <option value="MEDIA">Media</option>
+                                <option value="ALTA">Alta</option>
+                                <option value="CRITICA">Crítica</option>
+                            </select>
+                            <div class="input-underline"></div>
+                        </div>
+                        <span class="error-message" id="createAppointmentPriorityError"></span>
+                    </div>
+
+                    <div class="input-group">
+                        <div class="input-container">
+                            <i class="fas fa-comment input-icon"></i>
+                            <textarea id="createAppointmentNotes" placeholder="Notas adicionales" rows="4"></textarea>
+                            <div class="input-underline"></div>
+                        </div>
+                    </div>
+
+                    <div style="display:flex; gap:1rem; margin-top:1.5rem;">
+                        <button type="button" class="submit-btn btn-secondary" onclick="closeCreateAppointmentModal()" style="flex:1;">Cancelar</button>
+                        <button type="submit" class="submit-btn" style="flex:1;">
+                            <i class="fa-solid fa-calendar-check"></i> Crear Cita
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Editar Información de Mascota -->
+    <div class="patient-modal" id="editPetInfoModal" onclick="if(event.target===this) closeEditPetInfoModal()">
+        <div class="patient-modal-content">
+            <div class="patient-modal-header">
+                <h2 class="patient-modal-title">
+                    <i class="fa-solid fa-edit"></i> Editar Información de Mascota
+                </h2>
+                <button class="patient-modal-close" onclick="closeEditPetInfoModal()">
+                    <i class="fa-solid fa-times"></i>
+                </button>
+            </div>
+            <div class="patient-modal-body">
+                <form id="editPetInfoForm" class="auth-form" onsubmit="event.preventDefault(); savePetInfo();">
+                    <div class="input-group">
+                        <div class="input-container">
+                            <i class="fas fa-paw input-icon"></i>
+                            <input type="text" id="editPetName" placeholder="Nombre de la mascota" required>
+                            <div class="input-underline"></div>
+                        </div>
+                        <span class="error-message" id="editPetNameError"></span>
+                    </div>
+
+                    <div class="input-group">
+                        <div class="input-container select-container">
+                            <i class="fas fa-dog input-icon"></i>
+                            <select id="editPetSpecies" required>
+                                <option value="">Selecciona la especie</option>
+                                <option value="Perro">Perro</option>
+                                <option value="Gato">Gato</option>
+                                <option value="Conejo">Conejo</option>
+                                <option value="Ave">Ave</option>
+                                <option value="Otro">Otro</option>
+                            </select>
+                            <div class="input-underline"></div>
+                        </div>
+                        <span class="error-message" id="editPetSpeciesError"></span>
+                    </div>
+
+                    <div class="input-group">
+                        <div class="input-container">
+                            <i class="fas fa-tag input-icon"></i>
+                            <input type="text" id="editPetBreed" placeholder="Raza">
+                            <div class="input-underline"></div>
+                        </div>
+                    </div>
+
+                    <div class="input-group">
+                        <div class="input-container select-container">
+                            <i class="fas fa-venus-mars input-icon"></i>
+                            <select id="editPetGender">
+                                <option value="">Selecciona el sexo</option>
+                                <option value="Macho">Macho</option>
+                                <option value="Hembra">Hembra</option>
+                                <option value="Esterilizado">Macho Esterilizado</option>
+                                <option value="Esterilizada">Hembra Esterilizada</option>
+                            </select>
+                            <div class="input-underline"></div>
+                        </div>
+                    </div>
+
+                    <div class="input-group">
+                        <div class="input-container">
+                            <i class="fas fa-calendar input-icon"></i>
+                            <input type="date" id="editPetBirthdate">
+                            <div class="input-underline"></div>
+                        </div>
+                    </div>
+
+                    <div class="input-group">
+                        <div class="input-container">
+                            <i class="fas fa-weight input-icon"></i>
+                            <input type="number" id="editPetWeight" placeholder="Peso (kg)" step="0.1" min="0">
+                            <div class="input-underline"></div>
+                        </div>
+                    </div>
+
+                    <div class="input-group">
+                        <div class="input-container">
+                            <i class="fas fa-palette input-icon"></i>
+                            <input type="text" id="editPetColor" placeholder="Color">
+                            <div class="input-underline"></div>
+                        </div>
+                    </div>
+
+                    <div class="input-group">
+                        <div class="input-container">
+                            <i class="fas fa-comment input-icon"></i>
+                            <textarea id="editPetNotes" placeholder="Notas adicionales" rows="4"></textarea>
+                            <div class="input-underline"></div>
+                        </div>
+                    </div>
+
+                    <div style="display:flex; gap:1rem; margin-top:1.5rem;">
+                        <button type="button" class="submit-btn btn-secondary" onclick="closeEditPetInfoModal()" style="flex:1;">Cancelar</button>
+                        <button type="submit" class="submit-btn" style="flex:1;">
+                            <i class="fa-solid fa-save"></i> Guardar Cambios
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Crear Factura -->
+    <div class="patient-modal" id="createInvoiceModal" onclick="if(event.target===this) closeCreateInvoiceModal()">
+        <div class="patient-modal-content large">
+            <div class="patient-modal-header">
+                <h2 class="patient-modal-title">
+                    <i class="fa-solid fa-receipt"></i> Crear Factura
+                </h2>
+                <button class="patient-modal-close" onclick="closeCreateInvoiceModal()">
+                    <i class="fa-solid fa-times"></i>
+                </button>
+            </div>
+            <div class="patient-modal-body">
+                <form id="createInvoiceForm" class="auth-form" onsubmit="event.preventDefault(); saveInvoice();">
+                    <!-- Información básica -->
+                    <div style="background:var(--gray-50); padding:1rem; border-radius:var(--border-radius-lg); margin-bottom:1.5rem;">
+                        <h3 style="margin-bottom:1rem; color:var(--gray-900); font-size:1.1rem;">
+                            <i class="fa-solid fa-info-circle"></i> Información General
+                        </h3>
+                        <div class="input-group">
+                            <div class="input-container select-container">
+                                <i class="fas fa-user input-icon"></i>
+                                <select id="invoiceClientId" required>
+                                    <option value="">Selecciona el cliente</option>
+                                </select>
+                                <div class="input-underline"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Ítems de la factura -->
+                    <div style="margin-bottom:1.5rem;">
+                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem;">
+                            <h3 style="color:var(--gray-900); font-size:1.1rem;">
+                                <i class="fa-solid fa-list"></i> Ítems de la Factura
+                            </h3>
+                            <button type="button" class="btn-action btn-accept" onclick="addInvoiceItem()" style="padding:0.75rem 1.25rem; font-size:0.95rem;">
+                                <i class="fa-solid fa-plus"></i> Agregar Ítem
+                            </button>
+                        </div>
+                        <div id="invoiceItemsList" style="display:flex; flex-direction:column; gap:1.25rem;">
+                            <!-- Los ítems se agregarán dinámicamente -->
+                        </div>
+                    </div>
+
+                    <!-- Observaciones -->
+                    <div class="input-group">
+                        <div class="input-container">
+                            <i class="fas fa-comment input-icon"></i>
+                            <textarea id="invoiceObservations" placeholder="Observaciones adicionales (opcional)" rows="3"></textarea>
+                            <div class="input-underline"></div>
+                        </div>
+                    </div>
+
+                    <!-- Resumen -->
+                    <div style="background:var(--primary-color); color:var(--white); padding:1.5rem; border-radius:var(--border-radius-lg); margin-top:1.5rem;">
+                        <div style="display:flex; justify-content:space-between; margin-bottom:0.5rem;">
+                            <span>Subtotal:</span>
+                            <span id="invoiceSubtotal">$0.00</span>
+                        </div>
+                        <div style="display:flex; justify-content:space-between; margin-bottom:0.5rem;">
+                            <span>Impuestos (19%):</span>
+                            <span id="invoiceTax">$0.00</span>
+                        </div>
+                        <div style="display:flex; justify-content:space-between; font-size:1.25rem; font-weight:bold; padding-top:0.5rem; border-top:2px solid rgba(255,255,255,0.3);">
+                            <span>Total:</span>
+                            <span id="invoiceTotal">$0.00</span>
+                        </div>
+                    </div>
+
+                    <div style="display:flex; gap:1rem; margin-top:1.5rem;">
+                        <button type="button" class="submit-btn btn-secondary" onclick="closeCreateInvoiceModal()" style="flex:1;">Cancelar</button>
+                        <button type="submit" class="submit-btn" style="flex:1;">
+                            <i class="fa-solid fa-save"></i> Generar Factura
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Cancelar Cita -->
+    <div class="patient-modal" id="cancelAppointmentModal" onclick="if(event.target===this) closeCancelAppointmentModal()">
+        <div class="patient-modal-content">
+            <div class="patient-modal-header">
+                <h2 class="patient-modal-title">
+                    <i class="fa-solid fa-times-circle"></i> Cancelar Cita
+                </h2>
+                <button class="patient-modal-close" onclick="closeCancelAppointmentModal()">
+                    <i class="fa-solid fa-times"></i>
+                </button>
+            </div>
+            <div class="patient-modal-body">
+                <div style="background:var(--gray-50); padding:1rem; border-radius:var(--border-radius-lg); margin-bottom:1.5rem;" id="cancelAppointmentInfo">
+                    <!-- Se llenará dinámicamente -->
+                </div>
+                <form id="cancelAppointmentForm" class="auth-form">
+                    <div class="input-group">
+                        <div class="input-container">
+                            <i class="fas fa-comment-dots input-icon"></i>
+                            <textarea id="cancelReason" placeholder="Motivo de la cancelación (requerido)" rows="4" required></textarea>
+                            <div class="input-underline"></div>
+                        </div>
+                        <span class="error-message" id="cancelReasonError"></span>
+                        <p style="margin-top:0.5rem; color:var(--gray-600); font-size:0.85rem;">
+                            <i class="fa-solid fa-info-circle"></i> El cliente será notificado de la cancelación y el motivo.
+                        </p>
+                    </div>
+
+                    <div style="display:flex; gap:1rem; margin-top:1.5rem;">
+                        <button type="button" class="submit-btn btn-secondary" onclick="closeCancelAppointmentModal()" style="flex:1;">No Cancelar</button>
+                        <button type="button" class="submit-btn" onclick="confirmCancelAppointment()" style="flex:1; background:var(--error-color);">
+                            <i class="fa-solid fa-times-circle"></i> Confirmar Cancelación
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Posponer Cita -->
+    <div class="patient-modal" id="postponeAppointmentModal" onclick="if(event.target===this) closePostponeAppointmentModal()">
+        <div class="patient-modal-content">
+            <div class="patient-modal-header">
+                <h2 class="patient-modal-title">
+                    <i class="fa-solid fa-clock-rotate-left"></i> Posponer Cita
+                </h2>
+                <button class="patient-modal-close" onclick="closePostponeAppointmentModal()">
+                    <i class="fa-solid fa-times"></i>
+                </button>
+            </div>
+            <div class="patient-modal-body">
+                <div style="background:var(--gray-50); padding:1rem; border-radius:var(--border-radius-lg); margin-bottom:1.5rem;">
+                    <div style="font-size:0.85rem; color:var(--gray-600); margin-bottom:0.5rem;">Fecha y hora actual:</div>
+                    <div style="font-weight:700; color:var(--gray-900);" id="currentAppointmentDate">-</div>
+                </div>
+                <form id="postponeAppointmentForm" class="auth-form">
+                    <div class="input-group">
+                        <div class="input-container">
+                            <i class="fas fa-calendar input-icon"></i>
+                            <input type="date" id="postponeDate" required>
+                            <div class="input-underline"></div>
+                        </div>
+                        <span class="error-message" id="postponeDateError"></span>
+                    </div>
+
+                    <div class="input-group">
+                        <div class="input-container">
+                            <i class="fas fa-clock input-icon"></i>
+                            <input type="time" id="postponeTime" required>
+                            <div class="input-underline"></div>
+                        </div>
+                        <span class="error-message" id="postponeTimeError"></span>
+                    </div>
+
+                    <div class="input-group">
+                        <div class="input-container">
+                            <i class="fas fa-comment input-icon"></i>
+                            <textarea id="postponeNotes" placeholder="Motivo de la postergación (opcional)" rows="3"></textarea>
+                            <div class="input-underline"></div>
+                        </div>
+                    </div>
+
+                    <div style="display:flex; gap:1rem; margin-top:1.5rem;">
+                        <button type="button" class="submit-btn btn-secondary" onclick="closePostponeAppointmentModal()" style="flex:1;">Cancelar</button>
+                        <button type="button" class="submit-btn" onclick="savePostponedAppointment()" style="flex:1;">
+                            <i class="fa-solid fa-clock-rotate-left"></i> Posponer Cita
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Enviar Notificación -->
+    <div class="patient-modal" id="sendNotificationModal" onclick="if(event.target===this) closeSendNotificationModal()">
+        <div class="patient-modal-content">
+            <div class="patient-modal-header">
+                <h2 class="patient-modal-title">
+                    <i class="fa-solid fa-paper-plane"></i> Enviar Notificación
+                </h2>
+                <button class="patient-modal-close" onclick="closeSendNotificationModal()">
+                    <i class="fa-solid fa-times"></i>
+                </button>
+            </div>
+            <div class="patient-modal-body">
+                <form id="sendNotificationForm" class="auth-form">
+                    <div class="input-group">
+                        <div class="input-container">
+                            <i class="fas fa-heading input-icon"></i>
+                            <input type="text" id="notificationTitleToSend" placeholder="Título de la notificación" required>
+                            <div class="input-underline"></div>
+                        </div>
+                        <span class="error-message" id="notificationTitleToSendError"></span>
+                    </div>
+
+                    <div class="input-group">
+                        <div class="input-container">
+                            <i class="fas fa-comment input-icon"></i>
+                            <textarea id="notificationMessageToSend" placeholder="Mensaje para el dueño" rows="5" required></textarea>
+                            <div class="input-underline"></div>
+                        </div>
+                        <span class="error-message" id="notificationMessageToSendError"></span>
+                    </div>
+
+                    <div class="input-group">
+                        <div class="input-container select-container">
+                            <i class="fas fa-exclamation-triangle input-icon"></i>
+                            <select id="notificationPriorityToSend">
+                                <option value="MEDIA">Prioridad Media</option>
+                                <option value="ALTA">Alta</option>
+                                <option value="BAJA">Baja</option>
+                            </select>
+                            <div class="input-underline"></div>
+                        </div>
+                    </div>
+
+                    <div style="display:flex; gap:1rem; margin-top:1.5rem;">
+                        <button type="button" class="submit-btn btn-secondary" onclick="closeSendNotificationModal()" style="flex:1;">Cancelar</button>
+                        <button type="submit" class="submit-btn" style="flex:1;">
+                            <i class="fa-solid fa-paper-plane"></i> Enviar Notificación
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="./veterinarian.js"></script>
+</body>
+</html>
+

@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>VetUni - Clnica Veterinaria Universitaria</title>
+    <link rel="stylesheet" href="../../assets/css/styles.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Contenedor principal de la aplicación -->
+    <div class="app-container">
+        <!-- Panel de navegación entre Login y Register -->
+        <div class="auth-toggle">
+            <button class="toggle-btn active" data-form="login">
+                <i class="fas fa-sign-in-alt"></i>
+                Iniciar Sesión
+            </button>
+            <button class="toggle-btn" data-form="register">
+                <i class="fas fa-user-plus"></i>
+                Registrarse
+            </button>
+        </div>
+
+        <!-- Formulario de Login -->
+        <div class="form-container active" id="login-form">
+            <div class="form-header">
+                <div class="logo-container">
+                    <div class="logo">
+                        <i class="fas fa-paw"></i>
+                    </div>
+                    <h1>VetUni</h1>
+                    <p class="subtitle">Clínica Veterinaria Universitaria</p>
+                </div>
+            </div>
+
+            <form class="auth-form" id="loginForm">
+                <h2 class="form-title">Bienvenido de vuelta</h2>
+                <p class="form-description">Ingresa tus credenciales para acceder al sistema</p>
+
+                <!-- Campo Email -->
+                <div class="input-group">
+                    <div class="input-container">
+                        <i class="fas fa-envelope input-icon"></i>
+                        <input 
+                            type="email" 
+                            id="loginEmail" 
+                            name="email" 
+                            placeholder="Correo electrónico"
+                            required
+                        >
+                        <div class="input-underline"></div>
+                    </div>
+                    <span class="error-message" id="loginEmailError"></span>
+                </div>
+
+                <!-- Campo Contraseña -->
+                <div class="input-group">
+                    <div class="input-container">
+                        <i class="fas fa-lock input-icon"></i>
+                        <input 
+                            type="password" 
+                            id="loginPassword" 
+                            name="password" 
+                            placeholder="Contraseña"
+                            required
+                        >
+                        <button type="button" class="password-toggle" data-target="loginPassword">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                        <div class="input-underline"></div>
+                    </div>
+                    <span class="error-message" id="loginPasswordError"></span>
+                </div>
+
+                <!-- Recordar sesión y recuperar contraseña -->
+                <div class="form-options">
+                    <label class="checkbox-container">
+                        <input type="checkbox" id="rememberMe">
+                        <span class="checkmark"></span>
+                        Recordar sesión
+                    </label>
+                    <a href="#" class="forgot-password">¿Olvidaste tu contraseña?</a>
+                </div>
+
+                <!-- Botón de envío -->
+                <button type="submit" class="submit-btn">
+                    <span class="btn-text">Iniciar Sesión</span>
+                    <i class="fas fa-arrow-right btn-icon"></i>
+                    <div class="btn-loader">
+                        <div class="loader"></div>
+                    </div>
+                </button>
+
+                <!-- Divider -->
+                <div class="divider">
+                    <span>o continúa con</span>
+                </div>
+
+                <!-- Botones de redes sociales -->
+                <div class="social-buttons">
+                    <button type="button" class="social-btn google-btn">
+                        <i class="fab fa-google"></i>
+                        Google
+                    </button>
+                    <button type="button" class="social-btn microsoft-btn">
+                        <i class="fab fa-microsoft"></i>
+                        Microsoft
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Formulario de Registro -->
+        <div class="form-container" id="register-form">
+            <div class="form-header">
+                <div class="logo-container">
+                    <div class="logo">
+                        <i class="fas fa-paw"></i>
+                    </div>
+                    <h1>VetUni</h1>
+                    <p class="subtitle">Clínica Veterinaria Universitaria</p>
+                </div>
+            </div>
+
+            <form class="auth-form" id="registerForm">
+                <h2 class="form-title">nete a VetUni</h2>
+                <p class="form-description">Crea tu cuenta para comenzar a cuidar a las mascotas</p>
+
+                <!-- Campos de nombre -->
+                <div class="input-row">
+                    <div class="input-group">
+                        <div class="input-container">
+                            <i class="fas fa-user input-icon"></i>
+                            <input 
+                                type="text" 
+                                id="firstName" 
+                                name="firstName" 
+                                placeholder="Nombre"
+                                required
+                            >
+                            <div class="input-underline"></div>
+                        </div>
+                        <span class="error-message" id="firstNameError"></span>
+                    </div>
+
+                    <div class="input-group">
+                        <div class="input-container">
+                            <i class="fas fa-user input-icon"></i>
+                            <input 
+                                type="text" 
+                                id="lastName" 
+                                name="lastName" 
+                                placeholder="Apellido"
+                                required
+                            >
+                            <div class="input-underline"></div>
+                        </div>
+                        <span class="error-message" id="lastNameError"></span>
+                    </div>
+                </div>
+
+                <!-- Campo Email -->
+                <div class="input-group">
+                    <div class="input-container">
+                        <i class="fas fa-envelope input-icon"></i>
+                        <input 
+                            type="email" 
+                            id="registerEmail" 
+                            name="email" 
+                            placeholder="Correo electrónico"
+                            required
+                        >
+                        <div class="input-underline"></div>
+                    </div>
+                    <span class="error-message" id="registerEmailError"></span>
+                </div>
+
+                <!-- Campo Teléfono -->
+                <div class="input-group">
+                    <div class="input-container">
+                        <i class="fas fa-phone input-icon"></i>
+                        <input 
+                            type="tel" 
+                            id="phone" 
+                            name="phone" 
+                            placeholder="Teléfono"
+                            required
+                        >
+                        <div class="input-underline"></div>
+                    </div>
+                    <span class="error-message" id="phoneError"></span>
+                </div>
+
+                <!-- El rol se asigna automáticamente como "cliente" o "dueno" -->
+
+                <!-- Campos de contraseña -->
+                <div class="input-group">
+                    <div class="input-container">
+                        <i class="fas fa-lock input-icon"></i>
+                        <input 
+                            type="password" 
+                            id="registerPassword" 
+                            name="password" 
+                            placeholder="Contraseña"
+                            required
+                        >
+                        <button type="button" class="password-toggle" data-target="registerPassword">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                        <div class="input-underline"></div>
+                    </div>
+                    <!-- Indicador de fortaleza de contraseña -->
+                    <div class="password-strength">
+                        <div class="strength-bar">
+                            <div class="strength-fill"></div>
+                        </div>
+                        <span class="strength-text">Fortaleza de contraseña</span>
+                    </div>
+                    <span class="error-message" id="registerPasswordError"></span>
+                </div>
+
+                <!-- Confirmar contraseña -->
+                <div class="input-group">
+                    <div class="input-container">
+                        <i class="fas fa-lock input-icon"></i>
+                        <input 
+                            type="password" 
+                            id="confirmPassword" 
+                            name="confirmPassword" 
+                            placeholder="Confirmar contraseña"
+                            required
+                        >
+                        <button type="button" class="password-toggle" data-target="confirmPassword">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                        <div class="input-underline"></div>
+                    </div>
+                    <span class="error-message" id="confirmPasswordError"></span>
+                </div>
+
+                <!-- Términos y condiciones -->
+                <div class="form-options">
+                    <label class="checkbox-container">
+                        <input type="checkbox" id="acceptTerms" required>
+                        <span class="checkmark"></span>
+                        Acepto los <a href="#" class="terms-link">términos y condiciones</a>
+                    </label>
+                </div>
+
+                <!-- Botón de envío -->
+                <button type="submit" class="submit-btn">
+                    <span class="btn-text">Crear Cuenta</span>
+                    <i class="fas fa-paw btn-icon"></i>
+                    <div class="btn-loader">
+                        <div class="loader"></div>
+                    </div>
+                </button>
+
+                <!-- Divider -->
+                <div class="divider">
+                    <span>o regístrate con</span>
+                </div>
+
+                <!-- Botones de redes sociales -->
+                <div class="social-buttons">
+                    <button type="button" class="social-btn google-btn">
+                        <i class="fab fa-google"></i>
+                        Google
+                    </button>
+                    <button type="button" class="social-btn microsoft-btn">
+                        <i class="fab fa-microsoft"></i>
+                        Microsoft
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Fondo decorativo -->
+        <div class="background-decoration">
+            <div class="decoration-shape shape-1"></div>
+            <div class="decoration-shape shape-2"></div>
+            <div class="decoration-shape shape-3"></div>
+            <div class="floating-icons">
+                <i class="fas fa-paw floating-icon" style="--delay: 0s"></i>
+                <i class="fas fa-heart floating-icon" style="--delay: 1s"></i>
+                <i class="fas fa-bone floating-icon" style="--delay: 2s"></i>
+                <i class="fas fa-stethoscope floating-icon" style="--delay: 3s"></i>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript -->
+    <!-- Configuración API y Servicios -->
+    <script src="../../assets/js/api.service.js"></script>
+    <script src="./auth.js"></script>
+</body>
+</html>

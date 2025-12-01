@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>VetUni - Finalizar Compra</title>
+    <link rel="stylesheet" href="../../assets/css/styles.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+        
+        html, body {
+            overflow-x: hidden;
+            width: 100%;
+            max-width: 100%;
+        }
+        
+        .app-container {
+            width: 100%;
+            max-width: 100%;
+            overflow-x: hidden;
+        }
+        
+        .checkout-container {
+            max-width: 1200px;
+            width: 100%;
+            margin: 0 auto;
+            padding: 2rem;
+            background: var(--white);
+            border-radius: var(--border-radius-2xl);
+            box-shadow: var(--shadow-md);
+            overflow-x: hidden;
+        }
+        
+        .checkout-header {
+            text-align: center;
+            margin-bottom: 2.5rem;
+            padding: 2rem;
+            background: var(--white);
+            border-radius: var(--border-radius-xl);
+            border-bottom: 2px solid var(--gray-200);
+        }
+        
+        .checkout-header h1 {
+            font-size: var(--font-size-3xl);
+            font-weight: var(--font-weight-bold);
+            color: var(--primary-dark);
+            margin-bottom: 0.5rem;
+        }
+        
+        .checkout-header p {
+            color: var(--gray-600);
+        }
+        
+        .checkout-content {
+            display: grid;
+            grid-template-columns: 1fr 450px;
+            gap: 2rem;
+        }
+        
+        .checkout-section {
+            background: var(--white);
+            border-radius: var(--border-radius-xl);
+            padding: 2rem;
+            box-shadow: var(--shadow-md);
+            border: 1px solid var(--gray-200);
+            margin-bottom: 1.5rem;
+        }
+        
+        .section-title {
+            font-size: var(--font-size-xl);
+            font-weight: var(--font-weight-bold);
+            color: var(--primary-dark);
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid var(--gray-200);
+        }
+        
+        .payment-methods {
+            display: grid;
+            gap: 1rem;
+        }
+        
+        .payment-option {
+            border: 2px solid var(--gray-200);
+            border-radius: var(--border-radius-lg);
+            padding: 1.5rem;
+            cursor: pointer;
+            transition: all var(--transition-normal);
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .payment-option:hover {
+            border-color: var(--primary-color);
+            background: var(--gray-50);
+        }
+        
+        .payment-option.selected {
+            border-color: var(--primary-color);
+            background: linear-gradient(135deg, rgba(46, 139, 87, 0.1), rgba(60, 179, 113, 0.1));
+        }
+        
+        .payment-option input[type="radio"] {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+        }
+        
+        .payment-icon {
+            width: 50px;
+            height: 50px;
+            background: var(--gray-100);
+            border-radius: var(--border-radius-lg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: var(--primary-color);
+        }
+        
+        .payment-info {
+            flex: 1;
+        }
+        
+        .payment-name {
+            font-size: var(--font-size-lg);
+            font-weight: var(--font-weight-semibold);
+            color: var(--gray-900);
+            margin-bottom: 0.25rem;
+        }
+        
+        .payment-description {
+            font-size: var(--font-size-sm);
+            color: var(--gray-600);
+        }
+        
+        .payment-form {
+            margin-top: 1.5rem;
+            display: none;
+        }
+        
+        .payment-form.active {
+            display: block;
+        }
+        
+        .order-summary {
+            background: linear-gradient(135deg, var(--gray-50), var(--white));
+            border-radius: var(--border-radius-xl);
+            padding: 2rem;
+            box-shadow: var(--shadow-md);
+            border: 2px solid var(--gray-200);
+            position: sticky;
+            top: 2rem;
+            height: fit-content;
+        }
+        
+        .summary-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid var(--gray-200);
+        }
+        
+        .summary-item:last-child {
+            border-bottom: none;
+        }
+        
+        .summary-item-name {
+            font-size: var(--font-size-sm);
+            color: var(--gray-700);
+        }
+        
+        .summary-item-price {
+            font-size: var(--font-size-sm);
+            font-weight: var(--font-weight-semibold);
+            color: var(--gray-900);
+        }
+        
+        .summary-total {
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 2px solid var(--gray-200);
+            display: flex;
+            justify-content: space-between;
+            font-size: var(--font-size-xl);
+            font-weight: var(--font-weight-bold);
+            color: var(--primary-color);
+        }
+        
+        .place-order-btn {
+            width: 100%;
+            padding: 1rem;
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
+            color: var(--white);
+            border: none;
+            border-radius: var(--border-radius-lg);
+            font-size: var(--font-size-lg);
+            font-weight: var(--font-weight-semibold);
+            cursor: pointer;
+            transition: all var(--transition-normal);
+            margin-top: 1.5rem;
+            box-shadow: var(--shadow-md);
+        }
+        
+        .place-order-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+        
+        .place-order-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        .local-payment-info {
+            background: linear-gradient(135deg, #E8F5E9, #F1F8F4);
+            border: 2px solid var(--primary-color);
+            border-radius: var(--border-radius-lg);
+            padding: 1.5rem;
+            margin-top: 1rem;
+        }
+        
+        .local-payment-info h4 {
+            color: var(--primary-dark);
+            margin-bottom: 0.75rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .local-payment-info p {
+            color: var(--gray-700);
+            font-size: var(--font-size-sm);
+            margin-bottom: 0.5rem;
+        }
+        
+        /* ========== RESPONSIVE DESIGN ========== */
+        @media (max-width: 768px) {
+            html, body {
+                overflow-x: hidden !important;
+                width: 100% !important;
+                max-width: 100% !important;
+            }
+            
+            .app-container {
+                padding: 0.5rem !important;
+                min-height: 100vh;
+                overflow-y: auto;
+                overflow-x: hidden !important;
+                -webkit-overflow-scrolling: touch;
+                width: 100% !important;
+                max-width: 100% !important;
+            }
+            
+            .checkout-container {
+                padding: 1rem !important;
+                margin: 0.5rem auto !important;
+                width: calc(100% - 1rem) !important;
+                max-width: 100% !important;
+                overflow-x: hidden !important;
+            }
+            
+            .checkout-content {
+                grid-template-columns: 1fr !important;
+                gap: 1.5rem !important;
+            }
+            
+            .order-summary {
+                position: static !important;
+                order: -1;
+            }
+            
+            .checkout-section {
+                padding: 1.5rem !important;
+            }
+            
+            nav {
+                flex-direction: column !important;
+                align-items: stretch !important;
+                gap: 0.75rem !important;
+                padding: 0 0.5rem !important;
+            }
+            
+            nav > div:last-child {
+                width: 100% !important;
+            }
+            
+            .back-btn {
+                width: 100% !important;
+                justify-content: center !important;
+            }
+            
+            .checkout-header h1 {
+                font-size: var(--font-size-2xl) !important;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .app-container {
+                padding: 0.25rem !important;
+            }
+            
+            .checkout-container {
+                padding: 0.75rem !important;
+                margin: 0.25rem auto !important;
+                width: calc(100% - 0.5rem) !important;
+                max-width: calc(100% - 0.5rem) !important;
+                box-sizing: border-box !important;
+            }
+            
+            .checkout-section {
+                padding: 1rem !important;
+            }
+            
+            .section-title {
+                font-size: var(--font-size-lg) !important;
+            }
+            
+            .payment-option {
+                padding: 1rem !important;
+            }
+            
+            .checkout-header h1 {
+                font-size: var(--font-size-xl) !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    <script src="../../assets/js/api.service.js"></script>
+    
+    <div class="app-container" style="padding-top: 2rem; min-height: 100vh; overflow-y: auto; -webkit-overflow-scrolling: touch;">
+        <!-- Barra de navegación mejorada -->
+        <nav aria-label="Barra de navegación" style="width:100%; max-width:1200px; margin:0 auto 2rem; display:flex; justify-content:space-between; align-items:center; padding:0 2rem; flex-wrap: wrap; gap: 0.75rem;">
+            <a href="./cart.html" class="back-btn" style="display:inline-flex; align-items:center; gap:0.5rem; padding:0.6rem 1rem; background:var(--white); border:none; border-radius:12px; color:var(--primary-color); font-weight:600; text-decoration:none; box-shadow:0 2px 8px rgba(0,0,0,0.1); transition:all 0.3s ease; width:100%; justify-content:center; order: 1;">
+                <i class="fa-solid fa-arrow-left"></i> <span>Volver al Carrito</span>
+            </a>
+            <div style="display:flex; align-items:center; gap:.5rem; color:var(--primary-dark); font-weight:600; width:100%; justify-content:center; order: 2; background:var(--white); padding:0.75rem 1.5rem; border-radius:12px; box-shadow:0 2px 8px rgba(0,0,0,0.1);">
+                <i class="fa-solid fa-credit-card" style="color:var(--primary-color);"></i>
+                <span>Finalizar Compra</span>
+            </div>
+        </nav>
+
+        <div class="checkout-container">
+            <!-- Header -->
+            <div class="checkout-header">
+                <h1><i class="fa-solid fa-credit-card" style="color: var(--primary-color);"></i> Finalizar Compra</h1>
+                <p>Completa tu información y método de pago</p>
+            </div>
+
+            <div class="checkout-content">
+                <!-- Formulario de pago -->
+                <div class="checkout-main">
+                    <!-- Información de contacto -->
+                    <div class="checkout-section">
+                        <h2 class="section-title">
+                            <i class="fa-solid fa-user"></i> Información de Contacto
+                        </h2>
+                        <form id="contactForm" class="auth-form">
+                            <div class="input-group">
+                                <div class="input-container">
+                                    <i class="fas fa-envelope input-icon"></i>
+                                    <input type="email" id="checkoutEmail" placeholder="Correo electrónico" required>
+                                    <div class="input-underline"></div>
+                                </div>
+                            </div>
+                            <div class="input-group">
+                                <div class="input-container">
+                                    <i class="fas fa-phone input-icon"></i>
+                                    <input type="tel" id="checkoutPhone" placeholder="Teléfono" required>
+                                    <div class="input-underline"></div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+
+                    <!-- Método de pago -->
+                    <div class="checkout-section">
+                        <h2 class="section-title">
+                            <i class="fa-solid fa-credit-card"></i> Método de Pago
+                        </h2>
+                        <div class="payment-methods">
+                            <label class="payment-option" data-payment="card">
+                                <input type="radio" name="paymentMethod" value="card" checked>
+                                <div class="payment-icon">
+                                    <i class="fa-solid fa-credit-card"></i>
+                                </div>
+                                <div class="payment-info">
+                                    <div class="payment-name">Tarjeta de Crédito/Débito</div>
+                                    <div class="payment-description">Pago seguro con tarjeta</div>
+                                </div>
+                            </label>
+
+                            <label class="payment-option" data-payment="local">
+                                <input type="radio" name="paymentMethod" value="local">
+                                <div class="payment-icon">
+                                    <i class="fa-solid fa-store"></i>
+                                </div>
+                                <div class="payment-info">
+                                    <div class="payment-name">Pago en el Local</div>
+                                    <div class="payment-description">Paga cuando retires tu pedido</div>
+                                </div>
+                            </label>
+                        </div>
+
+                        <!-- Formulario de tarjeta -->
+                        <div class="payment-form active" id="cardForm">
+                            <div class="input-group" style="margin-top: 1.5rem;">
+                                <div class="input-container">
+                                    <i class="fas fa-credit-card input-icon"></i>
+                                    <input type="text" id="cardNumber" placeholder="Número de tarjeta" maxlength="19" required>
+                                    <div class="input-underline"></div>
+                                </div>
+                            </div>
+                            <div class="input-row">
+                                <div class="input-group">
+                                    <div class="input-container">
+                                        <i class="fas fa-calendar input-icon"></i>
+                                        <input type="text" id="cardExpiry" placeholder="MM/AA" maxlength="5" required>
+                                        <div class="input-underline"></div>
+                                    </div>
+                                </div>
+                                <div class="input-group">
+                                    <div class="input-container">
+                                        <i class="fas fa-lock input-icon"></i>
+                                        <input type="text" id="cardCVC" placeholder="CVC" maxlength="4" required>
+                                        <div class="input-underline"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="input-group">
+                                <div class="input-container">
+                                    <i class="fas fa-user input-icon"></i>
+                                    <input type="text" id="cardName" placeholder="Nombre en la tarjeta" required>
+                                    <div class="input-underline"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Información de pago en local -->
+                        <div class="payment-form" id="localForm">
+                            <div class="local-payment-info">
+                                <h4>
+                                    <i class="fa-solid fa-info-circle"></i> Información sobre Pago en Local
+                                </h4>
+                                <p><strong>Dirección:</strong> Clínica Veterinaria Universitaria</p>
+                                <p><strong>Horario de atención:</strong> Lunes a Viernes 8:00 AM - 6:00 PM</p>
+                                <p><strong>Teléfono:</strong> (123) 456-7890</p>
+                                <p style="margin-top: 0.75rem; font-weight: 600; color: var(--primary-dark);">
+                                    Podrás pagar en efectivo o con tarjeta cuando retires tu pedido.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Resumen del pedido -->
+                <div class="order-summary">
+                    <h2 class="section-title" style="margin-bottom: 1rem;">
+                        <i class="fa-solid fa-receipt"></i> Resumen
+                    </h2>
+                    <div id="orderItems">
+                        <!-- Los items se cargarán dinámicamente -->
+                    </div>
+                    <div class="summary-item">
+                        <span class="summary-item-name">Subtotal:</span>
+                        <span class="summary-item-price" id="summarySubtotal">$0.00</span>
+                    </div>
+                    <div class="summary-item">
+                        <span class="summary-item-name">Envío:</span>
+                        <span class="summary-item-price" id="summaryShipping">$0.00</span>
+                    </div>
+                    <div class="summary-total">
+                        <span>Total:</span>
+                        <span id="summaryTotal">$0.00</span>
+                    </div>
+                    <button class="place-order-btn" id="placeOrderBtn">
+                        <i class="fa-solid fa-check"></i> Confirmar Pedido
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sistema de Notificaciones -->
+    <div id="notificationContainer" style="position:fixed; top:20px; right:20px; z-index:10000; display:flex; flex-direction:column; gap:0.75rem; max-width:400px; width:100%;"></div>
+    
+    <script src="../../assets/js/api.service.js"></script>
+    <script src="./checkout.js"></script>
+    <script>
+        // Sistema de notificaciones
+        function showNotification(message, type = 'success') {
+            const container = document.getElementById('notificationContainer');
+            const notification = document.createElement('div');
+            
+            const bgColor = type === 'success' ? 'var(--success-color)' : 
+                           type === 'error' ? 'var(--error-color)' : 
+                           'var(--info-color)';
+            
+            notification.style.cssText = `
+                background: ${bgColor};
+                color: white;
+                padding: 1rem 1.5rem;
+                border-radius: 12px;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+                display: flex;
+                align-items: center;
+                gap: 0.75rem;
+                animation: slideInRight 0.3s ease;
+                font-weight: 500;
+            `;
+            
+            const icon = type === 'success' ? 'fa-check-circle' : 
+                        type === 'error' ? 'fa-exclamation-circle' : 
+                        'fa-info-circle';
+            
+            notification.innerHTML = `
+                <i class="fa-solid ${icon}" style="font-size:1.25rem;"></i>
+                <span>${message}</span>
+            `;
+            
+            container.appendChild(notification);
+            
+            // Remover después de 5 segundos
+            setTimeout(() => {
+                notification.style.animation = 'slideOutRight 0.3s ease';
+                setTimeout(() => notification.remove(), 300);
+            }, 5000);
+        }
+        
+        // Agregar animaciones CSS
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes slideInRight {
+                from {
+                    transform: translateX(100%);
+                    opacity: 0;
+                }
+                to {
+                    transform: translateX(0);
+                    opacity: 1;
+                }
+            }
+            @keyframes slideOutRight {
+                from {
+                    transform: translateX(0);
+                    opacity: 1;
+                }
+                to {
+                    transform: translateX(100%);
+                    opacity: 0;
+                }
+            }
+            @media (max-width: 768px) {
+                #notificationContainer {
+                    top: 10px !important;
+                    right: 10px !important;
+                    left: 10px !important;
+                    max-width: calc(100% - 20px) !important;
+                }
+            }
+        `;
+        document.head.appendChild(style);
+        
+        // Hacer función global
+        window.showNotification = showNotification;
+    </script>
+</body>
+</html>
+

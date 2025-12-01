@@ -1,0 +1,614 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VetUni - Prueba de Conexiones Backend</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 2rem;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 16px;
+            padding: 2rem;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+
+        h1 {
+            color: #2E8B57;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .status-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding: 1rem;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+
+        .config-section {
+            margin-bottom: 2rem;
+            padding: 1rem;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+
+        .config-section h3 {
+            margin-bottom: 0.5rem;
+            color: #333;
+        }
+
+        .config-input {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+            margin-top: 0.5rem;
+        }
+
+        .config-input input {
+            flex: 1;
+            padding: 0.5rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+
+        .config-input button {
+            padding: 0.5rem 1rem;
+            background: #2E8B57;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .config-input button:hover {
+            background: #3CB371;
+        }
+
+        .test-section {
+            margin-bottom: 2rem;
+        }
+
+        .test-section h2 {
+            color: #333;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid #2E8B57;
+        }
+
+        .test-buttons {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .test-btn {
+            padding: 0.75rem 1rem;
+            background: #2E8B57;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .test-btn:hover {
+            background: #3CB371;
+            transform: translateY(-2px);
+        }
+
+        .test-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .test-all-btn {
+            padding: 1rem 2rem;
+            background: #FF8C42;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 700;
+            font-size: 1.1rem;
+            margin-bottom: 1rem;
+            width: 100%;
+        }
+
+        .test-all-btn:hover {
+            background: #FF6B1A;
+        }
+
+        .results {
+            margin-top: 1rem;
+        }
+
+        .result-item {
+            padding: 1rem;
+            margin-bottom: 0.5rem;
+            border-radius: 8px;
+            border-left: 4px solid;
+            background: #f8f9fa;
+        }
+
+        .result-item.success {
+            border-left-color: #4CAF50;
+            background: #e8f5e9;
+        }
+
+        .result-item.error {
+            border-left-color: #f44336;
+            background: #ffebee;
+        }
+
+        .result-item.pending {
+            border-left-color: #ff9800;
+            background: #fff3e0;
+        }
+
+        .result-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+
+        .result-title {
+            font-weight: 600;
+            color: #333;
+        }
+
+        .result-status {
+            padding: 0.25rem 0.75rem;
+            border-radius: 12px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .status-success {
+            background: #4CAF50;
+            color: white;
+        }
+
+        .status-error {
+            background: #f44336;
+            color: white;
+        }
+
+        .status-pending {
+            background: #ff9800;
+            color: white;
+        }
+
+        .result-details {
+            font-size: 0.9rem;
+            color: #666;
+            margin-top: 0.5rem;
+            word-break: break-all;
+        }
+
+        .result-data {
+            margin-top: 0.5rem;
+            padding: 0.5rem;
+            background: white;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.85rem;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        .summary {
+            margin-top: 2rem;
+            padding: 1rem;
+            background: #e3f2fd;
+            border-radius: 8px;
+            border-left: 4px solid #2196F3;
+        }
+
+        .summary h3 {
+            margin-bottom: 0.5rem;
+            color: #1976D2;
+        }
+
+        .summary-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .stat-item {
+            text-align: center;
+            padding: 1rem;
+            background: white;
+            border-radius: 8px;
+        }
+
+        .stat-number {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #1976D2;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            color: #666;
+            margin-top: 0.25rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔌 Prueba de Conexiones Backend - VetUni</h1>
+        
+        <div class="status-header">
+            <div>
+                <strong>API Gateway URL:</strong> 
+                <span id="currentUrl">http://localhost:8070</span>
+            </div>
+            <div class="config-section" style="margin: 0; padding: 0.5rem; background: transparent;">
+                <div class="config-input">
+                    <input type="text" id="apiUrl" placeholder="http://localhost:8070" value="http://localhost:8070">
+                    <button onclick="updateApiUrl()">Actualizar URL</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="config-section">
+            <h3>📝 Datos de Prueba (Login/Registro)</h3>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 0.5rem;">
+                <div>
+                    <label><strong>Email:</strong></label>
+                    <input type="email" id="testEmail" value="test@vetuni.com" style="width: 100%; padding: 0.5rem; margin-top: 0.25rem;">
+                </div>
+                <div>
+                    <label><strong>Contraseña:</strong></label>
+                    <input type="password" id="testPassword" value="Test1234!" style="width: 100%; padding: 0.5rem; margin-top: 0.25rem;">
+                </div>
+            </div>
+        </div>
+
+        <button class="test-all-btn" onclick="testAllConnections()">
+            🚀 Probar Todas las Conexiones
+        </button>
+
+        <div class="test-section">
+            <h2>🔐 Autenticación</h2>
+            <div class="test-buttons">
+                <button class="test-btn" onclick="testEndpoint('GET', '/api/auth', 'Listar Usuarios', true)">Listar Usuarios</button>
+                <button class="test-btn" onclick="testLogin()">Login</button>
+                <button class="test-btn" onclick="testRegister()">Registro</button>
+                <button class="test-btn" onclick="testGetUser()">Obtener Usuario</button>
+            </div>
+        </div>
+
+        <div class="test-section">
+            <h2>📦 Inventario - Productos</h2>
+            <div class="test-buttons">
+                <button class="test-btn" onclick="testEndpoint('GET', '/api/inventario/productos', 'Listar Productos', false)">Listar Productos</button>
+                <button class="test-btn" onclick="testEndpoint('GET', '/api/inventario/productos/1', 'Obtener Producto 1', false)">Obtener Producto</button>
+            </div>
+        </div>
+
+        <div class="test-section">
+            <h2>🏷️ Inventario - Categorías</h2>
+            <div class="test-buttons">
+                <button class="test-btn" onclick="testEndpoint('GET', '/api/inventario/categorias', 'Listar Categorías', false)">Listar Categorías</button>
+                <button class="test-btn" onclick="testEndpoint('GET', '/api/inventario/categorias/1', 'Obtener Categoría 1', false)">Obtener Categoría</button>
+            </div>
+        </div>
+
+        <div class="results" id="results"></div>
+
+        <div class="summary" id="summary" style="display: none;">
+            <h3>📊 Resumen de Pruebas</h3>
+            <div class="summary-stats">
+                <div class="stat-item">
+                    <div class="stat-number" id="totalTests">0</div>
+                    <div class="stat-label">Total Pruebas</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number" id="successTests" style="color: #4CAF50;">0</div>
+                    <div class="stat-label">Exitosas</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number" id="errorTests" style="color: #f44336;">0</div>
+                    <div class="stat-label">Errores</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Configuración
+        let API_BASE_URL = 'http://localhost:8070';
+        let authToken = null;
+        let testResults = {
+            total: 0,
+            success: 0,
+            error: 0
+        };
+
+        // Cargar token del localStorage si existe
+        window.addEventListener('DOMContentLoaded', () => {
+            authToken = localStorage.getItem('vetuni_token');
+            if (authToken) {
+                console.log('✅ Token encontrado en localStorage');
+            }
+        });
+
+        function updateApiUrl() {
+            const input = document.getElementById('apiUrl');
+            API_BASE_URL = input.value.trim() || 'http://localhost:8070';
+            document.getElementById('currentUrl').textContent = API_BASE_URL;
+            console.log('🔗 URL actualizada a:', API_BASE_URL);
+        }
+
+        async function testEndpoint(method, endpoint, title, requiresAuth = false) {
+            const resultId = `result-${Date.now()}-${Math.random()}`;
+            addResult(resultId, title, 'pending', 'Probando...');
+
+            try {
+                const url = `${API_BASE_URL}${endpoint}`;
+                const options = {
+                    method: method,
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    }
+                };
+
+                if (requiresAuth && authToken) {
+                    options.headers['Authorization'] = `Bearer ${authToken}`;
+                }
+
+                const startTime = Date.now();
+                const response = await fetch(url, options);
+                const endTime = Date.now();
+                const duration = endTime - startTime;
+
+                let data = null;
+                const contentType = response.headers.get('content-type');
+                
+                if (contentType && contentType.includes('application/json')) {
+                    try {
+                        data = await response.json();
+                    } catch (e) {
+                        data = await response.text();
+                    }
+                } else {
+                    data = await response.text();
+                }
+
+                if (response.ok) {
+                    updateResult(resultId, title, 'success', 
+                        `✅ Éxito (${response.status}) - ${duration}ms`, 
+                        data);
+                    testResults.success++;
+                } else {
+                    updateResult(resultId, title, 'error', 
+                        `❌ Error ${response.status}: ${response.statusText}`, 
+                        data);
+                    testResults.error++;
+                }
+            } catch (error) {
+                updateResult(resultId, title, 'error', 
+                    `❌ Error de conexión: ${error.message}`, 
+                    error);
+                testResults.error++;
+            }
+
+            testResults.total++;
+            updateSummary();
+        }
+
+        async function testLogin() {
+            const email = document.getElementById('testEmail').value;
+            const password = document.getElementById('testPassword').value;
+            
+            const resultId = `result-${Date.now()}-${Math.random()}`;
+            addResult(resultId, 'Login', 'pending', 'Probando login...');
+
+            try {
+                const url = `${API_BASE_URL}/api/auth/login`;
+                const response = await fetch(url, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        correo: email,
+                        contraseña: password
+                    })
+                });
+
+                const data = await response.json();
+
+                if (response.ok && data.token) {
+                    authToken = data.token;
+                    localStorage.setItem('vetuni_token', authToken);
+                    updateResult(resultId, 'Login', 'success', 
+                        `✅ Login exitoso - Token guardado`, 
+                        { ...data, token: '***TOKEN OCULTO***' });
+                    testResults.success++;
+                } else {
+                    updateResult(resultId, 'Login', 'error', 
+                        `❌ Error ${response.status}: ${data.message || 'Credenciales inválidas'}`, 
+                        data);
+                    testResults.error++;
+                }
+            } catch (error) {
+                updateResult(resultId, 'Login', 'error', 
+                    `❌ Error de conexión: ${error.message}`, 
+                    error);
+                testResults.error++;
+            }
+
+            testResults.total++;
+            updateSummary();
+        }
+
+        async function testRegister() {
+            const email = document.getElementById('testEmail').value;
+            const password = document.getElementById('testPassword').value;
+            
+            const resultId = `result-${Date.now()}-${Math.random()}`;
+            addResult(resultId, 'Registro', 'pending', 'Probando registro...');
+
+            try {
+                const url = `${API_BASE_URL}/api/auth/register`;
+                const response = await fetch(url, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        nombre: 'Test',
+                        apellido: 'Usuario',
+                        correo: email,
+                        contraseña: password,
+                        direccion: 'Calle Test 123',
+                        telefono: '3001234567',
+                        tipoUsuario: 'DUEÑO',
+                        especialidad: null
+                    })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    updateResult(resultId, 'Registro', 'success', 
+                        `✅ Usuario registrado exitosamente`, 
+                        data);
+                    testResults.success++;
+                } else {
+                    updateResult(resultId, 'Registro', 'error', 
+                        `❌ Error ${response.status}: ${data.message || 'Error al registrar'}`, 
+                        data);
+                    testResults.error++;
+                }
+            } catch (error) {
+                updateResult(resultId, 'Registro', 'error', 
+                    `❌ Error de conexión: ${error.message}`, 
+                    error);
+                testResults.error++;
+            }
+
+            testResults.total++;
+            updateSummary();
+        }
+
+        async function testGetUser() {
+            if (!authToken) {
+                alert('⚠️ Primero debes hacer login para obtener un token');
+                return;
+            }
+
+            const resultId = `result-${Date.now()}-${Math.random()}`;
+            addResult(resultId, 'Obtener Usuario', 'pending', 'Probando obtener usuario...');
+
+            // Intentar obtener el ID del usuario desde localStorage o usar 1 como default
+            const userId = localStorage.getItem('vetuni_user_id') || '1';
+            
+            await testEndpoint('GET', `/api/auth/${userId}`, 'Obtener Usuario', true);
+        }
+
+        async function testAllConnections() {
+            // Limpiar resultados anteriores
+            document.getElementById('results').innerHTML = '';
+            testResults = { total: 0, success: 0, error: 0 };
+
+            // Probar endpoints públicos primero
+            await testEndpoint('GET', '/api/inventario/productos', 'Listar Productos', false);
+            await new Promise(resolve => setTimeout(resolve, 500));
+            
+            await testEndpoint('GET', '/api/inventario/categorias', 'Listar Categorías', false);
+            await new Promise(resolve => setTimeout(resolve, 500));
+
+            // Probar login
+            await testLogin();
+            await new Promise(resolve => setTimeout(resolve, 500));
+
+            // Si tenemos token, probar endpoints autenticados
+            if (authToken) {
+                await testEndpoint('GET', '/api/auth', 'Listar Usuarios', true);
+                await new Promise(resolve => setTimeout(resolve, 500));
+            }
+        }
+
+        function addResult(id, title, status, message, data = null) {
+            const results = document.getElementById('results');
+            const resultDiv = document.createElement('div');
+            resultDiv.id = id;
+            resultDiv.className = `result-item ${status}`;
+            
+            const statusClass = status === 'success' ? 'status-success' : 
+                               status === 'error' ? 'status-error' : 'status-pending';
+            
+            resultDiv.innerHTML = `
+                <div class="result-header">
+                    <div class="result-title">${title}</div>
+                    <div class="result-status ${statusClass}">${message}</div>
+                </div>
+                ${data ? `<div class="result-data">${JSON.stringify(data, null, 2)}</div>` : ''}
+            `;
+            
+            results.appendChild(resultDiv);
+            resultDiv.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+
+        function updateResult(id, title, status, message, data = null) {
+            const resultDiv = document.getElementById(id);
+            if (!resultDiv) return;
+
+            resultDiv.className = `result-item ${status}`;
+            
+            const statusClass = status === 'success' ? 'status-success' : 
+                               status === 'error' ? 'status-error' : 'status-pending';
+            
+            resultDiv.innerHTML = `
+                <div class="result-header">
+                    <div class="result-title">${title}</div>
+                    <div class="result-status ${statusClass}">${message}</div>
+                </div>
+                ${data ? `<div class="result-data">${JSON.stringify(data, null, 2)}</div>` : ''}
+            `;
+        }
+
+        function updateSummary() {
+            document.getElementById('summary').style.display = 'block';
+            document.getElementById('totalTests').textContent = testResults.total;
+            document.getElementById('successTests').textContent = testResults.success;
+            document.getElementById('errorTests').textContent = testResults.error;
+        }
+    </script>
+</body>
+</html>
+

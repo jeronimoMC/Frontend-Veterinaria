@@ -1,0 +1,519 @@
+<!-- Contenedor principal del contenido de clientes y mascotas -->
+<div id="sectionContent" style="max-width: 1800px; margin: 0 auto; padding: 0 1rem;">
+    <!-- Selector de vista -->
+    <div class="admin-card" style="margin-bottom:1.5rem;">
+        <div style="display:flex; gap:1rem; padding:1rem; background:var(--gray-50); border-radius:var(--border-radius-lg);">
+            <button class="submit-btn" id="viewClientsBtn" onclick="switchClientsView('clients')" style="flex:1;">
+                <i class="fa-solid fa-users"></i> Clientes
+            </button>
+            <button class="submit-btn btn-secondary" id="viewPetsBtn" onclick="switchClientsView('pets')" style="flex:1;">
+                <i class="fa-solid fa-paw"></i> Mascotas
+            </button>
+        </div>
+    </div>
+    
+    <!-- Estadísticas -->
+    <div class="admin-card" style="margin-bottom:1.5rem;">
+        <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap:1rem;" id="clientsStatsContainer">
+            <!-- Se cargará dinámicamente -->
+        </div>
+    </div>
+    
+    <!-- VISTA: CLIENTES -->
+    <div id="clientsViewContainer">
+        <!-- Barra de herramientas -->
+        <div class="admin-card" style="margin-bottom:1.5rem;">
+            <div class="admin-card-header">
+                <h2 style="margin:0; color:var(--gray-900); display:flex; align-items:center; gap:0.5rem; font-size:1.25rem; font-weight:600;">
+                    <i class="fa-solid fa-users" style="color:var(--primary-color);"></i> Gestión de Clientes
+                </h2>
+                <button class="submit-btn" onclick="openCreateClientModal()">
+                    <i class="fa-solid fa-user-plus"></i> Nuevo Cliente
+                </button>
+            </div>
+            
+            <!-- Filtros -->
+            <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap:1rem; margin-top:1.5rem; padding-top:1.5rem; border-top:2px solid var(--gray-200);">
+                <div class="input-container">
+                    <i class="fas fa-search input-icon"></i>
+                    <input type="text" id="clientSearch" placeholder="Buscar por nombre o email..." onkeyup="filterClients()">
+                    <div class="input-underline"></div>
+                </div>
+                
+                <div class="input-container select-container">
+                    <i class="fas fa-filter input-icon"></i>
+                    <select id="filterClientStatus" onchange="filterClients()">
+                        <option value="">Todos los estados</option>
+                        <option value="active">Activos</option>
+                        <option value="inactive">Inactivos</option>
+                    </select>
+                    <div class="input-underline"></div>
+                </div>
+                
+                <button class="submit-btn btn-secondary" onclick="clearClientFilters()" style="white-space:nowrap;">
+                    <i class="fa-solid fa-times"></i> Limpiar Filtros
+                </button>
+            </div>
+        </div>
+        
+        <!-- Tabla de clientes -->
+        <div class="admin-card">
+            <div style="overflow-x:auto;">
+                <table class="data-table" style="width:100%; border-collapse:collapse;">
+                    <thead>
+                        <tr style="background:var(--gray-100); border-bottom:2px solid var(--gray-300);">
+                            <th style="padding:0.75rem; text-align:left; font-weight:600; color:var(--gray-700);">ID</th>
+                            <th style="padding:0.75rem; text-align:left; font-weight:600; color:var(--gray-700);">Nombre Completo</th>
+                            <th style="padding:0.75rem; text-align:left; font-weight:600; color:var(--gray-700);">Identificación</th>
+                            <th style="padding:0.75rem; text-align:left; font-weight:600; color:var(--gray-700);">Email</th>
+                            <th style="padding:0.75rem; text-align:left; font-weight:600; color:var(--gray-700);">Teléfono</th>
+                            <th style="padding:0.75rem; text-align:center; font-weight:600; color:var(--gray-700);">Mascotas</th>
+                            <th style="padding:0.75rem; text-align:center; font-weight:600; color:var(--gray-700);">Estado</th>
+                            <th style="padding:0.75rem; text-align:center; font-weight:600; color:var(--gray-700);">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="clientsTableBody">
+                        <!-- Se cargará dinámicamente -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    
+    <!-- VISTA: MASCOTAS -->
+    <div id="petsViewContainer" style="display:none;">
+        <!-- Barra de herramientas -->
+        <div class="admin-card" style="margin-bottom:1.5rem;">
+            <div class="admin-card-header">
+                <h2 style="margin:0; color:var(--gray-900); display:flex; align-items:center; gap:0.5rem; font-size:1.25rem; font-weight:600;">
+                    <i class="fa-solid fa-paw" style="color:var(--primary-color);"></i> Gestión de Mascotas
+                </h2>
+                <button class="submit-btn" onclick="openCreatePetModal()">
+                    <i class="fa-solid fa-plus"></i> Nueva Mascota
+                </button>
+            </div>
+            
+            <!-- Filtros -->
+            <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap:1rem; margin-top:1.5rem; padding-top:1.5rem; border-top:2px solid var(--gray-200);">
+                <div class="input-container">
+                    <i class="fas fa-search input-icon"></i>
+                    <input type="text" id="petSearch" placeholder="Buscar por nombre..." onkeyup="filterPets()">
+                    <div class="input-underline"></div>
+                </div>
+                
+                <div class="input-container select-container">
+                    <i class="fas fa-dog input-icon"></i>
+                    <select id="filterPetSpecies" onchange="filterPets()">
+                        <option value="">Todas las especies</option>
+                        <option value="Perro">Perro</option>
+                        <option value="Gato">Gato</option>
+                        <option value="Otro">Otro</option>
+                    </select>
+                    <div class="input-underline"></div>
+                </div>
+                
+                <div class="input-container select-container">
+                    <i class="fas fa-user input-icon"></i>
+                    <select id="filterPetOwner" onchange="filterPets()">
+                        <option value="">Todos los dueños</option>
+                    </select>
+                    <div class="input-underline"></div>
+                </div>
+                
+                <div class="input-container select-container">
+                    <i class="fas fa-filter input-icon"></i>
+                    <select id="filterPetStatus" onchange="filterPets()">
+                        <option value="">Todos los estados</option>
+                        <option value="active">Activos</option>
+                        <option value="inactive">Inactivos</option>
+                    </select>
+                    <div class="input-underline"></div>
+                </div>
+                
+                <button class="submit-btn btn-secondary" onclick="clearPetFilters()" style="white-space:nowrap;">
+                    <i class="fa-solid fa-times"></i> Limpiar Filtros
+                </button>
+            </div>
+        </div>
+        
+        <!-- Tabla de mascotas -->
+        <div class="admin-card">
+            <div style="overflow-x:auto;">
+                <table class="data-table" style="width:100%; border-collapse:collapse;">
+                    <thead>
+                        <tr style="background:var(--gray-100); border-bottom:2px solid var(--gray-300);">
+                            <th style="padding:0.75rem; text-align:left; font-weight:600; color:var(--gray-700);">ID</th>
+                            <th style="padding:0.75rem; text-align:left; font-weight:600; color:var(--gray-700);">Nombre</th>
+                            <th style="padding:0.75rem; text-align:left; font-weight:600; color:var(--gray-700);">Especie</th>
+                            <th style="padding:0.75rem; text-align:left; font-weight:600; color:var(--gray-700);">Raza</th>
+                            <th style="padding:0.75rem; text-align:left; font-weight:600; color:var(--gray-700);">Dueño</th>
+                            <th style="padding:0.75rem; text-align:center; font-weight:600; color:var(--gray-700);">Edad</th>
+                            <th style="padding:0.75rem; text-align:center; font-weight:600; color:var(--gray-700);">Estado</th>
+                            <th style="padding:0.75rem; text-align:center; font-weight:600; color:var(--gray-700);">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="petsTableBody">
+                        <!-- Se cargará dinámicamente -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal: Crear/Editar Cliente -->
+<div id="createClientModal" class="patient-modal" onclick="if(event.target === this) closeCreateClientModal();">
+    <div class="patient-modal-content" style="max-width:700px;">
+        <div class="patient-modal-header">
+            <h2 class="patient-modal-title">
+                <i class="fa-solid fa-user-plus"></i> <span id="createClientModalTitle">Nuevo Cliente</span>
+            </h2>
+            <button class="patient-modal-close" onclick="closeCreateClientModal()">
+                <i class="fa-solid fa-times"></i>
+            </button>
+        </div>
+        <div class="patient-modal-body">
+            <form id="createClientForm" onsubmit="event.preventDefault(); saveClient();">
+                <div class="form-grid-admin" style="display:grid; grid-template-columns:repeat(2, 1fr); gap:1.5rem; margin-bottom:1.5rem;">
+                    <div class="input-group">
+                        <label style="display:block; margin-bottom:0.5rem; font-weight:600; color:var(--gray-700);">Nombre *</label>
+                        <div class="input-container">
+                            <i class="fas fa-user input-icon"></i>
+                            <input type="text" id="clientFirstName" required placeholder="Nombre" oninput="validateClientField('firstName')">
+                            <div class="input-underline"></div>
+                        </div>
+                        <small class="field-error" id="clientFirstNameError"></small>
+                    </div>
+                    
+                    <div class="input-group">
+                        <label style="display:block; margin-bottom:0.5rem; font-weight:600; color:var(--gray-700);">Apellido *</label>
+                        <div class="input-container">
+                            <i class="fas fa-user input-icon"></i>
+                            <input type="text" id="clientLastName" required placeholder="Apellido" oninput="validateClientField('lastName')">
+                            <div class="input-underline"></div>
+                        </div>
+                        <small class="field-error" id="clientLastNameError"></small>
+                    </div>
+                    
+                    <div class="input-group">
+                        <label style="display:block; margin-bottom:0.5rem; font-weight:600; color:var(--gray-700);">Identificación / DNI *</label>
+                        <div class="input-container">
+                            <i class="fas fa-id-card input-icon"></i>
+                            <input type="text" id="clientIdentification" required placeholder="Ej: 1234567890" oninput="validateClientField('identification')">
+                            <div class="input-underline"></div>
+                        </div>
+                        <small class="field-error" id="clientIdentificationError"></small>
+                    </div>
+                    
+                    <div class="input-group">
+                        <label style="display:block; margin-bottom:0.5rem; font-weight:600; color:var(--gray-700);">Email *</label>
+                        <div class="input-container">
+                            <i class="fas fa-envelope input-icon"></i>
+                            <input type="email" id="clientEmail" required placeholder="email@ejemplo.com" oninput="validateClientField('email')">
+                            <div class="input-underline"></div>
+                        </div>
+                        <small class="field-error" id="clientEmailError"></small>
+                    </div>
+                    
+                    <div class="input-group">
+                        <label style="display:block; margin-bottom:0.5rem; font-weight:600; color:var(--gray-700);">Teléfono *</label>
+                        <div class="input-container">
+                            <i class="fas fa-phone input-icon"></i>
+                            <input type="tel" id="clientPhone" required placeholder="+1234567890" oninput="validateClientField('phone')">
+                            <div class="input-underline"></div>
+                        </div>
+                        <small class="field-error" id="clientPhoneError"></small>
+                    </div>
+                    
+                    <div class="input-group">
+                        <label style="display:block; margin-bottom:0.5rem; font-weight:600; color:var(--gray-700);">Dirección</label>
+                        <div class="input-container">
+                            <i class="fas fa-map-marker-alt input-icon"></i>
+                            <input type="text" id="clientAddress" placeholder="Dirección (opcional)">
+                            <div class="input-underline"></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div id="clientPasswordSection" style="margin-bottom:1.5rem;">
+                    <div class="form-grid-admin" style="display:grid; grid-template-columns:repeat(2, 1fr); gap:1.5rem; margin-bottom:1rem;">
+                        <div class="input-group">
+                            <label style="display:block; margin-bottom:0.5rem; font-weight:600; color:var(--gray-700);">
+                                Contraseña <span id="clientPasswordRequired">*</span>
+                                <span style="font-weight:400; font-size:0.85rem; color:var(--gray-500);">(para inicio de sesión)</span>
+                            </label>
+                            <div class="input-container">
+                                <i class="fas fa-lock input-icon"></i>
+                                <input type="password" id="clientPassword" placeholder="Mínimo 8 caracteres" oninput="validateClientField('password')">
+                                <div class="input-underline"></div>
+                            </div>
+                            <small class="field-error" id="clientPasswordError"></small>
+                            <small style="display:block; margin-top:0.25rem; font-size:0.75rem; color:var(--gray-500);">
+                                Si no se proporciona, se generará una contraseña temporal
+                            </small>
+                        </div>
+                        
+                        <div class="input-group">
+                            <label style="display:block; margin-bottom:0.5rem; font-weight:600; color:var(--gray-700);">Confirmar Contraseña</label>
+                            <div class="input-container">
+                                <i class="fas fa-lock input-icon"></i>
+                                <input type="password" id="clientPasswordConfirm" placeholder="Confirma la contraseña" oninput="validateClientField('passwordConfirm')">
+                                <div class="input-underline"></div>
+                            </div>
+                            <small class="field-error" id="clientPasswordConfirmError"></small>
+                        </div>
+                    </div>
+                    
+                    <div style="padding:0.75rem; background:var(--gray-50); border-radius:var(--border-radius-md); border-left:3px solid var(--primary-color); margin-bottom:1rem;">
+                        <div style="display:flex; align-items:start; gap:0.5rem;">
+                            <i class="fa-solid fa-info-circle" style="color:var(--primary-color); margin-top:0.2rem;"></i>
+                            <div style="font-size:0.85rem; color:var(--gray-700);">
+                                <strong>Nota:</strong> Si proporcionas una contraseña, el cliente podrá iniciar sesión inmediatamente. 
+                                Si no, se generará una contraseña temporal que deberás proporcionarle.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="input-group" style="margin-bottom:1.5rem;">
+                    <label style="display:flex; align-items:center; gap:0.5rem; font-weight:600; color:var(--gray-700); cursor:pointer;">
+                        <input type="checkbox" id="clientActive" checked style="width:20px; height:20px; cursor:pointer; accent-color:var(--primary-color);">
+                        <span>Cliente Activo</span>
+                        <small style="font-weight:400; color:var(--gray-500); margin-left:0.5rem;">(Los clientes inactivos no podrán iniciar sesión)</small>
+                    </label>
+                </div>
+                
+                <div style="display:flex; gap:1rem; justify-content:flex-end;">
+                    <button type="button" class="submit-btn btn-secondary" onclick="closeCreateClientModal()">
+                        Cancelar
+                    </button>
+                    <button type="submit" class="submit-btn">
+                        <i class="fa-solid fa-save"></i> Guardar Cliente
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modal: Detalle de Cliente -->
+<div id="clientDetailModal" class="patient-modal" onclick="if(event.target === this) closeClientDetailModal();">
+    <div class="patient-modal-content" style="max-width:900px; max-height:90vh; overflow-y:auto;">
+        <div class="patient-modal-header">
+            <h2 class="patient-modal-title">
+                <i class="fa-solid fa-user"></i> Detalle del Cliente
+            </h2>
+            <button class="patient-modal-close" onclick="closeClientDetailModal()">
+                <i class="fa-solid fa-times"></i>
+            </button>
+        </div>
+        <div class="patient-modal-body" id="clientDetailContent">
+            <!-- Se cargará dinámicamente -->
+        </div>
+        <div class="patient-modal-footer" style="padding:1rem 1.5rem; border-top:1px solid var(--gray-200); display:flex; gap:0.75rem; justify-content:flex-end;">
+            <button class="submit-btn btn-secondary" onclick="closeClientDetailModal()">
+                Cerrar
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Modal: Crear/Editar Mascota -->
+<div id="createPetModal" class="patient-modal" onclick="if(event.target === this) closeCreatePetModal();">
+    <div class="patient-modal-content" style="max-width:700px;">
+        <div class="patient-modal-header">
+            <h2 class="patient-modal-title">
+                <i class="fa-solid fa-plus"></i> <span id="createPetModalTitle">Nueva Mascota</span>
+            </h2>
+            <button class="patient-modal-close" onclick="closeCreatePetModal()">
+                <i class="fa-solid fa-times"></i>
+            </button>
+        </div>
+        <div class="patient-modal-body">
+            <form id="createPetForm" onsubmit="event.preventDefault(); savePet();">
+                <div class="form-grid-admin" style="display:grid; grid-template-columns:repeat(2, 1fr); gap:1.5rem; margin-bottom:1.5rem;">
+                    <div class="input-group">
+                        <label style="display:block; margin-bottom:0.5rem; font-weight:600; color:var(--gray-700);">Nombre *</label>
+                        <div class="input-container">
+                            <i class="fas fa-paw input-icon"></i>
+                            <input type="text" id="petName" required placeholder="Nombre de la mascota">
+                            <div class="input-underline"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="input-group">
+                        <label style="display:block; margin-bottom:0.5rem; font-weight:600; color:var(--gray-700);">Dueño *</label>
+                        <div class="input-container select-container">
+                            <i class="fas fa-user input-icon"></i>
+                            <select id="petOwner" required onchange="validatePetOwner()">
+                                <option value="">Seleccione un dueño</option>
+                            </select>
+                            <div class="input-underline"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="input-group">
+                        <label style="display:block; margin-bottom:0.5rem; font-weight:600; color:var(--gray-700);">Especie *</label>
+                        <div class="input-container select-container">
+                            <i class="fas fa-dog input-icon"></i>
+                            <select id="petSpecies" required>
+                                <option value="">Seleccione una especie</option>
+                                <option value="Perro">Perro</option>
+                                <option value="Gato">Gato</option>
+                                <option value="Otro">Otro</option>
+                            </select>
+                            <div class="input-underline"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="input-group">
+                        <label style="display:block; margin-bottom:0.5rem; font-weight:600; color:var(--gray-700);">Raza</label>
+                        <div class="input-container">
+                            <i class="fas fa-dna input-icon"></i>
+                            <input type="text" id="petBreed" placeholder="Raza (opcional)">
+                            <div class="input-underline"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="input-group">
+                        <label style="display:block; margin-bottom:0.5rem; font-weight:600; color:var(--gray-700);">Sexo *</label>
+                        <div class="input-container select-container">
+                            <i class="fas fa-venus-mars input-icon"></i>
+                            <select id="petSex" required>
+                                <option value="">Seleccione</option>
+                                <option value="Macho">Macho</option>
+                                <option value="Hembra">Hembra</option>
+                            </select>
+                            <div class="input-underline"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="input-group">
+                        <label style="display:block; margin-bottom:0.5rem; font-weight:600; color:var(--gray-700);">Fecha de Nacimiento</label>
+                        <div class="input-container">
+                            <i class="fas fa-calendar input-icon"></i>
+                            <input type="date" id="petBirthdate" max="">
+                            <div class="input-underline"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="input-group">
+                        <label style="display:block; margin-bottom:0.5rem; font-weight:600; color:var(--gray-700);">Peso (kg)</label>
+                        <div class="input-container">
+                            <i class="fas fa-weight input-icon"></i>
+                            <input type="number" id="petWeight" step="0.1" min="0" placeholder="0.0">
+                            <div class="input-underline"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="input-group">
+                        <label style="display:block; margin-bottom:0.5rem; font-weight:600; color:var(--gray-700);">Color</label>
+                        <div class="input-container">
+                            <i class="fas fa-palette input-icon"></i>
+                            <input type="text" id="petColor" placeholder="Color (opcional)" oninput="validatePetField('color')">
+                            <div class="input-underline"></div>
+                        </div>
+                        <small class="field-error" id="petColorError"></small>
+                    </div>
+                </div>
+                
+                <div class="input-group" style="margin-bottom:1.5rem;">
+                    <label style="display:block; margin-bottom:0.5rem; font-weight:600; color:var(--gray-700);">Notas Adicionales</label>
+                    <div class="input-container" style="position:relative; display:flex; align-items:flex-start;">
+                        <i class="fas fa-sticky-note input-icon" style="position:absolute; left:1rem; top:1rem; color:var(--gray-400); transition:color 0.3s ease;"></i>
+                        <textarea 
+                            id="petNotes" 
+                            rows="3" 
+                            placeholder="Notas adicionales sobre la mascota (opcional)"
+                            style="width:100%; min-height:80px; padding:1rem 1rem 1rem calc(1rem + 24px); border:2px solid var(--gray-300); border-radius:var(--border-radius-lg); font-family:var(--font-family); font-size:var(--font-size-base); resize:vertical; transition:all 0.3s ease; background:var(--gray-50); color:var(--gray-900); line-height:1.5; outline:none;">
+                        </textarea>
+                        <div class="input-underline" style="position:absolute; bottom:0; left:0; width:0; height:2px; background:var(--primary-color); transition:width 0.3s ease; pointer-events:none;"></div>
+                    </div>
+                </div>
+                
+                <div class="input-group" style="margin-bottom:1.5rem;">
+                    <label style="display:flex; align-items:center; gap:0.5rem; font-weight:600; color:var(--gray-700); cursor:pointer;">
+                        <input type="checkbox" id="petActive" checked style="width:20px; height:20px; cursor:pointer; accent-color:var(--primary-color);">
+                        <span>Mascota Activa</span>
+                        <small style="font-weight:400; color:var(--gray-500); margin-left:0.5rem;">(Las mascotas inactivas no aparecerán en algunas vistas)</small>
+                    </label>
+                </div>
+                
+                <div style="display:flex; gap:1rem; justify-content:flex-end;">
+                    <button type="button" class="submit-btn btn-secondary" onclick="closeCreatePetModal()">
+                        Cancelar
+                    </button>
+                    <button type="submit" class="submit-btn">
+                        <i class="fa-solid fa-save"></i> Guardar Mascota
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modal: Detalle de Mascota -->
+<div id="petDetailModal" class="patient-modal" onclick="if(event.target === this) closePetDetailModal();">
+    <div class="patient-modal-content" style="max-width:900px; max-height:90vh; overflow-y:auto;">
+        <div class="patient-modal-header">
+            <h2 class="patient-modal-title">
+                <i class="fa-solid fa-paw"></i> Detalle de la Mascota
+            </h2>
+            <button class="patient-modal-close" onclick="closePetDetailModal()">
+                <i class="fa-solid fa-times"></i>
+            </button>
+        </div>
+        <div class="patient-modal-body" id="petDetailContent">
+            <!-- Se cargará dinámicamente -->
+        </div>
+        <div class="patient-modal-footer" style="padding:1rem 1.5rem; border-top:1px solid var(--gray-200); display:flex; gap:0.75rem; justify-content:flex-end;">
+            <button class="submit-btn btn-secondary" onclick="closePetDetailModal()">
+                Cerrar
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Acciones de la sección -->
+<div id="sectionActions" style="display:none;"></div>
+
+<style>
+    #viewClientsBtn.active,
+    #viewPetsBtn.active {
+        background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
+        color: white;
+    }
+    
+    #viewClientsBtn.active:hover,
+    #viewPetsBtn.active:hover {
+        background: linear-gradient(135deg, var(--primary-dark), var(--primary-color));
+    }
+    
+    .field-error {
+        display: block;
+        margin-top: 0.25rem;
+        font-size: 0.75rem;
+        color: var(--error-color);
+        min-height: 1rem;
+    }
+    
+    #petNotes:focus,
+    #petNotes:focus ~ .input-underline {
+        background: var(--white);
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 4px rgba(46, 139, 87, 0.1);
+    }
+    
+    #petNotes:focus ~ .input-underline {
+        width: 100%;
+    }
+    
+    #petNotes:focus ~ .input-icon {
+        color: var(--primary-color);
+    }
+    
+    #petNotes::placeholder {
+        color: var(--gray-400);
+    }
+</style>
+

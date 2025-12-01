@@ -1,0 +1,295 @@
+<!-- Contenedor principal del contenido de veterinarios -->
+<div id="sectionContent" style="max-width: 1800px; margin: 0 auto; padding: 0 1rem;">
+    <!-- Vista: Lista de Veterinarios -->
+    <div id="veterinariansListView">
+        <div class="admin-card">
+            <div class="admin-card-header">
+                <h2 style="margin:0; color:var(--gray-900); display:flex; align-items:center; gap:0.5rem; font-size:1.25rem; font-weight:600;">
+                    <i class="fa-solid fa-user-doctor" style="color:var(--primary-color);"></i> Gestión de Veterinarios
+                </h2>
+                <button class="submit-btn" onclick="openCreateVeterinarianModal()">
+                    <i class="fa-solid fa-user-plus"></i> Nuevo Veterinario
+                </button>
+            </div>
+            
+            <!-- Estadísticas rápidas -->
+            <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap:1rem; margin-bottom:1.5rem; padding:1rem; background:var(--gray-50); border-radius:var(--border-radius-lg);">
+                <div style="text-align:center; padding:0.75rem; background:var(--white); border-radius:var(--border-radius-md); border:1px solid var(--gray-200);">
+                    <div style="font-size:0.85rem; color:var(--gray-600); margin-bottom:0.25rem;">Total Veterinarios</div>
+                    <div style="font-size:1.5rem; font-weight:700; color:var(--primary-color);" id="statTotalVeterinarians">0</div>
+                </div>
+                <div style="text-align:center; padding:0.75rem; background:var(--white); border-radius:var(--border-radius-md); border:1px solid var(--gray-200);">
+                    <div style="font-size:0.85rem; color:var(--gray-600); margin-bottom:0.25rem;">Activos</div>
+                    <div style="font-size:1.5rem; font-weight:700; color:#4CAF50;" id="statActiveVeterinarians">0</div>
+                </div>
+                <div style="text-align:center; padding:0.75rem; background:var(--white); border-radius:var(--border-radius-md); border:1px solid var(--gray-200);">
+                    <div style="font-size:0.85rem; color:var(--gray-600); margin-bottom:0.25rem;">En Turno</div>
+                    <div style="font-size:1.5rem; font-weight:700; color:#2196F3;" id="statOnDutyVeterinarians">0</div>
+                </div>
+                <div style="text-align:center; padding:0.75rem; background:var(--white); border-radius:var(--border-radius-md); border:1px solid var(--gray-200);">
+                    <div style="font-size:0.85rem; color:var(--gray-600); margin-bottom:0.25rem;">Citas Hoy</div>
+                    <div style="font-size:1.5rem; font-weight:700; color:var(--secondary-color);" id="statTodayAppointments">0</div>
+                </div>
+            </div>
+            
+            <!-- Búsqueda y filtros -->
+            <div style="display:grid; grid-template-columns: 1fr auto auto; gap:1rem; margin-bottom:1.5rem;">
+                <div class="input-container">
+                    <i class="fas fa-search input-icon"></i>
+                    <input type="text" id="veterinarianSearch" placeholder="Buscar por nombre, especialidad o email..." 
+                           onkeyup="filterVeterinarians()">
+                    <div class="input-underline"></div>
+                </div>
+                <div class="input-container select-container">
+                    <i class="fas fa-filter input-icon"></i>
+                    <select id="filterVeterinarianStatus" onchange="filterVeterinarians()">
+                        <option value="">Todos los estados</option>
+                        <option value="active">Activos</option>
+                        <option value="inactive">Inactivos</option>
+                    </select>
+                    <div class="input-underline"></div>
+                </div>
+                <button class="submit-btn btn-secondary" onclick="clearVeterinarianFilters()" style="white-space:nowrap;">
+                    <i class="fa-solid fa-times"></i> Limpiar
+                </button>
+            </div>
+            
+            <!-- Tabla de veterinarios -->
+            <div style="overflow-x:auto;">
+                <table class="data-table" style="width:100%; border-collapse:collapse;">
+                    <thead>
+                        <tr style="background:var(--gray-100); border-bottom:2px solid var(--gray-300);">
+                            <th style="padding:0.75rem; text-align:left; font-weight:600; color:var(--gray-700);">ID</th>
+                            <th style="padding:0.75rem; text-align:left; font-weight:600; color:var(--gray-700);">Nombre Completo</th>
+                            <th style="padding:0.75rem; text-align:left; font-weight:600; color:var(--gray-700);">Especialidad</th>
+                            <th style="padding:0.75rem; text-align:left; font-weight:600; color:var(--gray-700);">Cargo</th>
+                            <th style="padding:0.75rem; text-align:left; font-weight:600; color:var(--gray-700);">Email</th>
+                            <th style="padding:0.75rem; text-align:center; font-weight:600; color:var(--gray-700);">Citas Hoy</th>
+                            <th style="padding:0.75rem; text-align:center; font-weight:600; color:var(--gray-700);">Estado</th>
+                            <th style="padding:0.75rem; text-align:center; font-weight:600; color:var(--gray-700);">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="veterinariansTableBody">
+                        <!-- Se cargará dinámicamente -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal: Crear/Editar Veterinario -->
+<div id="createVeterinarianModal" class="patient-modal" onclick="if(event.target === this) closeCreateVeterinarianModal();">
+    <div class="patient-modal-content" style="max-width:800px;">
+        <div class="patient-modal-header">
+            <h2 class="patient-modal-title">
+                <i class="fa-solid fa-user-doctor"></i> <span id="veterinarianModalTitle">Nuevo Veterinario</span>
+            </h2>
+            <button class="patient-modal-close" onclick="closeCreateVeterinarianModal()">
+                <i class="fa-solid fa-times"></i>
+            </button>
+        </div>
+        <div class="patient-modal-body">
+            <form id="veterinarianForm" onsubmit="event.preventDefault(); saveVeterinarian();">
+                <!-- Información Personal -->
+                <div style="margin-bottom:2rem;">
+                    <h3 style="margin:0 0 1rem 0; color:var(--gray-900); font-size:1.1rem; font-weight:600; display:flex; align-items:center; gap:0.5rem;">
+                        <i class="fa-solid fa-user" style="color:var(--primary-color);"></i> Información Personal
+                    </h3>
+                    <div class="form-grid-admin" style="display:grid; grid-template-columns:repeat(2, 1fr); gap:1.5rem; margin-bottom:1.5rem;">
+                        <div class="input-group">
+                            <label style="display:block; margin-bottom:0.5rem; font-weight:600; color:var(--gray-700);">Nombre *</label>
+                            <div class="input-container">
+                                <i class="fas fa-user input-icon"></i>
+                                <input type="text" id="vetFirstName" required placeholder="Nombre">
+                                <div class="input-underline"></div>
+                            </div>
+                        </div>
+                        
+                        <div class="input-group">
+                            <label style="display:block; margin-bottom:0.5rem; font-weight:600; color:var(--gray-700);">Apellido *</label>
+                            <div class="input-container">
+                                <i class="fas fa-user input-icon"></i>
+                                <input type="text" id="vetLastName" required placeholder="Apellido">
+                                <div class="input-underline"></div>
+                            </div>
+                        </div>
+                        
+                        <div class="input-group">
+                            <label style="display:block; margin-bottom:0.5rem; font-weight:600; color:var(--gray-700);">Identificación / DNI *</label>
+                            <div class="input-container">
+                                <i class="fas fa-id-card input-icon"></i>
+                                <input type="text" id="vetIdentification" required placeholder="Ej: 1234567890">
+                                <div class="input-underline"></div>
+                            </div>
+                        </div>
+                        
+                        <div class="input-group">
+                            <label style="display:block; margin-bottom:0.5rem; font-weight:600; color:var(--gray-700);">Teléfono *</label>
+                            <div class="input-container">
+                                <i class="fas fa-phone input-icon"></i>
+                                <input type="tel" id="vetPhone" required placeholder="+1234567890">
+                                <div class="input-underline"></div>
+                            </div>
+                        </div>
+                        
+                        <div class="input-group" style="grid-column:span 2;">
+                            <label style="display:block; margin-bottom:0.5rem; font-weight:600; color:var(--gray-700);">Email *</label>
+                            <div class="input-container">
+                                <i class="fas fa-envelope input-icon"></i>
+                                <input type="email" id="vetEmail" required placeholder="email@ejemplo.com">
+                                <div class="input-underline"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Información Profesional -->
+                <div style="margin-bottom:2rem;">
+                    <h3 style="margin:0 0 1rem 0; color:var(--gray-900); font-size:1.1rem; font-weight:600; display:flex; align-items:center; gap:0.5rem;">
+                        <i class="fa-solid fa-stethoscope" style="color:var(--primary-color);"></i> Información Profesional
+                    </h3>
+                    <div class="form-grid-admin" style="display:grid; grid-template-columns:repeat(2, 1fr); gap:1.5rem; margin-bottom:1.5rem;">
+                        <div class="input-group">
+                            <label style="display:block; margin-bottom:0.5rem; font-weight:600; color:var(--gray-700);">Cargo *</label>
+                            <div class="input-container select-container">
+                                <i class="fas fa-briefcase input-icon"></i>
+                                <select id="vetPosition" required>
+                                    <option value="">Selecciona el cargo</option>
+                                    <option value="Veterinario General">Veterinario General</option>
+                                    <option value="Veterinario Especialista">Veterinario Especialista</option>
+                                    <option value="Veterinario Cirujano">Veterinario Cirujano</option>
+                                    <option value="Veterinario de Emergencias">Veterinario de Emergencias</option>
+                                    <option value="Veterinario Residente">Veterinario Residente</option>
+                                </select>
+                                <div class="input-underline"></div>
+                            </div>
+                        </div>
+                        
+                        <div class="input-group">
+                            <label style="display:block; margin-bottom:0.5rem; font-weight:600; color:var(--gray-700);">Especialidad</label>
+                            <div class="input-container">
+                                <i class="fas fa-graduation-cap input-icon"></i>
+                                <input type="text" id="vetSpecialty" placeholder="Ej: Cardiología, Dermatología">
+                                <div class="input-underline"></div>
+                            </div>
+                        </div>
+                        
+                        <div class="input-group">
+                            <label style="display:block; margin-bottom:0.5rem; font-weight:600; color:var(--gray-700);">Años de Experiencia</label>
+                            <div class="input-container">
+                                <i class="fas fa-calendar-alt input-icon"></i>
+                                <input type="number" id="vetExperienceYears" min="0" placeholder="0">
+                                <div class="input-underline"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Credenciales -->
+                <div style="margin-bottom:2rem;">
+                    <h3 style="margin:0 0 1rem 0; color:var(--gray-900); font-size:1.1rem; font-weight:600; display:flex; align-items:center; gap:0.5rem;">
+                        <i class="fa-solid fa-key" style="color:var(--primary-color);"></i> Credenciales de Acceso
+                    </h3>
+                    <div class="form-grid-admin" style="display:grid; grid-template-columns:repeat(2, 1fr); gap:1.5rem; margin-bottom:1rem;">
+                        <div class="input-group">
+                            <label style="display:block; margin-bottom:0.5rem; font-weight:600; color:var(--gray-700);">
+                                Contraseña <span id="vetPasswordRequired">*</span>
+                                <span style="font-weight:400; font-size:0.85rem; color:var(--gray-500);">(para inicio de sesión)</span>
+                            </label>
+                            <div class="input-container">
+                                <i class="fas fa-lock input-icon"></i>
+                                <input type="password" id="vetPassword" placeholder="Mínimo 8 caracteres">
+                                <div class="input-underline"></div>
+                            </div>
+                        </div>
+                        
+                        <div class="input-group">
+                            <label style="display:block; margin-bottom:0.5rem; font-weight:600; color:var(--gray-700);">Confirmar Contraseña</label>
+                            <div class="input-container">
+                                <i class="fas fa-lock input-icon"></i>
+                                <input type="password" id="vetPasswordConfirm" placeholder="Confirma la contraseña">
+                                <div class="input-underline"></div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div style="padding:0.75rem; background:var(--gray-50); border-radius:var(--border-radius-md); border-left:3px solid var(--primary-color);">
+                        <div style="display:flex; align-items:start; gap:0.5rem;">
+                            <i class="fa-solid fa-info-circle" style="color:var(--primary-color); margin-top:0.2rem;"></i>
+                            <div style="font-size:0.85rem; color:var(--gray-700);">
+                                <strong>Nota:</strong> Si proporcionas una contraseña, el veterinario podrá iniciar sesión inmediatamente. 
+                                Si no, se generará una contraseña temporal que deberás proporcionarle.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Estado -->
+                <div class="input-group" style="margin-bottom:1.5rem;">
+                    <label style="display:flex; align-items:center; gap:0.5rem; font-weight:600; color:var(--gray-700); cursor:pointer;">
+                        <input type="checkbox" id="vetActive" checked style="width:20px; height:20px; cursor:pointer; accent-color:var(--primary-color);">
+                        <span>Veterinario Activo</span>
+                        <small style="color:var(--gray-500); font-weight:400; margin-left:0.5rem;">(Los veterinarios inactivos no podrán iniciar sesión ni ser asignados a citas)</small>
+                    </label>
+                </div>
+                
+                <div class="patient-modal-footer" style="padding:1rem 1.5rem; border-top:1px solid var(--gray-200); display:flex; gap:0.75rem; justify-content:flex-end;">
+                    <button type="button" class="submit-btn btn-secondary" onclick="closeCreateVeterinarianModal()">
+                        Cancelar
+                    </button>
+                    <button type="submit" class="submit-btn">
+                        <i class="fa-solid fa-save"></i> Guardar Veterinario
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modal: Detalle de Veterinario -->
+<div id="veterinarianDetailModal" class="patient-modal" onclick="if(event.target === this) closeVeterinarianDetailModal();">
+    <div class="patient-modal-content" style="max-width:900px; max-height:90vh; overflow-y:auto;">
+        <div class="patient-modal-header">
+            <h2 class="patient-modal-title">
+                <i class="fa-solid fa-user-doctor"></i> Detalle del Veterinario
+            </h2>
+            <button class="patient-modal-close" onclick="closeVeterinarianDetailModal()">
+                <i class="fa-solid fa-times"></i>
+            </button>
+        </div>
+        <div class="patient-modal-body" id="veterinarianDetailContent">
+            <!-- Se cargará dinámicamente -->
+        </div>
+        <div class="patient-modal-footer" style="padding:1rem 1.5rem; border-top:1px solid var(--gray-200); display:flex; gap:0.75rem; justify-content:flex-end;">
+            <button class="submit-btn btn-secondary" onclick="closeVeterinarianDetailModal()">
+                Cerrar
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Modal: Ver Agenda del Veterinario -->
+<div id="veterinarianScheduleModal" class="patient-modal" onclick="if(event.target === this) closeVeterinarianScheduleModal();">
+    <div class="patient-modal-content" style="max-width:1200px; max-height:90vh; overflow-y:auto;">
+        <div class="patient-modal-header">
+            <h2 class="patient-modal-title">
+                <i class="fa-solid fa-calendar-days"></i> Agenda del Veterinario
+            </h2>
+            <button class="patient-modal-close" onclick="closeVeterinarianScheduleModal()">
+                <i class="fa-solid fa-times"></i>
+            </button>
+        </div>
+        <div class="patient-modal-body" id="veterinarianScheduleContent">
+            <!-- Se cargará dinámicamente -->
+        </div>
+        <div class="patient-modal-footer" style="padding:1rem 1.5rem; border-top:1px solid var(--gray-200); display:flex; gap:0.75rem; justify-content:flex-end;">
+            <button class="submit-btn btn-secondary" onclick="closeVeterinarianScheduleModal()">
+                Cerrar
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Acciones de la sección -->
+<div id="sectionActions" style="display:none;"></div>

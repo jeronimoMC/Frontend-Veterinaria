@@ -1,0 +1,60 @@
+# .dockerignore para el Frontend de VetUni
+
+# Archivos de sistema
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*~
+
+# Archivos de IDE
+.idea/
+.vscode/
+*.sublime-project
+*.sublime-workspace
+
+# Node modules (si en el futuro usas npm)
+node_modules/
+npm-debug.log
+yarn-error.log
+
+# Archivos de build (si los hay)
+dist/
+build/
+*.min.js
+*.min.css
+
+# Archivos de Git
+.git/
+.gitignore
+.gitattributes
+
+# Archivos de Docker
+Dockerfile
+.dockerignore
+docker-compose.yml
+
+# Archivos de documentación
+README.md
+*.md
+docs/
+
+# Archivos de entorno
+.env
+.env.local
+.env.*.local
+
+# Archivos de logs
+*.log
+logs/
+
+# Archivos temporales
+tmp/
+temp/
+*.tmp
+
+# Archivos de backup
+*.bak
+*.backup
+*~
+

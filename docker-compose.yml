@@ -1,0 +1,35 @@
+version: '3.8'
+
+services:
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: vetuni-frontend
+    restart: unless-stopped
+    ports:
+      - "3000:80"  # Puerto 3000 en host, 80 en contenedor
+    volumes:
+      # Solo para desarrollo - permite cambios en caliente
+      # En producción, comenta esta línea
+      # - .:/usr/share/nginx/html:ro
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf:ro
+    networks:
+      - vetuni-network
+    environment:
+      - TZ=America/Bogota
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    labels:
+      - "com.vetuni.service=frontend"
+      - "com.vetuni.version=1.0"
+
+networks:
+  vetuni-network:
+    driver: bridge
+    name: vetuni-network
+

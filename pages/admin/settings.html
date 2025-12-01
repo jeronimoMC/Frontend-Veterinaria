@@ -1,0 +1,523 @@
+<!-- Contenedor principal del contenido de configuración -->
+<div id="sectionContent" style="max-width: 1800px; margin: 0 auto; padding: 0 1rem;">
+    <!-- Header Principal -->
+    <div class="admin-card" style="margin-bottom:1.5rem;">
+        <div class="admin-card-header" style="margin-bottom:0; padding-bottom:1rem; border-bottom:2px solid var(--gray-100);">
+            <h2 style="margin:0; color:var(--gray-900); display:flex; align-items:center; gap:0.5rem; font-size:1.25rem; font-weight:600;">
+                <i class="fa-solid fa-gear" style="color:var(--primary-color);"></i> Configuración del Sistema
+            </h2>
+        </div>
+        
+        <!-- Tabs de navegación -->
+        <div style="padding:1.5rem; background:var(--white); border-radius:var(--border-radius-lg); margin-top:1rem; border:1px solid var(--gray-200);">
+            <div style="display:flex; gap:1rem; flex-wrap:wrap; align-items:center; border-bottom:2px solid var(--gray-200); padding-bottom:0;">
+                <button class="settings-tab-btn active" onclick="switchSettingsTab('users')" data-tab="users">
+                    <i class="fa-solid fa-users"></i> <span>Usuarios</span>
+                </button>
+                <button class="settings-tab-btn" onclick="switchSettingsTab('roles')" data-tab="roles">
+                    <i class="fa-solid fa-shield-halved"></i> <span>Roles y Permisos</span>
+                </button>
+                <button class="settings-tab-btn" onclick="switchSettingsTab('clinic')" data-tab="clinic">
+                    <i class="fa-solid fa-building"></i> <span>Datos de la Clínica</span>
+                </button>
+                <button class="settings-tab-btn" onclick="switchSettingsTab('inventory')" data-tab="inventory">
+                    <i class="fa-solid fa-warehouse"></i> <span>Inventario y Categorías</span>
+                </button>
+                <button class="settings-tab-btn" onclick="switchSettingsTab('invoices')" data-tab="invoices">
+                    <i class="fa-solid fa-file-invoice"></i> <span>Plantillas de Facturas</span>
+                </button>
+                <button class="settings-tab-btn" onclick="switchSettingsTab('notifications')" data-tab="notifications">
+                    <i class="fa-solid fa-bell"></i> <span>Notificaciones</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- TAB: CREACIÓN Y GESTIÓN DE USUARIOS -->
+    <div id="settingsUsersView" class="settings-view" style="display:block;">
+        <div class="admin-card">
+            <div class="admin-card-header">
+                <h3 style="margin:0; color:var(--gray-900); display:flex; align-items:center; gap:0.5rem; font-size:1.1rem; font-weight:600;">
+                    <i class="fa-solid fa-users" style="color:var(--primary-color);"></i> Gestión de Usuarios del Sistema
+                </h3>
+            </div>
+            
+            <!-- Selector de tipo de usuario -->
+            <div style="padding:1.5rem; background:var(--gray-50); border-radius:var(--border-radius-lg); margin-bottom:1.5rem;">
+                <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(250px, 1fr)); gap:1rem;">
+                    <button class="user-type-btn active" onclick="switchUserType('veterinarians')" data-user-type="veterinarians" style="padding:1.25rem; background:var(--white); border:2px solid var(--primary-color); border-radius:var(--border-radius-lg); cursor:pointer; transition:all 0.3s ease; text-align:center;">
+                        <i class="fa-solid fa-user-doctor" style="font-size:2rem; color:var(--primary-color); margin-bottom:0.5rem; display:block;"></i>
+                        <div style="font-weight:600; color:var(--gray-900); margin-bottom:0.25rem;">Veterinarios</div>
+                        <div style="font-size:0.85rem; color:var(--gray-600);">Crear y gestionar veterinarios</div>
+                    </button>
+                    <button class="user-type-btn" onclick="switchUserType('admins')" data-user-type="admins" style="padding:1.25rem; background:var(--white); border:2px solid var(--gray-300); border-radius:var(--border-radius-lg); cursor:pointer; transition:all 0.3s ease; text-align:center;">
+                        <i class="fa-solid fa-user-shield" style="font-size:2rem; color:#9C27B0; margin-bottom:0.5rem; display:block;"></i>
+                        <div style="font-weight:600; color:var(--gray-900); margin-bottom:0.25rem;">Administradores</div>
+                        <div style="font-size:0.85rem; color:var(--gray-600);">Crear administradores adicionales</div>
+                    </button>
+                    <button class="user-type-btn" onclick="switchUserType('clients')" data-user-type="clients" style="padding:1.25rem; background:var(--white); border:2px solid var(--gray-300); border-radius:var(--border-radius-lg); cursor:pointer; transition:all 0.3s ease; text-align:center;">
+                        <i class="fa-solid fa-user" style="font-size:2rem; color:#4CAF50; margin-bottom:0.5rem; display:block;"></i>
+                        <div style="font-weight:600; color:var(--gray-900); margin-bottom:0.25rem;">Clientes</div>
+                        <div style="font-size:0.85rem; color:var(--gray-600);">Registrar clientes manualmente</div>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Vista: Veterinarios -->
+            <div id="usersVeterinariansView" class="user-type-view" style="display:block;">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem;">
+                    <h4 style="margin:0; color:var(--gray-900); font-size:1rem; font-weight:600;">Lista de Veterinarios</h4>
+                    <button class="submit-btn" onclick="openCreateUserModal('veterinarian')">
+                        <i class="fa-solid fa-user-plus"></i> Nuevo Veterinario
+                    </button>
+                </div>
+                
+                <!-- Búsqueda y filtros -->
+                <div style="display:grid; grid-template-columns: 1fr auto; gap:1rem; margin-bottom:1.5rem;">
+                    <div class="input-container">
+                        <i class="fas fa-search input-icon"></i>
+                        <input type="text" id="settingsVetSearch" placeholder="Buscar veterinarios..." onkeyup="filterSettingsUsers('veterinarian')">
+                        <div class="input-underline"></div>
+                    </div>
+                    <div class="input-container select-container">
+                        <i class="fas fa-filter input-icon"></i>
+                        <select id="settingsVetStatus" onchange="filterSettingsUsers('veterinarian')">
+                            <option value="">Todos</option>
+                            <option value="active">Activos</option>
+                            <option value="inactive">Inactivos</option>
+                        </select>
+                        <div class="input-underline"></div>
+                    </div>
+                </div>
+
+                <!-- Tabla de veterinarios -->
+                <div style="overflow-x:auto; border:1px solid var(--gray-200); border-radius:var(--border-radius-lg);">
+                    <table class="data-table" style="width:100%; border-collapse:collapse;">
+                        <thead>
+                            <tr style="background:linear-gradient(135deg, var(--primary-color), #5CB85C); color:var(--white);">
+                                <th style="padding:1rem; text-align:left; font-weight:600;">Nombre</th>
+                                <th style="padding:1rem; text-align:left; font-weight:600;">Email</th>
+                                <th style="padding:1rem; text-align:left; font-weight:600;">Especialidad</th>
+                                <th style="padding:1rem; text-align:left; font-weight:600;">Licencia</th>
+                                <th style="padding:1rem; text-align:center; font-weight:600;">Estado</th>
+                                <th style="padding:1rem; text-align:center; font-weight:600;">Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="settingsVeterinariansTableBody">
+                            <!-- Se carga dinámicamente -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Vista: Administradores -->
+            <div id="usersAdminsView" class="user-type-view" style="display:none;">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem;">
+                    <h4 style="margin:0; color:var(--gray-900); font-size:1rem; font-weight:600;">Lista de Administradores</h4>
+                    <button class="submit-btn" onclick="openCreateUserModal('admin')">
+                        <i class="fa-solid fa-user-shield"></i> Nuevo Administrador
+                    </button>
+                </div>
+                
+                <!-- Búsqueda y filtros -->
+                <div style="display:grid; grid-template-columns: 1fr auto; gap:1rem; margin-bottom:1.5rem;">
+                    <div class="input-container">
+                        <i class="fas fa-search input-icon"></i>
+                        <input type="text" id="settingsAdminSearch" placeholder="Buscar administradores..." onkeyup="filterSettingsUsers('admin')">
+                        <div class="input-underline"></div>
+                    </div>
+                    <div class="input-container select-container">
+                        <i class="fas fa-filter input-icon"></i>
+                        <select id="settingsAdminStatus" onchange="filterSettingsUsers('admin')">
+                            <option value="">Todos</option>
+                            <option value="active">Activos</option>
+                            <option value="inactive">Inactivos</option>
+                        </select>
+                        <div class="input-underline"></div>
+                    </div>
+                </div>
+
+                <!-- Tabla de administradores -->
+                <div style="overflow-x:auto; border:1px solid var(--gray-200); border-radius:var(--border-radius-lg);">
+                    <table class="data-table" style="width:100%; border-collapse:collapse;">
+                        <thead>
+                            <tr style="background:linear-gradient(135deg, #9C27B0, #BA68C8); color:var(--white);">
+                                <th style="padding:1rem; text-align:left; font-weight:600;">Nombre</th>
+                                <th style="padding:1rem; text-align:left; font-weight:600;">Email</th>
+                                <th style="padding:1rem; text-align:left; font-weight:600;">Nivel de Acceso</th>
+                                <th style="padding:1rem; text-align:left; font-weight:600;">Fecha Creación</th>
+                                <th style="padding:1rem; text-align:center; font-weight:600;">Estado</th>
+                                <th style="padding:1rem; text-align:center; font-weight:600;">Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="settingsAdminsTableBody">
+                            <!-- Se carga dinámicamente -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Vista: Clientes -->
+            <div id="usersClientsView" class="user-type-view" style="display:none;">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem;">
+                    <h4 style="margin:0; color:var(--gray-900); font-size:1rem; font-weight:600;">Lista de Clientes</h4>
+                    <button class="submit-btn" onclick="openCreateUserModal('client')">
+                        <i class="fa-solid fa-user-plus"></i> Nuevo Cliente
+                    </button>
+                </div>
+                
+                <!-- Búsqueda y filtros -->
+                <div style="display:grid; grid-template-columns: 1fr auto; gap:1rem; margin-bottom:1.5rem;">
+                    <div class="input-container">
+                        <i class="fas fa-search input-icon"></i>
+                        <input type="text" id="settingsClientSearch" placeholder="Buscar clientes..." onkeyup="filterSettingsUsers('client')">
+                        <div class="input-underline"></div>
+                    </div>
+                    <div class="input-container select-container">
+                        <i class="fas fa-filter input-icon"></i>
+                        <select id="settingsClientStatus" onchange="filterSettingsUsers('client')">
+                            <option value="">Todos</option>
+                            <option value="active">Activos</option>
+                            <option value="inactive">Inactivos</option>
+                        </select>
+                        <div class="input-underline"></div>
+                    </div>
+                </div>
+
+                <!-- Tabla de clientes -->
+                <div style="overflow-x:auto; border:1px solid var(--gray-200); border-radius:var(--border-radius-lg);">
+                    <table class="data-table" style="width:100%; border-collapse:collapse;">
+                        <thead>
+                            <tr style="background:linear-gradient(135deg, #4CAF50, #66BB6A); color:var(--white);">
+                                <th style="padding:1rem; text-align:left; font-weight:600;">Nombre</th>
+                                <th style="padding:1rem; text-align:left; font-weight:600;">Email</th>
+                                <th style="padding:1rem; text-align:left; font-weight:600;">Teléfono</th>
+                                <th style="padding:1rem; text-align:left; font-weight:600;">Mascotas</th>
+                                <th style="padding:1rem; text-align:center; font-weight:600;">Estado</th>
+                                <th style="padding:1rem; text-align:center; font-weight:600;">Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="settingsClientsTableBody">
+                            <!-- Se carga dinámicamente -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- TAB: ROLES Y PERMISOS -->
+    <div id="settingsRolesView" class="settings-view" style="display:none;">
+        <div class="admin-card">
+            <div class="admin-card-header">
+                <h3 style="margin:0; color:var(--gray-900); display:flex; align-items:center; gap:0.5rem; font-size:1.1rem; font-weight:600;">
+                    <i class="fa-solid fa-shield-halved" style="color:var(--primary-color);"></i> Gestión de Roles y Permisos
+                </h3>
+            </div>
+            <div style="padding:2rem; text-align:center; color:var(--gray-600);">
+                <i class="fa-solid fa-shield-halved" style="font-size:3rem; margin-bottom:1rem; opacity:0.3;"></i>
+                <p>Próximamente: Gestión avanzada de roles y permisos</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- TAB: DATOS DE LA CLÍNICA -->
+    <div id="settingsClinicView" class="settings-view" style="display:none;">
+        <div class="admin-card">
+            <div class="admin-card-header">
+                <h3 style="margin:0; color:var(--gray-900); display:flex; align-items:center; gap:0.5rem; font-size:1.1rem; font-weight:600;">
+                    <i class="fa-solid fa-building" style="color:var(--primary-color);"></i> Datos Generales de la Clínica
+                </h3>
+            </div>
+            <div style="padding:2rem; text-align:center; color:var(--gray-600);">
+                <i class="fa-solid fa-building" style="font-size:3rem; margin-bottom:1rem; opacity:0.3;"></i>
+                <p>Próximamente: Configuración de datos de la clínica</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- TAB: INVENTARIO Y CATEGORÍAS -->
+    <div id="settingsInventoryView" class="settings-view" style="display:none;">
+        <div class="admin-card">
+            <div class="admin-card-header">
+                <h3 style="margin:0; color:var(--gray-900); display:flex; align-items:center; gap:0.5rem; font-size:1.1rem; font-weight:600;">
+                    <i class="fa-solid fa-warehouse" style="color:var(--primary-color);"></i> Ajustes de Inventario y Categorías
+                </h3>
+            </div>
+            <div style="padding:2rem; text-align:center; color:var(--gray-600);">
+                <i class="fa-solid fa-warehouse" style="font-size:3rem; margin-bottom:1rem; opacity:0.3;"></i>
+                <p>Próximamente: Configuración de inventario y categorías</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- TAB: PLANTILLAS DE FACTURAS -->
+    <div id="settingsInvoicesView" class="settings-view" style="display:none;">
+        <div class="admin-card">
+            <div class="admin-card-header">
+                <h3 style="margin:0; color:var(--gray-900); display:flex; align-items:center; gap:0.5rem; font-size:1.1rem; font-weight:600;">
+                    <i class="fa-solid fa-file-invoice" style="color:var(--primary-color);"></i> Plantillas de Facturas
+                </h3>
+            </div>
+            <div style="padding:2rem; text-align:center; color:var(--gray-600);">
+                <i class="fa-solid fa-file-invoice" style="font-size:3rem; margin-bottom:1rem; opacity:0.3;"></i>
+                <p>Próximamente: Configuración de plantillas de facturas</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- TAB: NOTIFICACIONES -->
+    <div id="settingsNotificationsView" class="settings-view" style="display:none;">
+        <div class="admin-card">
+            <div class="admin-card-header">
+                <h3 style="margin:0; color:var(--gray-900); display:flex; align-items:center; gap:0.5rem; font-size:1.1rem; font-weight:600;">
+                    <i class="fa-solid fa-bell" style="color:var(--primary-color);"></i> Notificaciones Automáticas
+                </h3>
+            </div>
+            <div style="padding:2rem; text-align:center; color:var(--gray-600);">
+                <i class="fa-solid fa-bell" style="font-size:3rem; margin-bottom:1rem; opacity:0.3;"></i>
+                <p>Próximamente: Configuración de notificaciones automáticas</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL: Crear/Editar Usuario -->
+<div id="createUserModal" class="modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:10000; overflow-y:auto; padding:2rem;">
+    <div class="modal-content" style="max-width:700px; margin:2rem auto; background:var(--white); border-radius:var(--border-radius-lg); box-shadow:var(--shadow-xl); position:relative;">
+        <div class="modal-header" style="padding:1.5rem; border-bottom:2px solid var(--gray-200); display:flex; justify-content:space-between; align-items:center;">
+            <h3 id="createUserModalTitle" style="margin:0; color:var(--gray-900); font-size:1.25rem; font-weight:600;">
+                <i class="fa-solid fa-user-plus" style="color:var(--primary-color);"></i> Nuevo Usuario
+            </h3>
+            <button onclick="closeCreateUserModal()" style="background:none; border:none; font-size:1.5rem; color:var(--gray-400); cursor:pointer; padding:0; width:32px; height:32px; display:flex; align-items:center; justify-content:center; border-radius:50%; transition:all 0.2s ease;">
+                <i class="fa-solid fa-times"></i>
+            </button>
+        </div>
+        
+        <form id="createUserForm" onsubmit="saveUser(event)" style="padding:1.5rem;">
+            <input type="hidden" id="createUserType" name="userType">
+            <input type="hidden" id="createUserId" name="userId">
+            
+            <!-- Campos comunes -->
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem; margin-bottom:1rem;">
+                <div class="input-group">
+                    <label style="display:block; margin-bottom:0.5rem; font-weight:600; color:var(--gray-700);">Nombre *</label>
+                    <div class="input-container">
+                        <i class="fas fa-user input-icon"></i>
+                        <input type="text" id="createUserName" name="firstName" required>
+                        <div class="input-underline"></div>
+                    </div>
+                </div>
+                <div class="input-group">
+                    <label style="display:block; margin-bottom:0.5rem; font-weight:600; color:var(--gray-700);">Apellido *</label>
+                    <div class="input-container">
+                        <i class="fas fa-user input-icon"></i>
+                        <input type="text" id="createUserLastName" name="lastName" required>
+                        <div class="input-underline"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem; margin-bottom:1rem;">
+                <div class="input-group">
+                    <label style="display:block; margin-bottom:0.5rem; font-weight:600; color:var(--gray-700);">Email *</label>
+                    <div class="input-container">
+                        <i class="fas fa-envelope input-icon"></i>
+                        <input type="email" id="createUserEmail" name="email" required>
+                        <div class="input-underline"></div>
+                    </div>
+                </div>
+                <div class="input-group">
+                    <label style="display:block; margin-bottom:0.5rem; font-weight:600; color:var(--gray-700);">Teléfono *</label>
+                    <div class="input-container">
+                        <i class="fas fa-phone input-icon"></i>
+                        <input type="tel" id="createUserPhone" name="phone" required>
+                        <div class="input-underline"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="input-group" style="margin-bottom:1rem;">
+                <label style="display:block; margin-bottom:0.5rem; font-weight:600; color:var(--gray-700);">Identificación/DNI *</label>
+                <div class="input-container">
+                    <i class="fas fa-id-card input-icon"></i>
+                    <input type="text" id="createUserIdentification" name="identification" required>
+                    <div class="input-underline"></div>
+                </div>
+            </div>
+
+            <!-- Campos específicos para Veterinarios -->
+            <div id="vetFields" style="display:none;">
+                <div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem; margin-bottom:1rem;">
+                    <div class="input-group">
+                        <label style="display:block; margin-bottom:0.5rem; font-weight:600; color:var(--gray-700);">Especialidad *</label>
+                        <div class="input-container select-container">
+                            <i class="fas fa-stethoscope input-icon"></i>
+                            <select id="createVetSpecialty" name="specialty" required>
+                                <option value="">Seleccionar especialidad</option>
+                                <option value="General">Medicina General</option>
+                                <option value="Cirugía">Cirugía</option>
+                                <option value="Dermatología">Dermatología</option>
+                                <option value="Cardiología">Cardiología</option>
+                                <option value="Oncología">Oncología</option>
+                                <option value="Oftalmología">Oftalmología</option>
+                                <option value="Neurología">Neurología</option>
+                                <option value="Ortopedia">Ortopedia</option>
+                            </select>
+                            <div class="input-underline"></div>
+                        </div>
+                    </div>
+                    <div class="input-group">
+                        <label style="display:block; margin-bottom:0.5rem; font-weight:600; color:var(--gray-700);">Años de Experiencia</label>
+                        <div class="input-container">
+                            <i class="fas fa-calendar-alt input-icon"></i>
+                            <input type="number" id="createVetExperience" name="experience" min="0" value="0">
+                            <div class="input-underline"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="input-group" style="margin-bottom:1rem;">
+                    <label style="display:block; margin-bottom:0.5rem; font-weight:600; color:var(--gray-700);">Número de Licencia Profesional</label>
+                    <div class="input-container">
+                        <i class="fas fa-certificate input-icon"></i>
+                        <input type="text" id="createVetLicense" name="license">
+                        <div class="input-underline"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Campos específicos para Administradores -->
+            <div id="adminFields" style="display:none;">
+                <div class="input-group" style="margin-bottom:1rem;">
+                    <label style="display:block; margin-bottom:0.5rem; font-weight:600; color:var(--gray-700);">Nivel de Acceso *</label>
+                    <div class="input-container select-container">
+                        <i class="fas fa-shield-halved input-icon"></i>
+                        <select id="createAdminLevel" name="accessLevel" required>
+                            <option value="">Seleccionar nivel</option>
+                            <option value="super">Super Administrador</option>
+                            <option value="manager">Gerente</option>
+                            <option value="supervisor">Supervisor</option>
+                        </select>
+                        <div class="input-underline"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Campos específicos para Clientes -->
+            <div id="clientFields" style="display:none;">
+                <div class="input-group" style="margin-bottom:1rem;">
+                    <label style="display:block; margin-bottom:0.5rem; font-weight:600; color:var(--gray-700);">Dirección</label>
+                    <div class="input-container">
+                        <i class="fas fa-map-marker-alt input-icon"></i>
+                        <input type="text" id="createClientAddress" name="address">
+                        <div class="input-underline"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Contraseña -->
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem; margin-bottom:1rem;">
+                <div class="input-group">
+                    <label style="display:block; margin-bottom:0.5rem; font-weight:600; color:var(--gray-700);">Contraseña <span id="passwordRequired" style="color:var(--gray-500);">(opcional)</span></label>
+                    <div class="input-container">
+                        <i class="fas fa-lock input-icon"></i>
+                        <input type="password" id="createUserPassword" name="password">
+                        <div class="input-underline"></div>
+                    </div>
+                    <small style="color:var(--gray-600); font-size:0.85rem;">Si se deja vacío, se generará automáticamente</small>
+                </div>
+                <div class="input-group">
+                    <label style="display:block; margin-bottom:0.5rem; font-weight:600; color:var(--gray-700);">Confirmar Contraseña</label>
+                    <div class="input-container">
+                        <i class="fas fa-lock input-icon"></i>
+                        <input type="password" id="createUserPasswordConfirm" name="passwordConfirm">
+                        <div class="input-underline"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div style="display:flex; align-items:center; gap:0.75rem; margin-bottom:1.5rem;">
+                <input type="checkbox" id="createUserActive" name="active" checked style="width:20px; height:20px; cursor:pointer;">
+                <label for="createUserActive" style="font-weight:500; color:var(--gray-700); cursor:pointer;">Usuario activo</label>
+            </div>
+
+            <div style="display:flex; gap:1rem; justify-content:flex-end;">
+                <button type="button" class="btn-secondary" onclick="closeCreateUserModal()">Cancelar</button>
+                <button type="submit" class="submit-btn">
+                    <i class="fa-solid fa-save"></i> Guardar Usuario
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Contenedor para acciones adicionales -->
+<div id="sectionActions" style="display:none;"></div>
+
+<style>
+    .settings-tab-btn {
+        padding: 0.75rem 1rem !important;
+        background: transparent !important;
+        border: none !important;
+        border-bottom: 3px solid transparent !important;
+        border-radius: 0 !important;
+        color: #757575 !important;
+        font-weight: 500 !important;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: inline-flex !important;
+        align-items: center !important;
+        gap: 0.5rem !important;
+        font-size: 0.9rem !important;
+        white-space: nowrap;
+        margin: 0;
+        flex: 0 0 auto;
+    }
+
+    .settings-tab-btn i {
+        font-size: 0.95rem !important;
+        width: 18px;
+        text-align: center;
+    }
+
+    .settings-tab-btn:hover {
+        color: var(--primary-color) !important;
+        background: #FAFAFA !important;
+        border-radius: 0 !important;
+    }
+
+    .settings-tab-btn.active {
+        color: var(--primary-color) !important;
+        border-bottom: 3px solid var(--primary-color) !important;
+        font-weight: 600 !important;
+        background: transparent !important;
+        border-radius: 0 !important;
+    }
+
+    .settings-tab-btn.active i {
+        color: var(--primary-color) !important;
+    }
+
+    .user-type-btn.active {
+        border-color: var(--primary-color) !important;
+        box-shadow: 0 4px 12px rgba(46, 139, 87, 0.15);
+        transform: translateY(-2px);
+    }
+
+    .user-type-view {
+        display: none;
+    }
+
+    .user-type-view.active {
+        display: block;
+    }
+
+    .settings-view {
+        display: none;
+    }
+
+    .settings-view.active {
+        display: block;
+    }
+</style>
+

@@ -1,0 +1,746 @@
+<!-- Contenedor principal del contenido de reportes -->
+<div id="sectionContent" style="max-width: 1800px; margin: 0 auto; padding: 0 1rem;">
+    <!-- Header Principal de Reportes -->
+    <div class="admin-card" style="margin-bottom:1.5rem;">
+        <div class="admin-card-header" style="margin-bottom:0; padding-bottom:1rem; border-bottom:2px solid var(--gray-100);">
+            <h2 style="margin:0; color:var(--gray-900); display:flex; align-items:center; gap:0.5rem; font-size:1.25rem; font-weight:600;">
+                <i class="fa-solid fa-chart-bar" style="color:var(--primary-color);"></i> Reportes del Sistema
+            </h2>
+            <button class="submit-btn btn-secondary" onclick="exportAllReports()" title="Exportar todos los reportes" style="white-space:nowrap;">
+                <i class="fa-solid fa-file-export"></i> Exportar Reportes
+            </button>
+        </div>
+        
+        <!-- Tabs de navegación entre tipos de reportes -->
+        <div style="padding:1.5rem; background:var(--white); border-radius:var(--border-radius-lg); margin-top:1rem; border:1px solid var(--gray-200);">
+            <div style="display:flex; gap:1rem; flex-wrap:wrap; align-items:center; border-bottom:2px solid var(--gray-200); padding-bottom:0;">
+                <button class="report-tab-btn active" onclick="switchReportTab('sales')" data-tab="sales">
+                    <i class="fa-solid fa-dollar-sign"></i> <span>Ventas</span>
+                </button>
+                <button class="report-tab-btn" onclick="switchReportTab('services')" data-tab="services">
+                    <i class="fa-solid fa-stethoscope"></i> <span>Servicios</span>
+                </button>
+                <button class="report-tab-btn" onclick="switchReportTab('products')" data-tab="products">
+                    <i class="fa-solid fa-box"></i> <span>Productos</span>
+                </button>
+                <button class="report-tab-btn" onclick="switchReportTab('veterinarians')" data-tab="veterinarians">
+                    <i class="fa-solid fa-user-doctor"></i> <span>Veterinarios</span>
+                </button>
+                <button class="report-tab-btn" onclick="switchReportTab('clients')" data-tab="clients">
+                    <i class="fa-solid fa-users"></i> <span>Clientes</span>
+                </button>
+                <button class="report-tab-btn" onclick="switchReportTab('patients')" data-tab="patients">
+                    <i class="fa-solid fa-paw"></i> <span>Pacientes</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- REPORTE: VENTAS -->
+    <div id="reportSalesView" class="report-view active">
+        <div class="admin-card">
+            <div class="admin-card-header">
+                <h3 style="margin:0; color:var(--gray-900); display:flex; align-items:center; gap:0.5rem; font-size:1.1rem; font-weight:600;">
+                    <i class="fa-solid fa-dollar-sign" style="color:var(--primary-color);"></i> Reporte de Ventas
+                </h3>
+            </div>
+            
+            <!-- Filtros de período -->
+            <div style="padding:1.5rem; background:var(--gray-50); border-radius:var(--border-radius-lg); margin-bottom:1.5rem; border:1px solid var(--gray-200);">
+                <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(200px, 1fr)); gap:1.25rem;">
+                    <div class="input-group" style="margin-bottom:0;">
+                        <label style="display:block; margin-bottom:0.5rem; font-weight:600; color:var(--gray-700); font-size:0.9rem;">Fecha Desde</label>
+                        <div class="input-container" style="position:relative; display:flex; align-items:center; width:100%;">
+                            <i class="fas fa-calendar input-icon" style="position:absolute; left:1rem; color:var(--gray-400); font-size:1rem; pointer-events:none; z-index:1;"></i>
+                            <input type="date" id="reportSalesDateFrom" onchange="loadSalesReport()" onfocus="this.parentElement.querySelector('.input-icon').style.color='var(--primary-color)'; this.parentElement.querySelector('.input-underline').style.width='100%'; this.style.borderColor='var(--primary-color)'; this.style.boxShadow='0 0 0 4px rgba(46, 139, 87, 0.1)';" onblur="this.parentElement.querySelector('.input-icon').style.color='var(--gray-400)'; if(!this.value) this.parentElement.querySelector('.input-underline').style.width='0'; this.style.borderColor='var(--gray-300)'; this.style.boxShadow='none';" style="width:100%; padding:0.75rem 1rem 0.75rem calc(1rem + 24px + 0.5rem); border:2px solid var(--gray-300); border-radius:var(--border-radius-lg); font-family:var(--font-family, 'Poppins', sans-serif); font-size:1rem; color:var(--gray-900); background:var(--white); transition:all 0.3s ease; outline:none; -webkit-appearance:none !important; -moz-appearance:textfield !important; appearance:none !important; position:relative; z-index:1;">
+                            <div class="input-underline" style="position:absolute; bottom:0; left:0; width:0; height:2px; background:var(--primary-color); transition:width 0.3s ease; pointer-events:none;"></div>
+                        </div>
+                    </div>
+                    <div class="input-group" style="margin-bottom:0;">
+                        <label style="display:block; margin-bottom:0.5rem; font-weight:600; color:var(--gray-700); font-size:0.9rem;">Fecha Hasta</label>
+                        <div class="input-container" style="position:relative; display:flex; align-items:center; width:100%;">
+                            <i class="fas fa-calendar input-icon" style="position:absolute; left:1rem; color:var(--gray-400); font-size:1rem; pointer-events:none; z-index:2; transition:color 0.3s ease;"></i>
+                            <input type="date" id="reportSalesDateTo" onchange="loadSalesReport()" onfocus="this.parentElement.querySelector('.input-icon').style.color='var(--primary-color)'; this.parentElement.querySelector('.input-underline').style.width='100%'; this.style.borderColor='var(--primary-color)'; this.style.boxShadow='0 0 0 4px rgba(46, 139, 87, 0.1)';" onblur="this.parentElement.querySelector('.input-icon').style.color='var(--gray-400)'; if(!this.value) this.parentElement.querySelector('.input-underline').style.width='0'; this.style.borderColor='var(--gray-300)'; this.style.boxShadow='none';" style="width:100%; padding:0.75rem 1rem 0.75rem calc(1rem + 24px + 0.5rem); border:2px solid var(--gray-300); border-radius:var(--border-radius-lg); font-family:var(--font-family, 'Poppins', sans-serif); font-size:1rem; color:var(--gray-900); background:var(--white); transition:all 0.3s ease; outline:none; -webkit-appearance:none !important; -moz-appearance:textfield !important; appearance:none !important; position:relative; z-index:1;">
+                            <div class="input-underline" style="position:absolute; bottom:0; left:0; width:0; height:2px; background:var(--primary-color); transition:width 0.3s ease; pointer-events:none; z-index:3;"></div>
+                        </div>
+                    </div>
+                    <div class="input-group" style="margin-bottom:0;">
+                        <label style="display:block; margin-bottom:0.5rem; font-weight:600; color:var(--gray-700); font-size:0.9rem;">Período Rápido</label>
+                        <div class="input-container select-container" style="position:relative; display:flex; align-items:center; width:100%;">
+                            <i class="fas fa-clock input-icon" style="position:absolute; left:1rem; color:var(--gray-400); font-size:1rem; pointer-events:none; z-index:2; transition:color 0.3s ease;"></i>
+                            <select id="reportSalesQuickPeriod" onchange="setQuickSalesPeriod()" onfocus="this.parentElement.querySelector('.input-icon').style.color='var(--primary-color)'; this.parentElement.querySelector('.input-underline').style.width='100%'; this.style.borderColor='var(--primary-color)'; this.style.boxShadow='0 0 0 4px rgba(46, 139, 87, 0.1)';" onblur="this.parentElement.querySelector('.input-icon').style.color='var(--gray-400)'; if(!this.value) this.parentElement.querySelector('.input-underline').style.width='0'; this.style.borderColor='var(--gray-300)'; this.style.boxShadow='none';" style="width:100%; padding:0.75rem 2.5rem 0.75rem calc(1rem + 24px + 0.5rem); border:2px solid var(--gray-300); border-radius:var(--border-radius-lg); font-family:var(--font-family, 'Poppins', sans-serif); font-size:1rem; color:var(--gray-900); background:var(--white); transition:all 0.3s ease; outline:none; appearance:none !important; -webkit-appearance:none !important; -moz-appearance:none !important; background-image:none !important; position:relative; z-index:1; cursor:pointer;">
+                                <option value="">Seleccionar período</option>
+                                <option value="today">Hoy</option>
+                                <option value="week">Esta Semana</option>
+                                <option value="month">Este Mes</option>
+                                <option value="year">Este Año</option>
+                            </select>
+                            <div class="input-underline" style="position:absolute; bottom:0; left:0; width:0; height:2px; background:var(--primary-color); transition:width 0.3s ease; pointer-events:none; z-index:3;"></div>
+                        </div>
+                    </div>
+                    <div style="display:flex; align-items:flex-end;">
+                        <button onclick="loadSalesReport()" style="width:100%; display:inline-flex; align-items:center; justify-content:center; gap:0.5rem; padding:0.875rem 1.5rem; background:linear-gradient(135deg, var(--primary-color), #5CB85C); color:white; border:none; border-radius:var(--border-radius-lg); font-weight:600; font-size:0.95rem; cursor:pointer; transition:all 0.3s ease; box-shadow:0 2px 4px rgba(46, 139, 87, 0.2);">
+                            <i class="fa-solid fa-search"></i> Generar Reporte
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Estadísticas de ventas -->
+            <div id="salesStatsContainer" style="display:grid; grid-template-columns:repeat(auto-fit, minmax(220px, 1fr)); gap:1.25rem; margin-bottom:2rem;">
+                <!-- Se cargará dinámicamente -->
+            </div>
+            
+            <!-- Tabla de ventas -->
+            <div style="overflow-x:auto; border:1px solid var(--gray-200); border-radius:var(--border-radius-lg);">
+                <table class="data-table" style="width:100%; border-collapse:collapse;">
+                    <thead>
+                        <tr style="background:linear-gradient(135deg, var(--gray-100), var(--gray-50)); border-bottom:2px solid var(--gray-300);">
+                            <th style="padding:1rem; text-align:left; font-weight:600; color:var(--gray-700); font-size:0.9rem; text-transform:uppercase; letter-spacing:0.5px;">Fecha</th>
+                            <th style="padding:1rem; text-align:left; font-weight:600; color:var(--gray-700); font-size:0.9rem; text-transform:uppercase; letter-spacing:0.5px;">Número Factura</th>
+                            <th style="padding:1rem; text-align:left; font-weight:600; color:var(--gray-700); font-size:0.9rem; text-transform:uppercase; letter-spacing:0.5px;">Cliente</th>
+                            <th style="padding:1rem; text-align:left; font-weight:600; color:var(--gray-700); font-size:0.9rem; text-transform:uppercase; letter-spacing:0.5px;">Veterinario</th>
+                            <th style="padding:1rem; text-align:right; font-weight:600; color:var(--gray-700); font-size:0.9rem; text-transform:uppercase; letter-spacing:0.5px;">Subtotal</th>
+                            <th style="padding:1rem; text-align:right; font-weight:600; color:var(--gray-700); font-size:0.9rem; text-transform:uppercase; letter-spacing:0.5px;">Impuestos</th>
+                            <th style="padding:1rem; text-align:right; font-weight:600; color:var(--gray-700); font-size:0.9rem; text-transform:uppercase; letter-spacing:0.5px;">Total</th>
+                            <th style="padding:1rem; text-align:center; font-weight:600; color:var(--gray-700); font-size:0.9rem; text-transform:uppercase; letter-spacing:0.5px;">Estado</th>
+                        </tr>
+                    </thead>
+                    <tbody id="salesReportTableBody">
+                        <!-- Se cargará dinámicamente -->
+                    </tbody>
+                    <tfoot style="background:linear-gradient(135deg, var(--gray-50), var(--white)); border-top:3px solid var(--primary-color); font-weight:600;">
+                        <tr>
+                            <td colspan="4" style="padding:1rem; text-align:right; color:var(--gray-700); font-size:0.95rem;">TOTALES:</td>
+                            <td id="salesReportSubtotalTotal" style="padding:1rem; text-align:right; color:var(--gray-900); font-size:0.95rem;">$0.00</td>
+                            <td id="salesReportTaxTotal" style="padding:1rem; text-align:right; color:var(--gray-900); font-size:0.95rem;">$0.00</td>
+                            <td id="salesReportTotalTotal" style="padding:1rem; text-align:right; color:var(--primary-color); font-size:1.15rem; font-weight:700;">$0.00</td>
+                            <td></td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- REPORTE: SERVICIOS -->
+    <div id="reportServicesView" class="report-view" style="display:none;">
+        <div class="admin-card">
+            <div class="admin-card-header">
+                <h3 style="margin:0; color:var(--gray-900); display:flex; align-items:center; gap:0.5rem; font-size:1.1rem; font-weight:600;">
+                    <i class="fa-solid fa-stethoscope" style="color:var(--primary-color);"></i> Reporte de Servicios Más Utilizados
+                </h3>
+            </div>
+            
+            <!-- Filtros -->
+            <div style="padding:1.5rem; background:var(--gray-50); border-radius:var(--border-radius-lg); margin-bottom:1.5rem; border:1px solid var(--gray-200);">
+                <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(200px, 1fr)); gap:1.25rem;">
+                    <div class="input-group" style="margin-bottom:0;">
+                        <label style="display:block; margin-bottom:0.5rem; font-weight:600; color:var(--gray-700); font-size:0.9rem;">Fecha Desde</label>
+                        <div class="input-container" style="position:relative; display:flex; align-items:center; width:100%;">
+                            <i class="fas fa-calendar input-icon" style="position:absolute; left:1rem; color:var(--gray-400); font-size:1rem; pointer-events:none; z-index:1;"></i>
+                            <input type="date" id="reportServicesDateFrom" onchange="loadServicesReport()" onfocus="this.parentElement.querySelector('.input-icon').style.color='var(--primary-color)'; this.parentElement.querySelector('.input-underline').style.width='100%'; this.style.borderColor='var(--primary-color)'; this.style.boxShadow='0 0 0 4px rgba(46, 139, 87, 0.1)';" onblur="this.parentElement.querySelector('.input-icon').style.color='var(--gray-400)'; if(!this.value) this.parentElement.querySelector('.input-underline').style.width='0'; this.style.borderColor='var(--gray-300)'; this.style.boxShadow='none';" style="width:100%; padding:0.75rem 1rem 0.75rem calc(1rem + 24px + 0.5rem); border:2px solid var(--gray-300); border-radius:var(--border-radius-lg); font-family:var(--font-family, 'Poppins', sans-serif); font-size:1rem; color:var(--gray-900); background:var(--white); transition:all 0.3s ease; outline:none; -webkit-appearance:none !important; -moz-appearance:textfield !important; appearance:none !important; position:relative; z-index:1;">
+                            <div class="input-underline" style="position:absolute; bottom:0; left:0; width:0; height:2px; background:var(--primary-color); transition:width 0.3s ease; pointer-events:none;"></div>
+                        </div>
+                    </div>
+                    <div class="input-group" style="margin-bottom:0;">
+                        <label style="display:block; margin-bottom:0.5rem; font-weight:600; color:var(--gray-700); font-size:0.9rem;">Fecha Hasta</label>
+                        <div class="input-container" style="position:relative; display:flex; align-items:center; width:100%;">
+                            <i class="fas fa-calendar input-icon" style="position:absolute; left:1rem; color:var(--gray-400); font-size:1rem; pointer-events:none; z-index:1;"></i>
+                            <input type="date" id="reportServicesDateTo" onchange="loadServicesReport()" onfocus="this.parentElement.querySelector('.input-icon').style.color='var(--primary-color)'; this.parentElement.querySelector('.input-underline').style.width='100%'; this.style.borderColor='var(--primary-color)'; this.style.boxShadow='0 0 0 4px rgba(46, 139, 87, 0.1)';" onblur="this.parentElement.querySelector('.input-icon').style.color='var(--gray-400)'; if(!this.value) this.parentElement.querySelector('.input-underline').style.width='0'; this.style.borderColor='var(--gray-300)'; this.style.boxShadow='none';" style="width:100%; padding:0.75rem 1rem 0.75rem calc(1rem + 24px + 0.5rem); border:2px solid var(--gray-300); border-radius:var(--border-radius-lg); font-family:var(--font-family, 'Poppins', sans-serif); font-size:1rem; color:var(--gray-900); background:var(--white); transition:all 0.3s ease; outline:none; -webkit-appearance:none !important; -moz-appearance:textfield !important; appearance:none !important; position:relative; z-index:1;">
+                            <div class="input-underline" style="position:absolute; bottom:0; left:0; width:0; height:2px; background:var(--primary-color); transition:width 0.3s ease; pointer-events:none;"></div>
+                        </div>
+                    </div>
+                    <div class="input-group" style="margin-bottom:0;">
+                        <label style="display:block; margin-bottom:0.5rem; font-weight:600; color:var(--gray-700); font-size:0.9rem;">Top</label>
+                        <div class="input-container select-container" style="position:relative; display:flex; align-items:center; width:100%;">
+                            <i class="fas fa-sort-amount-down input-icon" style="position:absolute; left:1rem; color:var(--gray-400); font-size:1rem; pointer-events:none; z-index:2; transition:color 0.3s ease;"></i>
+                            <select id="reportServicesTop" onchange="loadServicesReport()" style="width:100%; padding:0.75rem 2.5rem 0.75rem calc(1rem + 24px + 0.5rem); border:2px solid var(--gray-300); border-radius:var(--border-radius-lg); font-family:var(--font-family, 'Poppins', sans-serif); font-size:1rem; color:var(--gray-900); background:var(--white); transition:all 0.3s ease; outline:none; appearance:none; -webkit-appearance:none; -moz-appearance:none; background-image:url('data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'12\' height=\'12\' viewBox=\'0 0 12 12\'%3E%3Cpath fill=\'%23666\' d=\'M6 9L1 4h10z\'/%3E%3C/svg%3E'); background-repeat:no-repeat; background-position:right 0.75rem center; background-size:12px;">
+                                <option value="10">Top 10</option>
+                                <option value="20">Top 20</option>
+                                <option value="50">Top 50</option>
+                                <option value="all">Todos</option>
+                            </select>
+                            <div class="input-underline" style="position:absolute; bottom:0; left:0; width:0; height:2px; background:var(--primary-color); transition:width 0.3s ease; pointer-events:none;"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Tabla de servicios -->
+            <div style="overflow-x:auto; border:1px solid var(--gray-200); border-radius:var(--border-radius-lg);">
+                <table class="data-table" style="width:100%; border-collapse:collapse;">
+                    <thead>
+                        <tr style="background:linear-gradient(135deg, var(--gray-100), var(--gray-50)); border-bottom:2px solid var(--gray-300);">
+                            <th style="padding:1rem; text-align:center; font-weight:600; color:var(--gray-700); font-size:0.9rem; text-transform:uppercase; letter-spacing:0.5px;">#</th>
+                            <th style="padding:1rem; text-align:left; font-weight:600; color:var(--gray-700); font-size:0.9rem; text-transform:uppercase; letter-spacing:0.5px;">Nombre del Servicio</th>
+                            <th style="padding:0.75rem; text-align:right; font-weight:600; color:var(--gray-700);">Veces Utilizado</th>
+                            <th style="padding:0.75rem; text-align:right; font-weight:600; color:var(--gray-700);">Ingresos Totales</th>
+                            <th style="padding:0.75rem; text-align:center; font-weight:600; color:var(--gray-700);">Porcentaje</th>
+                            <th style="padding:0.75rem; text-align:center; font-weight:600; color:var(--gray-700);">Visualización</th>
+                        </tr>
+                    </thead>
+                    <tbody id="servicesReportTableBody">
+                        <!-- Se cargará dinámicamente -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- REPORTE: PRODUCTOS -->
+    <div id="reportProductsView" class="report-view" style="display:none;">
+        <div class="admin-card">
+            <div class="admin-card-header">
+                <h3 style="margin:0; color:var(--gray-900); display:flex; align-items:center; gap:0.5rem; font-size:1.1rem; font-weight:600;">
+                    <i class="fa-solid fa-box" style="color:var(--primary-color);"></i> Reporte de Productos Más Vendidos
+                </h3>
+            </div>
+            
+            <!-- Filtros -->
+            <div style="padding:1.5rem; background:var(--gray-50); border-radius:var(--border-radius-lg); margin-bottom:1.5rem; border:1px solid var(--gray-200);">
+                <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(200px, 1fr)); gap:1.25rem;">
+                    <div class="input-group" style="margin-bottom:0;">
+                        <label style="display:block; margin-bottom:0.5rem; font-weight:600; color:var(--gray-700); font-size:0.9rem;">Fecha Desde</label>
+                        <div class="input-container" style="position:relative; display:flex; align-items:center; width:100%;">
+                            <i class="fas fa-calendar input-icon" style="position:absolute; left:1rem; color:var(--gray-400); font-size:1rem; pointer-events:none; z-index:1;"></i>
+                            <input type="date" id="reportProductsDateFrom" onchange="loadProductsReport()" onfocus="this.parentElement.querySelector('.input-icon').style.color='var(--primary-color)'; this.parentElement.querySelector('.input-underline').style.width='100%'; this.style.borderColor='var(--primary-color)'; this.style.boxShadow='0 0 0 4px rgba(46, 139, 87, 0.1)';" onblur="this.parentElement.querySelector('.input-icon').style.color='var(--gray-400)'; if(!this.value) this.parentElement.querySelector('.input-underline').style.width='0'; this.style.borderColor='var(--gray-300)'; this.style.boxShadow='none';" style="width:100%; padding:0.75rem 1rem 0.75rem calc(1rem + 24px + 0.5rem); border:2px solid var(--gray-300); border-radius:var(--border-radius-lg); font-family:var(--font-family, 'Poppins', sans-serif); font-size:1rem; color:var(--gray-900); background:var(--white); transition:all 0.3s ease; outline:none; -webkit-appearance:none !important; -moz-appearance:textfield !important; appearance:none !important; position:relative; z-index:1;">
+                            <div class="input-underline" style="position:absolute; bottom:0; left:0; width:0; height:2px; background:var(--primary-color); transition:width 0.3s ease; pointer-events:none;"></div>
+                        </div>
+                    </div>
+                    <div class="input-group" style="margin-bottom:0;">
+                        <label style="display:block; margin-bottom:0.5rem; font-weight:600; color:var(--gray-700); font-size:0.9rem;">Fecha Hasta</label>
+                        <div class="input-container" style="position:relative; display:flex; align-items:center; width:100%;">
+                            <i class="fas fa-calendar input-icon" style="position:absolute; left:1rem; color:var(--gray-400); font-size:1rem; pointer-events:none; z-index:1;"></i>
+                            <input type="date" id="reportProductsDateTo" onchange="loadProductsReport()" onfocus="this.parentElement.querySelector('.input-icon').style.color='var(--primary-color)'; this.parentElement.querySelector('.input-underline').style.width='100%'; this.style.borderColor='var(--primary-color)'; this.style.boxShadow='0 0 0 4px rgba(46, 139, 87, 0.1)';" onblur="this.parentElement.querySelector('.input-icon').style.color='var(--gray-400)'; if(!this.value) this.parentElement.querySelector('.input-underline').style.width='0'; this.style.borderColor='var(--gray-300)'; this.style.boxShadow='none';" style="width:100%; padding:0.75rem 1rem 0.75rem calc(1rem + 24px + 0.5rem); border:2px solid var(--gray-300); border-radius:var(--border-radius-lg); font-family:var(--font-family, 'Poppins', sans-serif); font-size:1rem; color:var(--gray-900); background:var(--white); transition:all 0.3s ease; outline:none; -webkit-appearance:none !important; -moz-appearance:textfield !important; appearance:none !important; position:relative; z-index:1;">
+                            <div class="input-underline" style="position:absolute; bottom:0; left:0; width:0; height:2px; background:var(--primary-color); transition:width 0.3s ease; pointer-events:none;"></div>
+                        </div>
+                    </div>
+                    <div class="input-group" style="margin-bottom:0;">
+                        <label style="display:block; margin-bottom:0.5rem; font-weight:600; color:var(--gray-700); font-size:0.9rem;">Top</label>
+                        <div class="input-container select-container" style="position:relative; display:flex; align-items:center; width:100%;">
+                            <i class="fas fa-sort-amount-down input-icon" style="position:absolute; left:1rem; color:var(--gray-400); font-size:1rem; pointer-events:none; z-index:2; transition:color 0.3s ease;"></i>
+                            <select id="reportProductsTop" onchange="loadProductsReport()" style="width:100%; padding:0.75rem 2.5rem 0.75rem calc(1rem + 24px + 0.5rem); border:2px solid var(--gray-300); border-radius:var(--border-radius-lg); font-family:var(--font-family, 'Poppins', sans-serif); font-size:1rem; color:var(--gray-900); background:var(--white); transition:all 0.3s ease; outline:none; appearance:none; -webkit-appearance:none; -moz-appearance:none; background-image:url('data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'12\' height=\'12\' viewBox=\'0 0 12 12\'%3E%3Cpath fill=\'%23666\' d=\'M6 9L1 4h10z\'/%3E%3C/svg%3E'); background-repeat:no-repeat; background-position:right 0.75rem center; background-size:12px;">
+                                <option value="10">Top 10</option>
+                                <option value="20">Top 20</option>
+                                <option value="50">Top 50</option>
+                                <option value="all">Todos</option>
+                            </select>
+                            <div class="input-underline" style="position:absolute; bottom:0; left:0; width:0; height:2px; background:var(--primary-color); transition:width 0.3s ease; pointer-events:none;"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Tabla de productos -->
+            <div style="overflow-x:auto; border:1px solid var(--gray-200); border-radius:var(--border-radius-lg);">
+                <table class="data-table" style="width:100%; border-collapse:collapse;">
+                    <thead>
+                        <tr style="background:var(--gray-100); border-bottom:2px solid var(--gray-300);">
+                            <th style="padding:0.75rem; text-align:center; font-weight:600; color:var(--gray-700);">#</th>
+                            <th style="padding:0.75rem; text-align:left; font-weight:600; color:var(--gray-700);">Nombre del Producto</th>
+                            <th style="padding:0.75rem; text-align:left; font-weight:600; color:var(--gray-700);">Categoría</th>
+                            <th style="padding:0.75rem; text-align:right; font-weight:600; color:var(--gray-700);">Cantidad Vendida</th>
+                            <th style="padding:0.75rem; text-align:right; font-weight:600; color:var(--gray-700);">Ingresos Totales</th>
+                            <th style="padding:0.75rem; text-align:center; font-weight:600; color:var(--gray-700);">Porcentaje</th>
+                            <th style="padding:0.75rem; text-align:center; font-weight:600; color:var(--gray-700);">Visualización</th>
+                        </tr>
+                    </thead>
+                    <tbody id="productsReportTableBody">
+                        <!-- Se cargará dinámicamente -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- REPORTE: VETERINARIOS -->
+    <div id="reportVeterinariansView" class="report-view" style="display:none;">
+        <div class="admin-card">
+            <div class="admin-card-header">
+                <h3 style="margin:0; color:var(--gray-900); display:flex; align-items:center; gap:0.5rem; font-size:1.1rem; font-weight:600;">
+                    <i class="fa-solid fa-user-doctor" style="color:var(--primary-color);"></i> Reporte de Veterinarios
+                </h3>
+            </div>
+            
+            <!-- Filtros -->
+            <div style="padding:1.5rem; background:var(--gray-50); border-radius:var(--border-radius-lg); margin-bottom:1.5rem; border:1px solid var(--gray-200);">
+                <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(200px, 1fr)); gap:1.25rem;">
+                    <div class="input-group" style="margin-bottom:0;">
+                        <label style="display:block; margin-bottom:0.5rem; font-weight:600; color:var(--gray-700); font-size:0.9rem;">Fecha Desde</label>
+                        <div class="input-container" style="position:relative; display:flex; align-items:center; width:100%;">
+                            <i class="fas fa-calendar input-icon" style="position:absolute; left:1rem; color:var(--gray-400); font-size:1rem; pointer-events:none; z-index:1;"></i>
+                            <input type="date" id="reportVetsDateFrom" onchange="loadVeterinariansReport()" onfocus="this.parentElement.querySelector('.input-icon').style.color='var(--primary-color)'; this.parentElement.querySelector('.input-underline').style.width='100%'; this.style.borderColor='var(--primary-color)'; this.style.boxShadow='0 0 0 4px rgba(46, 139, 87, 0.1)';" onblur="this.parentElement.querySelector('.input-icon').style.color='var(--gray-400)'; if(!this.value) this.parentElement.querySelector('.input-underline').style.width='0'; this.style.borderColor='var(--gray-300)'; this.style.boxShadow='none';" style="width:100%; padding:0.75rem 1rem 0.75rem calc(1rem + 24px + 0.5rem); border:2px solid var(--gray-300); border-radius:var(--border-radius-lg); font-family:var(--font-family, 'Poppins', sans-serif); font-size:1rem; color:var(--gray-900); background:var(--white); transition:all 0.3s ease; outline:none; -webkit-appearance:none !important; -moz-appearance:textfield !important; appearance:none !important; position:relative; z-index:1;">
+                            <div class="input-underline" style="position:absolute; bottom:0; left:0; width:0; height:2px; background:var(--primary-color); transition:width 0.3s ease; pointer-events:none;"></div>
+                        </div>
+                    </div>
+                    <div class="input-group" style="margin-bottom:0;">
+                        <label style="display:block; margin-bottom:0.5rem; font-weight:600; color:var(--gray-700); font-size:0.9rem;">Fecha Hasta</label>
+                        <div class="input-container" style="position:relative; display:flex; align-items:center; width:100%;">
+                            <i class="fas fa-calendar input-icon" style="position:absolute; left:1rem; color:var(--gray-400); font-size:1rem; pointer-events:none; z-index:1;"></i>
+                            <input type="date" id="reportVetsDateTo" onchange="loadVeterinariansReport()" onfocus="this.parentElement.querySelector('.input-icon').style.color='var(--primary-color)'; this.parentElement.querySelector('.input-underline').style.width='100%'; this.style.borderColor='var(--primary-color)'; this.style.boxShadow='0 0 0 4px rgba(46, 139, 87, 0.1)';" onblur="this.parentElement.querySelector('.input-icon').style.color='var(--gray-400)'; if(!this.value) this.parentElement.querySelector('.input-underline').style.width='0'; this.style.borderColor='var(--gray-300)'; this.style.boxShadow='none';" style="width:100%; padding:0.75rem 1rem 0.75rem calc(1rem + 24px + 0.5rem); border:2px solid var(--gray-300); border-radius:var(--border-radius-lg); font-family:var(--font-family, 'Poppins', sans-serif); font-size:1rem; color:var(--gray-900); background:var(--white); transition:all 0.3s ease; outline:none; -webkit-appearance:none !important; -moz-appearance:textfield !important; appearance:none !important; position:relative; z-index:1;">
+                            <div class="input-underline" style="position:absolute; bottom:0; left:0; width:0; height:2px; background:var(--primary-color); transition:width 0.3s ease; pointer-events:none;"></div>
+                        </div>
+                    </div>
+                    <div class="input-group" style="margin-bottom:0;">
+                        <label style="display:block; margin-bottom:0.5rem; font-weight:600; color:var(--gray-700); font-size:0.9rem;">Ordenar por</label>
+                        <div class="input-container select-container" style="position:relative; display:flex; align-items:center; width:100%;">
+                            <i class="fas fa-sort input-icon" style="position:absolute; left:1rem; color:var(--gray-400); font-size:1rem; pointer-events:none; z-index:2; transition:color 0.3s ease;"></i>
+                            <select id="reportVetsSortBy" onchange="loadVeterinariansReport()" style="width:100%; padding:0.75rem 2.5rem 0.75rem calc(1rem + 24px + 0.5rem); border:2px solid var(--gray-300); border-radius:var(--border-radius-lg); font-family:var(--font-family, 'Poppins', sans-serif); font-size:1rem; color:var(--gray-900); background:var(--white); transition:all 0.3s ease; outline:none; appearance:none; -webkit-appearance:none; -moz-appearance:none; background-image:url('data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'12\' height=\'12\' viewBox=\'0 0 12 12\'%3E%3Cpath fill=\'%23666\' d=\'M6 9L1 4h10z\'/%3E%3C/svg%3E'); background-repeat:no-repeat; background-position:right 0.75rem center; background-size:12px;">
+                                <option value="billing">Facturación</option>
+                                <option value="appointments">Número de Citas</option>
+                                <option value="name">Nombre</option>
+                            </select>
+                            <div class="input-underline" style="position:absolute; bottom:0; left:0; width:0; height:2px; background:var(--primary-color); transition:width 0.3s ease; pointer-events:none;"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Tabla de veterinarios -->
+            <div style="overflow-x:auto; border:1px solid var(--gray-200); border-radius:var(--border-radius-lg);">
+                <table class="data-table" style="width:100%; border-collapse:collapse;">
+                    <thead>
+                        <tr style="background:var(--gray-100); border-bottom:2px solid var(--gray-300);">
+                            <th style="padding:0.75rem; text-align:center; font-weight:600; color:var(--gray-700);">#</th>
+                            <th style="padding:0.75rem; text-align:left; font-weight:600; color:var(--gray-700);">Nombre del Veterinario</th>
+                            <th style="padding:0.75rem; text-align:left; font-weight:600; color:var(--gray-700);">Especialidad</th>
+                            <th style="padding:0.75rem; text-align:right; font-weight:600; color:var(--gray-700);">Número de Citas</th>
+                            <th style="padding:0.75rem; text-align:right; font-weight:600; color:var(--gray-700);">Facturación Total</th>
+                            <th style="padding:0.75rem; text-align:center; font-weight:600; color:var(--gray-700);">Porcentaje</th>
+                        </tr>
+                    </thead>
+                    <tbody id="veterinariansReportTableBody">
+                        <!-- Se cargará dinámicamente -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- REPORTE: CLIENTES -->
+    <div id="reportClientsView" class="report-view" style="display:none;">
+        <div class="admin-card">
+            <div class="admin-card-header">
+                <h3 style="margin:0; color:var(--gray-900); display:flex; align-items:center; gap:0.5rem; font-size:1.1rem; font-weight:600;">
+                    <i class="fa-solid fa-users" style="color:var(--primary-color);"></i> Reporte de Clientes Frecuentes
+                </h3>
+            </div>
+            
+            <!-- Filtros -->
+            <div style="padding:1.5rem; background:var(--gray-50); border-radius:var(--border-radius-lg); margin-bottom:1.5rem; border:1px solid var(--gray-200);">
+                <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(200px, 1fr)); gap:1.25rem;">
+                    <div class="input-group" style="margin-bottom:0;">
+                        <label style="display:block; margin-bottom:0.5rem; font-weight:600; color:var(--gray-700); font-size:0.9rem;">Fecha Desde</label>
+                        <div class="input-container" style="position:relative; display:flex; align-items:center; width:100%;">
+                            <i class="fas fa-calendar input-icon" style="position:absolute; left:1rem; color:var(--gray-400); font-size:1rem; pointer-events:none; z-index:1;"></i>
+                            <input type="date" id="reportClientsDateFrom" onchange="loadClientsReport()" onfocus="this.parentElement.querySelector('.input-icon').style.color='var(--primary-color)'; this.parentElement.querySelector('.input-underline').style.width='100%'; this.style.borderColor='var(--primary-color)'; this.style.boxShadow='0 0 0 4px rgba(46, 139, 87, 0.1)';" onblur="this.parentElement.querySelector('.input-icon').style.color='var(--gray-400)'; if(!this.value) this.parentElement.querySelector('.input-underline').style.width='0'; this.style.borderColor='var(--gray-300)'; this.style.boxShadow='none';" style="width:100%; padding:0.75rem 1rem 0.75rem calc(1rem + 24px + 0.5rem); border:2px solid var(--gray-300); border-radius:var(--border-radius-lg); font-family:var(--font-family, 'Poppins', sans-serif); font-size:1rem; color:var(--gray-900); background:var(--white); transition:all 0.3s ease; outline:none; -webkit-appearance:none !important; -moz-appearance:textfield !important; appearance:none !important; position:relative; z-index:1;">
+                            <div class="input-underline" style="position:absolute; bottom:0; left:0; width:0; height:2px; background:var(--primary-color); transition:width 0.3s ease; pointer-events:none;"></div>
+                        </div>
+                    </div>
+                    <div class="input-group" style="margin-bottom:0;">
+                        <label style="display:block; margin-bottom:0.5rem; font-weight:600; color:var(--gray-700); font-size:0.9rem;">Fecha Hasta</label>
+                        <div class="input-container" style="position:relative; display:flex; align-items:center; width:100%;">
+                            <i class="fas fa-calendar input-icon" style="position:absolute; left:1rem; color:var(--gray-400); font-size:1rem; pointer-events:none; z-index:1;"></i>
+                            <input type="date" id="reportClientsDateTo" onchange="loadClientsReport()" onfocus="this.parentElement.querySelector('.input-icon').style.color='var(--primary-color)'; this.parentElement.querySelector('.input-underline').style.width='100%'; this.style.borderColor='var(--primary-color)'; this.style.boxShadow='0 0 0 4px rgba(46, 139, 87, 0.1)';" onblur="this.parentElement.querySelector('.input-icon').style.color='var(--gray-400)'; if(!this.value) this.parentElement.querySelector('.input-underline').style.width='0'; this.style.borderColor='var(--gray-300)'; this.style.boxShadow='none';" style="width:100%; padding:0.75rem 1rem 0.75rem calc(1rem + 24px + 0.5rem); border:2px solid var(--gray-300); border-radius:var(--border-radius-lg); font-family:var(--font-family, 'Poppins', sans-serif); font-size:1rem; color:var(--gray-900); background:var(--white); transition:all 0.3s ease; outline:none; -webkit-appearance:none !important; -moz-appearance:textfield !important; appearance:none !important; position:relative; z-index:1;">
+                            <div class="input-underline" style="position:absolute; bottom:0; left:0; width:0; height:2px; background:var(--primary-color); transition:width 0.3s ease; pointer-events:none;"></div>
+                        </div>
+                    </div>
+                    <div class="input-group" style="margin-bottom:0;">
+                        <label style="display:block; margin-bottom:0.5rem; font-weight:600; color:var(--gray-700); font-size:0.9rem;">Top</label>
+                        <div class="input-container select-container" style="position:relative; display:flex; align-items:center; width:100%;">
+                            <i class="fas fa-sort-amount-down input-icon" style="position:absolute; left:1rem; color:var(--gray-400); font-size:1rem; pointer-events:none; z-index:2; transition:color 0.3s ease;"></i>
+                            <select id="reportClientsTop" onchange="loadClientsReport()" style="width:100%; padding:0.75rem 2.5rem 0.75rem calc(1rem + 24px + 0.5rem); border:2px solid var(--gray-300); border-radius:var(--border-radius-lg); font-family:var(--font-family, 'Poppins', sans-serif); font-size:1rem; color:var(--gray-900); background:var(--white); transition:all 0.3s ease; outline:none; appearance:none; -webkit-appearance:none; -moz-appearance:none; background-image:url('data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'12\' height=\'12\' viewBox=\'0 0 12 12\'%3E%3Cpath fill=\'%23666\' d=\'M6 9L1 4h10z\'/%3E%3C/svg%3E'); background-repeat:no-repeat; background-position:right 0.75rem center; background-size:12px;">
+                                <option value="10">Top 10</option>
+                                <option value="20">Top 20</option>
+                                <option value="50">Top 50</option>
+                                <option value="all">Todos</option>
+                            </select>
+                            <div class="input-underline" style="position:absolute; bottom:0; left:0; width:0; height:2px; background:var(--primary-color); transition:width 0.3s ease; pointer-events:none;"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Tabla de clientes -->
+            <div style="overflow-x:auto; border:1px solid var(--gray-200); border-radius:var(--border-radius-lg);">
+                <table class="data-table" style="width:100%; border-collapse:collapse;">
+                    <thead>
+                        <tr style="background:var(--gray-100); border-bottom:2px solid var(--gray-300);">
+                            <th style="padding:0.75rem; text-align:center; font-weight:600; color:var(--gray-700);">#</th>
+                            <th style="padding:0.75rem; text-align:left; font-weight:600; color:var(--gray-700);">Nombre del Cliente</th>
+                            <th style="padding:0.75rem; text-align:left; font-weight:600; color:var(--gray-700);">Email</th>
+                            <th style="padding:0.75rem; text-align:right; font-weight:600; color:var(--gray-700);">Número de Visitas</th>
+                            <th style="padding:0.75rem; text-align:right; font-weight:600; color:var(--gray-700);">Facturación Total</th>
+                            <th style="padding:0.75rem; text-align:center; font-weight:600; color:var(--gray-700);">Mascotas</th>
+                            <th style="padding:0.75rem; text-align:center; font-weight:600; color:var(--gray-700);">Retención</th>
+                        </tr>
+                    </thead>
+                    <tbody id="clientsReportTableBody">
+                        <!-- Se cargará dinámicamente -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- REPORTE: PACIENTES -->
+    <div id="reportPatientsView" class="report-view" style="display:none;">
+        <div class="admin-card">
+            <div class="admin-card-header">
+                <h3 style="margin:0; color:var(--gray-900); display:flex; align-items:center; gap:0.5rem; font-size:1.1rem; font-weight:600;">
+                    <i class="fa-solid fa-paw" style="color:var(--primary-color);"></i> Reporte de Pacientes Atendidos
+                </h3>
+            </div>
+            
+            <!-- Filtros -->
+            <div style="padding:1.5rem; background:var(--gray-50); border-radius:var(--border-radius-lg); margin-bottom:1.5rem; border:1px solid var(--gray-200);">
+                <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(200px, 1fr)); gap:1.25rem;">
+                    <div class="input-group" style="margin-bottom:0;">
+                        <label style="display:block; margin-bottom:0.5rem; font-weight:600; color:var(--gray-700); font-size:0.9rem;">Fecha Desde</label>
+                        <div class="input-container" style="position:relative; display:flex; align-items:center; width:100%;">
+                            <i class="fas fa-calendar input-icon" style="position:absolute; left:1rem; color:var(--gray-400); font-size:1rem; pointer-events:none; z-index:1;"></i>
+                            <input type="date" id="reportPatientsDateFrom" onchange="loadPatientsReport()" onfocus="this.parentElement.querySelector('.input-icon').style.color='var(--primary-color)'; this.parentElement.querySelector('.input-underline').style.width='100%'; this.style.borderColor='var(--primary-color)'; this.style.boxShadow='0 0 0 4px rgba(46, 139, 87, 0.1)';" onblur="this.parentElement.querySelector('.input-icon').style.color='var(--gray-400)'; if(!this.value) this.parentElement.querySelector('.input-underline').style.width='0'; this.style.borderColor='var(--gray-300)'; this.style.boxShadow='none';" style="width:100%; padding:0.75rem 1rem 0.75rem calc(1rem + 24px + 0.5rem); border:2px solid var(--gray-300); border-radius:var(--border-radius-lg); font-family:var(--font-family, 'Poppins', sans-serif); font-size:1rem; color:var(--gray-900); background:var(--white); transition:all 0.3s ease; outline:none; -webkit-appearance:none !important; -moz-appearance:textfield !important; appearance:none !important; position:relative; z-index:1;">
+                            <div class="input-underline" style="position:absolute; bottom:0; left:0; width:0; height:2px; background:var(--primary-color); transition:width 0.3s ease; pointer-events:none;"></div>
+                        </div>
+                    </div>
+                    <div class="input-group" style="margin-bottom:0;">
+                        <label style="display:block; margin-bottom:0.5rem; font-weight:600; color:var(--gray-700); font-size:0.9rem;">Fecha Hasta</label>
+                        <div class="input-container" style="position:relative; display:flex; align-items:center; width:100%;">
+                            <i class="fas fa-calendar input-icon" style="position:absolute; left:1rem; color:var(--gray-400); font-size:1rem; pointer-events:none; z-index:1;"></i>
+                            <input type="date" id="reportPatientsDateTo" onchange="loadPatientsReport()" onfocus="this.parentElement.querySelector('.input-icon').style.color='var(--primary-color)'; this.parentElement.querySelector('.input-underline').style.width='100%'; this.style.borderColor='var(--primary-color)'; this.style.boxShadow='0 0 0 4px rgba(46, 139, 87, 0.1)';" onblur="this.parentElement.querySelector('.input-icon').style.color='var(--gray-400)'; if(!this.value) this.parentElement.querySelector('.input-underline').style.width='0'; this.style.borderColor='var(--gray-300)'; this.style.boxShadow='none';" style="width:100%; padding:0.75rem 1rem 0.75rem calc(1rem + 24px + 0.5rem); border:2px solid var(--gray-300); border-radius:var(--border-radius-lg); font-family:var(--font-family, 'Poppins', sans-serif); font-size:1rem; color:var(--gray-900); background:var(--white); transition:all 0.3s ease; outline:none; -webkit-appearance:none !important; -moz-appearance:textfield !important; appearance:none !important; position:relative; z-index:1;">
+                            <div class="input-underline" style="position:absolute; bottom:0; left:0; width:0; height:2px; background:var(--primary-color); transition:width 0.3s ease; pointer-events:none;"></div>
+                        </div>
+                    </div>
+                    <div class="input-group" style="margin-bottom:0;">
+                        <label style="display:block; margin-bottom:0.5rem; font-weight:600; color:var(--gray-700); font-size:0.9rem;">Especie</label>
+                        <div class="input-container select-container" style="position:relative; display:flex; align-items:center; width:100%;">
+                            <i class="fas fa-dog input-icon" style="position:absolute; left:1rem; color:var(--gray-400); font-size:1rem; pointer-events:none; z-index:2; transition:color 0.3s ease;"></i>
+                            <select id="reportPatientsSpecies" onchange="loadPatientsReport()" style="width:100%; padding:0.75rem 2.5rem 0.75rem calc(1rem + 24px + 0.5rem); border:2px solid var(--gray-300); border-radius:var(--border-radius-lg); font-family:var(--font-family, 'Poppins', sans-serif); font-size:1rem; color:var(--gray-900); background:var(--white); transition:all 0.3s ease; outline:none; appearance:none; -webkit-appearance:none; -moz-appearance:none; background-image:url('data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'12\' height=\'12\' viewBox=\'0 0 12 12\'%3E%3Cpath fill=\'%23666\' d=\'M6 9L1 4h10z\'/%3E%3C/svg%3E'); background-repeat:no-repeat; background-position:right 0.75rem center; background-size:12px;">
+                                <option value="">Todas las especies</option>
+                                <option value="Perro">Perro</option>
+                                <option value="Gato">Gato</option>
+                                <option value="Ave">Ave</option>
+                                <option value="Conejo">Conejo</option>
+                                <option value="Otro">Otro</option>
+                            </select>
+                            <div class="input-underline" style="position:absolute; bottom:0; left:0; width:0; height:2px; background:var(--primary-color); transition:width 0.3s ease; pointer-events:none;"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Tabla de pacientes -->
+            <div style="overflow-x:auto; border:1px solid var(--gray-200); border-radius:var(--border-radius-lg);">
+                <table class="data-table" style="width:100%; border-collapse:collapse;">
+                    <thead>
+                        <tr style="background:var(--gray-100); border-bottom:2px solid var(--gray-300);">
+                            <th style="padding:0.75rem; text-align:left; font-weight:600; color:var(--gray-700);">Nombre del Paciente</th>
+                            <th style="padding:0.75rem; text-align:left; font-weight:600; color:var(--gray-700);">Especie</th>
+                            <th style="padding:0.75rem; text-align:left; font-weight:600; color:var(--gray-700);">Raza</th>
+                            <th style="padding:0.75rem; text-align:left; font-weight:600; color:var(--gray-700);">Propietario</th>
+                            <th style="padding:0.75rem; text-align:right; font-weight:600; color:var(--gray-700);">Número de Visitas</th>
+                            <th style="padding:0.75rem; text-align:left; font-weight:600; color:var(--gray-700);">Última Visita</th>
+                        </tr>
+                    </thead>
+                    <tbody id="patientsReportTableBody">
+                        <!-- Se cargará dinámicamente -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Acciones de la sección -->
+<div id="sectionActions" style="display:none;"></div>
+
+<style>
+/* Estilos para inputs y formularios en reportes */
+.input-group {
+    margin-bottom: 0;
+}
+
+.input-container {
+    position: relative;
+    display: flex;
+    align-items: center;
+    width: 100%;
+}
+
+.input-container input,
+.input-container select {
+    width: 100%;
+    padding: 0.75rem 1rem 0.75rem calc(1rem + 24px + 0.5rem);
+    border: 2px solid var(--gray-300);
+    border-radius: var(--border-radius-lg);
+    font-family: var(--font-family, 'Poppins', sans-serif);
+    font-size: var(--font-size-base, 1rem);
+    color: var(--gray-900);
+    background: var(--white);
+    transition: all 0.3s ease;
+    outline: none;
+}
+
+/* Ocultar iconos nativos de inputs date - MUY IMPORTANTE */
+input[type="date"]::-webkit-calendar-picker-indicator {
+    display: none !important;
+    -webkit-appearance: none !important;
+    opacity: 0 !important;
+    position: absolute !important;
+    right: -9999px !important;
+    width: 0 !important;
+    height: 0 !important;
+    pointer-events: none !important;
+}
+
+input[type="date"]::-webkit-inner-spin-button,
+input[type="date"]::-webkit-clear-button {
+    display: none !important;
+    -webkit-appearance: none !important;
+    opacity: 0 !important;
+}
+
+input[type="date"] {
+    -webkit-appearance: none !important;
+    -moz-appearance: textfield !important;
+    appearance: none !important;
+}
+
+/* Firefox para inputs date */
+input[type="date"]::-moz-clear {
+    display: none !important;
+}
+
+/* Asegurar que los selects no muestren iconos nativos */
+select {
+    -webkit-appearance: none !important;
+    -moz-appearance: none !important;
+    appearance: none !important;
+    background-image: none !important;
+}
+
+select::-ms-expand {
+    display: none !important;
+}
+
+.input-container input:focus,
+.input-container select:focus {
+    border-color: var(--primary-color) !important;
+    box-shadow: 0 0 0 4px rgba(46, 139, 87, 0.1) !important;
+    background: var(--white) !important;
+}
+
+input[type="date"]:focus,
+select:focus {
+    border-color: var(--primary-color) !important;
+    box-shadow: 0 0 0 4px rgba(46, 139, 87, 0.1) !important;
+}
+
+.input-icon {
+    position: absolute;
+    left: 1rem;
+    color: var(--gray-400);
+    font-size: 1rem;
+    pointer-events: none;
+    transition: color 0.3s ease;
+    z-index: 1;
+}
+
+.input-container input:focus ~ .input-icon,
+.input-container select:focus ~ .input-icon {
+    color: var(--primary-color);
+}
+
+.input-container input:focus + .input-underline,
+.input-container select:focus + .input-underline,
+.input-container input:focus ~ .input-underline,
+.input-container select:focus ~ .input-underline {
+    width: 100%;
+}
+
+.input-underline {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background: var(--primary-color);
+    transition: width 0.3s ease;
+    pointer-events: none;
+}
+
+.select-container {
+    position: relative;
+}
+
+.select-container::after {
+    content: '';
+    position: absolute;
+    right: 0.75rem;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 12px;
+    height: 12px;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23666' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: center;
+    pointer-events: none;
+    z-index: 10;
+}
+
+.select-container select {
+    padding-right: 2.5rem !important;
+    appearance: none !important;
+    -webkit-appearance: none !important;
+    -moz-appearance: none !important;
+    background-image: none !important;
+}
+
+/* Ocultar cualquier icono nativo que pueda aparecer */
+.select-container select::-ms-expand {
+    display: none !important;
+}
+
+/* Reglas adicionales para ocultar completamente iconos nativos */
+input[type="date"]::-webkit-calendar-picker-indicator {
+    opacity: 0 !important;
+    position: absolute;
+    right: 0;
+    width: 100%;
+    height: 100%;
+    cursor: pointer;
+    z-index: 1;
+}
+
+input[type="date"]::-webkit-inner-spin-button {
+    display: none !important;
+    -webkit-appearance: none !important;
+}
+
+/* Asegurar z-index correcto para iconos de FontAwesome */
+.input-container .input-icon {
+    z-index: 2 !important;
+}
+
+.input-container input[type="date"],
+.input-container select {
+    position: relative;
+    z-index: 1;
+}
+
+/* Asegurar que el pseudo-elemento ::after del select-container esté visible */
+.select-container::after {
+    z-index: 10 !important;
+}
+
+/* Estilos para botones en reportes */
+.submit-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.5rem;
+    background: linear-gradient(135deg, var(--primary-color), #5CB85C);
+    color: white;
+    border: none;
+    border-radius: var(--border-radius-lg);
+    font-weight: 600;
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 4px rgba(46, 139, 87, 0.2);
+}
+
+.submit-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(46, 139, 87, 0.3);
+}
+
+.submit-btn.btn-secondary {
+    background: var(--gray-200);
+    color: var(--gray-700);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.submit-btn.btn-secondary:hover {
+    background: var(--gray-300);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.report-tab-btn {
+    padding: 0.75rem 1rem !important;
+    background: transparent !important;
+    border: none !important;
+    border-bottom: 3px solid transparent !important;
+    border-radius: 0 !important;
+    color: #757575 !important;
+    font-weight: 500 !important;
+    font-size: 0.9rem !important;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 0.5rem !important;
+    white-space: nowrap;
+    margin: 0;
+    flex: 0 0 auto;
+    position: relative;
+}
+
+.report-tab-btn i {
+    font-size: 0.95rem !important;
+    width: 18px;
+    text-align: center;
+}
+
+.report-tab-btn:hover {
+    color: var(--primary-color) !important;
+    background: #FAFAFA !important;
+    border-radius: 0 !important;
+}
+
+.report-tab-btn.active {
+    background: transparent !important;
+    border-bottom: 3px solid var(--primary-color) !important;
+    color: var(--primary-color) !important;
+    font-weight: 600 !important;
+    box-shadow: none !important;
+    transform: none !important;
+}
+
+.report-tab-btn.active i {
+    color: var(--primary-color) !important;
+}
+
+.report-view {
+    display: none;
+}
+
+.report-view.active {
+    display: block;
+}
+
+.chart-bar {
+    height: 20px;
+    background: var(--gray-200);
+    border-radius: 10px;
+    overflow: hidden;
+    position: relative;
+    margin: 0.5rem 0;
+}
+
+.chart-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--primary-color), #5CB85C);
+    border-radius: 10px;
+    transition: width 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    padding-right: 0.5rem;
+    color: white;
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+</style>
+
